@@ -3,6 +3,7 @@
   <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.js"></script>
   </head>
+
   <style>
     body {
       background-color: #030303;
@@ -71,7 +72,7 @@
       -webkit-text-fill-color: transparent;
       -webkit-text-stroke-width: 1px;
       -webkit-text-stroke-color: #becf65;
-      font-size: 5em;
+      font-size: 3em;
       font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
       letter-spacing: 0.1em;
     }
@@ -80,20 +81,16 @@
     <div class="scoreboard-holder">
       <div class="scoreboard">
         <div>
-          <div class="life-text">
-            LIFE
+          <div class="score-text">
+            第
+            <span id="generation">0</span>
+            代
           </div>
-          <div class="life-bar" id="life-bar">
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
-            <div class="life-active"></div>
+        </div>
+        <div>
+          <div class="score-text">
+            Best:
+            <span id="record">0</span>
           </div>
         </div>
         <div class="score-wrapper">
@@ -105,6 +102,14 @@
         </div>
       </div>
     </div>
-    <script src="./main.js"></script>
+    <script src="/lib/p5.js"></script>
+    <script src="FamilyNames.js"></script>
+    <script src="Population.js"></script>
+    <script src="Player.js"></script>
+    <script src="Node.js"></script>
+    <script src="Connection.js"></script>
+    <script src="Genome.js"></script>
+    <script src="Healthbar.js"></script>
+    <script src="main.js"></script>
   </body>
 </html>
