@@ -18,7 +18,9 @@ var rightWalls = [];
 var ceilings = [];
 
 var distance = 0;
+var turnDead = 0;
 var status = "loading";
+
 
 // Current Platform to keep track of the platform
 let currentPlatform;
@@ -41,6 +43,7 @@ const lifeBar = document.getElementById("life-bar");
 const score = document.getElementById("score");
 const generation = document.getElementById("generation");
 const record = document.getElementById("record");
+const deadnumber = document.getElementById("deadnumber");
 
 function preload() {
   game.load.baseURL = "./assets/";
@@ -86,7 +89,7 @@ function create() {
   // createTextsBoard();
 
   // Mute the screaming kids
-  game.sound.mute = true;
+  game.sound.mute = false;
 }
 
 function update() {
@@ -100,7 +103,19 @@ function update() {
     restart();
     return;
   }
+
+  // 若大於10層
+  if(distance>10)
+  {
+    population.beginLevel =0;
+  }
+
   population.update();
+
+
+  turnDead  = population.turnDead
+
+  deadnumber.innerHTML = turnDead;
 
   updatePlatforms();
 

@@ -45,7 +45,8 @@ HealthBar.prototype.mergeWithDefaultConfiguration = function (newConfig) {
       color: "#651828",
     },
     bar: {
-      color: "#FEFF03",
+      // color: "#FEFF03",
+      color: "#00EC00"
     },
     border: {
       color: "#000000",

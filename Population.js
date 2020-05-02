@@ -7,6 +7,8 @@ class Population {
     this.bestFitness = 0;
     this.generation = 0;
     this.matingPool = [];
+    this.turnDead = 0;
+    this.beginLevel = 1;
 
     for (let i = 0; i < size; i++) {
       this.players.push(new Player(FamilyNames[i], this.generation));
@@ -26,6 +28,18 @@ class Population {
         this.players[i].think();
         this.players[i].update();
       }
+      // 計算死亡數
+      else if (this.players[i].dead & !this.players[i].reportDead)
+      {
+        this.turnDead ++;
+        this.players[i].reportDead = true;
+      }
+
+      if(this.beginLevel ==0)
+      {
+        this.players[i].beginLevel = 0;
+      }
+
     }
 
     // if (showBest && this.bestPlayer && !this.bestPlayer.dead) {

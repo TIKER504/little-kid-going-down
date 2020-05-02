@@ -31,7 +31,8 @@ class Player {
         fontSize: 12,
         fontWeight: "thin",
         align: "center",
-        fill: "yellow",
+        // fill: "yellow",
+        fill: "#00EC00"        
       }
     );
 
@@ -53,14 +54,17 @@ class Player {
     this.vision = []; //the input array fed into the neuralNet
     this.decision = []; //the out put of the NN
     this.dead = false;
+    this.reportDead = false;
     this.score = 0;
     this.unadjustedFitness;
     this.lifespan = 0; //how long the player lived for this.fitness
     this.bestScore = 0; //stores the this.score achieved used for replay
 
+    this.beginLevel = 1; // 是否為開剛始10 層
+
     this.moveState = 0; // 0 = not moving, 1 = move left, 2 = move right
     // Inputs for vision, Outputs for actions
-    this.genomeInputs = 5;
+    this.genomeInputs = 7;
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
   }
@@ -73,6 +77,9 @@ class Player {
     for (let index = 1; index <= number; index++) {
       text += "|";
     }
+
+    
+
     return text;
   }
 
@@ -89,6 +96,26 @@ class Player {
       this.updatePlayer();
       this.checkNailCeiling();
       this.checkFellPlayer();
+
+       // 紅血
+       if(this.player.life <= 3)
+       {
+         this.healthBar.fill ='#FF0000';        
+       }
+ 
+       // 黃血
+       if(this.player.life > 3 && this.player.life < 10)
+       {
+         this.healthBar.fill ='#F9F900';        
+       }
+ 
+       // 綠血
+       if(this.player.life == 10)
+       {
+         this.healthBar.fill ='#00EC00';        
+       }
+             
+
     } else {
       this.destroy();
     }
@@ -129,12 +156,38 @@ class Player {
       fake: 0,
     };
 
+    // cat iindex
+    // const platformCode = {
+    //   normal: 0,
+    //   nails: 1,
+    //   conveyorLeft: 2,
+    //   conveyorRight: 3,
+    //   trampoline: 4,
+    //   fake: 5,
+    // };
+
+    // danger index
+    // const platformCode = {
+    //   normal: 0,
+    //   nails: 1,
+    //   conveyorLeft: 0.5,
+    //   conveyorRight: 0.5,
+    //   trampoline: 0.3,
+    //   fake: 0.8,
+    // };
+
     let closestPlatform,
       closestDist = gameHeight;
 
     // Find the closest platform
     for (let index = 0; index < platforms.length; index++) {
+      // 高度距離
       const distToPlayer = platforms[index].y - playerY;
+
+      // 水平距離
+      // const distToPlayer = Math.abs(platforms[index].x - playerX);
+            
+      // 玩家似乎身高為60
       if (distToPlayer <= 0) {
         continue;
       }
@@ -146,34 +199,51 @@ class Player {
 
     // If no platform appears yet, use these values
     let platformY = gameHeight,
+      platformX = 400,
       distToPlatformLeftEdge = 0,
       distToPlatformRightEdge = 0,
-      platformType = 0;
+      platformType = 0,
+      playerNowLife = 0,
+      lastChance = 0;
+
 
     if (closestPlatform) {
       const { x, y, width } = closestPlatform;
       platformY = y;
 
-      distToPlatformLeftEdge = x - playerX;
-      distToPlatformRightEdge = x + width - playerX;
+      distToPlatformLeftEdge = Math.abs(x - playerX);
+      distToPlatformRightEdge = Math.abs(x + width - playerX);
       platformType = platformCode[closestPlatform.platformType];
     }
 
     // Normalize data
     playerY = this.normalize(playerY, gameHeight);
+    playerX = this.normalize(playerX, gameWidth);
+
     platformY = this.normalize(platformY, gameHeight);
+
+    platformX = this.normalize(platformX, gameWidth);
+
     distToPlatformLeftEdge = this.normalize(distToPlatformLeftEdge, gameWidth);
-    distToPlatformRightEdge = this.normalize(
-      distToPlatformRightEdge,
-      gameWidth
-    );
+    distToPlatformRightEdge = this.normalize(distToPlatformRightEdge,gameWidth);
+
+    playerNowLife = this.normalize(this.player.life,10);
+
+
+    if(this.player.life <3)
+    {
+      lastChance =1;
+    }
+
 
     this.vision.push(
       playerY,
-      platformY,
+      playerX,
+      platformX,
       distToPlatformLeftEdge,
       distToPlatformRightEdge,
-      platformType
+      platformType,
+      lastChance
     );
   }
 
@@ -313,11 +383,14 @@ class Player {
         stabbedSound.play();
         this.player.life -= 3;
         this.healthBar.text = this.generateHealthBar(this.player.life);
+
         game.camera.flash(0xff0000, 100);
         this.player.unbeatableTime = game.time.now + 1000;
         if (this.player.life <= 0 && !this.dead) {
           stabbedScream.play();
           this.dead = true;
+
+          console.log("nailsCeiling to death!");
         }
       }
     }
@@ -421,11 +494,14 @@ class Player {
       }
       player.life -= 3;
 
+
+
       player.touchOn = platform;
       game.camera.flash(0xff0000, 100);
       if (player.life <= 0 && !this.dead) {
         stabbedScream.play();
         this.dead = true;
+        console.log("nailsPlatform to death!");
       }
     }
   }
