@@ -64,7 +64,7 @@ class Player {
 
     this.moveState = 0; // 0 = not moving, 1 = move left, 2 = move right
     // Inputs for vision, Outputs for actions
-    this.genomeInputs = 7;
+    this.genomeInputs = 8;
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
   }
@@ -95,6 +95,10 @@ class Player {
       this.score = distance;
       this.updatePlayer();
       this.checkNailCeiling();
+      this.checkleftWalls();
+      this.checkrightWalls();
+      
+
       this.checkFellPlayer();
 
        // 紅血
@@ -147,14 +151,14 @@ class Player {
     let { x: playerX, y: playerY } = this.player;
 
     // Only distinguish dangerous one and safe one
-    const platformCode = {
-      normal: 0,
-      nails: 1,
-      conveyorLeft: 0,
-      conveyorRight: 0,
-      trampoline: 0,
-      fake: 0,
-    };
+    // const platformCode = {
+    //   normal: 0,
+    //   nails: 1,
+    //   conveyorLeft: 0,
+    //   conveyorRight: 0,
+    //   trampoline: 0,
+    //   fake: 0,
+    // };
 
     // cat iindex
     // const platformCode = {
@@ -167,14 +171,14 @@ class Player {
     // };
 
     // danger index
-    // const platformCode = {
-    //   normal: 0,
-    //   nails: 1,
-    //   conveyorLeft: 0.5,
-    //   conveyorRight: 0.5,
-    //   trampoline: 0.3,
-    //   fake: 0.8,
-    // };
+    const platformCode = {
+      normal: 0,
+      nails: 1,
+      conveyorLeft: 0.5,
+      conveyorRight: 0.5,
+      trampoline: 0.3,
+      fake: 0.8,
+    };
 
     let closestPlatform,
       closestDist = gameHeight;
@@ -187,15 +191,27 @@ class Player {
       // 水平距離
       // const distToPlayer = Math.abs(platforms[index].x - playerX);
             
-      // 玩家似乎身高為60
+      // 玩家似乎身高為60 ，超過玩家高度的不考量
       if (distToPlayer <= 0) {
         continue;
       }
+
+      // 忽略正再碰觸的當下地板
+      if(this.player.touchOn)
+      {
+        if(this.player.touchOn == platforms[index])
+        {
+          continue;
+        }
+      }
+
       if (distToPlayer < closestDist) {
         closestDist = distToPlayer;
-        closestPlatform = platforms[index];
+        closestPlatform = platforms[index];        
       }
     }
+
+    
 
     // If no platform appears yet, use these values
     let platformY = gameHeight,
@@ -204,6 +220,7 @@ class Player {
       distToPlatformRightEdge = 0,
       platformType = 0,
       playerNowLife = 0,
+      playerFromCenter = 0,
       lastChance = 0;
 
 
@@ -211,10 +228,21 @@ class Player {
       const { x, y, width } = closestPlatform;
       platformY = y;
 
+      platformX = x;
+
+      // 增加視線濾鏡 確定小朋友所見
+      closestPlatform.tint = 0xff00ff;
+
       distToPlatformLeftEdge = Math.abs(x - playerX);
       distToPlatformRightEdge = Math.abs(x + width - playerX);
       platformType = platformCode[closestPlatform.platformType];
     }
+
+    // 腳色距離中線多遠
+    // playerFromCenter = Math.abs(playerX -gameWidth/2);
+
+    playerFromCenter = playerX -gameWidth/2;
+
 
     // Normalize data
     playerY = this.normalize(playerY, gameHeight);
@@ -224,26 +252,29 @@ class Player {
 
     platformX = this.normalize(platformX, gameWidth);
 
+    playerFromCenter = this.normalize(playerFromCenter, gameWidth/2);
+
     distToPlatformLeftEdge = this.normalize(distToPlatformLeftEdge, gameWidth);
     distToPlatformRightEdge = this.normalize(distToPlatformRightEdge,gameWidth);
 
     playerNowLife = this.normalize(this.player.life,10);
 
 
-    if(this.player.life <3)
-    {
-      lastChance =1;
-    }
+    // if(this.player.life <3)
+    // {
+    //   lastChance =1;
+    // }
 
 
     this.vision.push(
       playerY,
       playerX,
       platformX,
+      platformY,
       distToPlatformLeftEdge,
       distToPlatformRightEdge,
       platformType,
-      lastChance
+      playerFromCenter
     );
   }
 
@@ -381,10 +412,19 @@ class Player {
 
       if (game.time.now > this.player.unbeatableTime) {
         stabbedSound.play();
-        this.player.life -= 3;
-        this.healthBar.text = this.generateHealthBar(this.player.life);
 
-        game.camera.flash(0xff0000, 100);
+        // this.player.life -= 3;
+
+        // 直接讓天花板殺害必殺，強迫小朋不要龜
+        this.player.life -= 10;
+
+
+
+        this.healthBar.text = this.generateHealthBar(this.player.life);
+        
+        // 受傷紅光
+        // game.camera.flash(0xff0000, 100);
+
         this.player.unbeatableTime = game.time.now + 1000;
         if (this.player.life <= 0 && !this.dead) {
           stabbedScream.play();
@@ -395,6 +435,39 @@ class Player {
       }
     }
   }
+
+
+  checkleftWalls(){
+    // 直接讓牆殺小朋友，強迫小朋友學習不要靠牆
+    if (this.player.body.x < 20)
+    {
+      this.player.life -= 10;
+      this.healthBar.text = this.generateHealthBar(this.player.life);
+      if (this.player.life <= 0 && !this.dead) {
+        stabbedScream.play();
+        this.dead = true;
+
+        console.log("leftWalls to death!");
+      }      
+    }    
+  }
+
+  checkrightWalls(){
+    // 直接讓牆殺小朋友，強迫小朋友學習不要靠牆
+    if (this.player.body.x > 715)
+    {
+      this.player.life -= 10;
+      this.healthBar.text = this.generateHealthBar(this.player.life);
+      if (this.player.life <= 0 && !this.dead) {
+        stabbedScream.play();
+        this.dead = true;
+
+        console.log("rightWalls to death!");
+      }
+      
+    }   
+  }
+
 
   checkFellPlayer() {
     if (this.player.body.y > gameHeight + 100 && !this.dead) {
@@ -497,7 +570,12 @@ class Player {
 
 
       player.touchOn = platform;
-      game.camera.flash(0xff0000, 100);
+      
+      // 受傷紅光
+      // game.camera.flash(0xff0000, 100);
+
+
+
       if (player.life <= 0 && !this.dead) {
         stabbedScream.play();
         this.dead = true;

@@ -22,6 +22,9 @@ class Population {
   }
 
   updateAlive() {
+
+    var suddenlyDeadNumber = 0;
+
     for (let i = 0; i < this.players.length; i++) {
       if (!this.players[i].dead) {
         this.players[i].look();
@@ -33,6 +36,8 @@ class Population {
       {
         this.turnDead ++;
         this.players[i].reportDead = true;
+
+        suddenlyDeadNumber++;
       }
 
       if(this.beginLevel ==0)
@@ -40,6 +45,14 @@ class Population {
         this.players[i].beginLevel = 0;
       }
 
+    }
+
+    if(suddenlyDeadNumber >2)
+    {
+      multi_kill.play();
+
+      // 搖鏡頭
+      game.camera.shake(0.05, 500);
     }
 
     // if (showBest && this.bestPlayer && !this.bestPlayer.dead) {

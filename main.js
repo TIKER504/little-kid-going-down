@@ -21,6 +21,10 @@ var distance = 0;
 var turnDead = 0;
 var status = "loading";
 
+var breakNewRocord =false;
+
+var cameraEffect = false;
+
 
 // Current Platform to keep track of the platform
 let currentPlatform;
@@ -32,7 +36,22 @@ let conveyorSound,
   platformSound,
   spinSound,
   stabbedSound,
-  stabbedScream;
+  stabbedScream,
+  newRecord,
+  counter1,
+  counter2,
+  counter3,
+  counter4,
+  counter5,
+  counter6,
+  counter7,
+  counter8,
+  counter9,
+  counter10,
+  multi_kill;
+  
+
+
 
 // Genetic Algothrithm Stuff
 let population,
@@ -64,6 +83,18 @@ function preload() {
   game.load.audio("spin", "/sounds/Spin 2.mp3");
   game.load.audio("stabbed", "/sounds/Stabbed.mp3");
   game.load.audio("stabbedScream", "/sounds/Stabbed Scream.mp3");
+  game.load.audio("newRecord", "/sounds/newRecord.mp3");
+  game.load.audio("counter1", "/sounds/1.mp3");
+  game.load.audio("counter2", "/sounds/2.mp3");
+  game.load.audio("counter3", "/sounds/3.mp3");
+  game.load.audio("counter4", "/sounds/4.mp3");
+  game.load.audio("counter5", "/sounds/5.mp3");
+  game.load.audio("counter6", "/sounds/6.mp3");
+  game.load.audio("counter7", "/sounds/7.mp3");
+  game.load.audio("counter8", "/sounds/8.mp3");
+  game.load.audio("counter9", "/sounds/9.mp3");
+  game.load.audio("counter10", "/sounds/10.mp3");
+  game.load.audio("multi_kill", "/sounds/multi_kill.mp3");
 }
 
 function create() {
@@ -89,7 +120,9 @@ function create() {
   // createTextsBoard();
 
   // Mute the screaming kids
-  game.sound.mute = false;
+  game.sound.mute = true;
+
+  
 }
 
 function update() {
@@ -153,6 +186,18 @@ function addAudio() {
   spinSound = game.add.audio("spin");
   stabbedSound = game.add.audio("stabbed");
   stabbedScream = game.add.audio("stabbedScream");
+  newRecord = game.add.audio("newRecord");
+  counter1 = game.add.audio("counter1");
+  counter2 = game.add.audio("counter2");
+  counter3 = game.add.audio("counter3");
+  counter4 = game.add.audio("counter4");
+  counter5 = game.add.audio("counter5");
+  counter6 = game.add.audio("counter6");
+  counter7 = game.add.audio("counter7");
+  counter8 = game.add.audio("counter8");
+  counter9 = game.add.audio("counter9");
+  counter10= game.add.audio("counter10");
+  multi_kill= game.add.audio("multi_kill");  
 }
 
 function createBounders() {
@@ -209,9 +254,66 @@ function updateDistance() {
   score.innerHTML = distance;
 
   if (recordScore < distance) {
+
+    // 破紀錄 放音樂
+    if(!breakNewRocord && population.generation !=0)
+    {
+      newRecord.play();
+      breakNewRocord  = true;
+    }
+    
+
     recordScore = distance;
     record.innerHTML = recordScore;
   }
+
+  //破記錄前的提示
+  if(recordScore - distance <= 10)
+  {
+    switch (recordScore - distance) {
+      case 10: 
+        counter10.play();
+        game.camera.shake(0.001, 500);
+        break;
+      case 9:       
+        counter9.play();
+        game.camera.shake(0.002, 500);
+        break;
+      case 8:       
+        counter8.play();
+        game.camera.shake(0.003, 500);
+        break;
+      case 7:       
+        counter7.play();
+        game.camera.shake(0.004, 500);
+        break;
+      case 6:       
+        counter6.play();
+        game.camera.shake(0.005, 500);
+        break;
+        case 5: 
+        counter5.play();
+        game.camera.shake(0.006, 500);
+        break;
+      case 4:       
+        counter4.play();
+        game.camera.shake(0.007, 500);
+        break;
+      case 3:       
+        counter3.play();
+        game.camera.shake(0.008, 500);
+        break;
+      case 2:       
+        counter2.play();
+        game.camera.shake(0.009, 500);
+        break;
+      case 1:       
+        counter1.play();
+        game.camera.shake(0.010, 500);
+        break;
+    }
+  }
+
 }
 
 function createOnePlatform() {
@@ -239,12 +341,14 @@ function createOnePlatform() {
     platformType = "conveyorRight";
     platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
     platform.play("scroll");
-  } else if (rand < 90) {
-    platform = game.add.sprite(x, y, "trampoline");
-    platformType = "trampoline";
-    platform.animations.add("jump", [4, 5, 4, 3, 2, 1, 0, 1, 2, 3], 120);
-    platform.frame = 3;
-  } else {
+  } 
+  // else if (rand < 90) {
+  //   platform = game.add.sprite(x, y, "trampoline");
+  //   platformType = "trampoline";
+  //   platform.animations.add("jump", [4, 5, 4, 3, 2, 1, 0, 1, 2, 3], 120);
+  //   platform.frame = 3;
+  // }
+   else {
     platform = game.add.sprite(x, y, "fake");
     platformType = "fake";
     platform.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
@@ -310,5 +414,6 @@ function restart() {
   });
   platforms = [];
   distance = 0;
+  breakNewRocord = false;
   population.naturalSelection();
 }
