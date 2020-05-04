@@ -423,7 +423,9 @@ class Player {
         this.healthBar.text = this.generateHealthBar(this.player.life);
         
         // 受傷紅光
-        // game.camera.flash(0xff0000, 100);
+        // game.camera.flash(0xff0000, 100);        
+        gec.cameraFlash(0xff0000, 100);
+
 
         this.player.unbeatableTime = game.time.now + 1000;
         if (this.player.life <= 0 && !this.dead) {
@@ -572,8 +574,8 @@ class Player {
       player.touchOn = platform;
       
       // 受傷紅光
-      // game.camera.flash(0xff0000, 100);
-
+      // game.camera.flash(0xff0000, 100);      
+      gec.cameraFlash(0xff0000, 100);
 
 
       if (player.life <= 0 && !this.dead) {

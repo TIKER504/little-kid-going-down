@@ -23,8 +23,6 @@ var status = "loading";
 
 var breakNewRocord =false;
 
-var cameraEffect = false;
-
 
 // Current Platform to keep track of the platform
 let currentPlatform;
@@ -50,12 +48,15 @@ let conveyorSound,
   counter10,
   multi_kill;
   
-
-
-
 // Genetic Algothrithm Stuff
 let population,
   recordScore = 0;
+
+
+// whether use cameraEffect
+var useCameraEffect = true;  
+
+var gec = new GameEffectCenter(useCameraEffect);
 
 // Scoreboard elements
 const lifeBar = document.getElementById("life-bar");
@@ -113,6 +114,8 @@ function create() {
   createBounders();
   addAudio();
 
+  
+
   // Create population
   population = new Population(100);
 
@@ -120,9 +123,9 @@ function create() {
   // createTextsBoard();
 
   // Mute the screaming kids
-  game.sound.mute = true;
+  game.sound.mute = false;
 
-  
+ 
 }
 
 function update() {
@@ -273,43 +276,43 @@ function updateDistance() {
     switch (recordScore - distance) {
       case 10: 
         counter10.play();
-        game.camera.shake(0.001, 500);
+        gec.cameraShake(0.001, 500);
         break;
       case 9:       
         counter9.play();
-        game.camera.shake(0.002, 500);
+        gec.cameraShake(0.002, 500);
         break;
       case 8:       
         counter8.play();
-        game.camera.shake(0.003, 500);
+        gec.cameraShake(0.003, 500);
         break;
       case 7:       
         counter7.play();
-        game.camera.shake(0.004, 500);
+        gec.cameraShake(0.004, 500);
         break;
       case 6:       
         counter6.play();
-        game.camera.shake(0.005, 500);
+        gec.cameraShake(0.005, 500);
         break;
         case 5: 
         counter5.play();
-        game.camera.shake(0.006, 500);
+        gec.cameraShake(0.006, 500);
         break;
       case 4:       
         counter4.play();
-        game.camera.shake(0.007, 500);
+        gec.cameraShake(0.007, 500);
         break;
       case 3:       
         counter3.play();
-        game.camera.shake(0.008, 500);
+        gec.cameraShake(0.008, 500);
         break;
       case 2:       
         counter2.play();
-        game.camera.shake(0.009, 500);
+        gec.cameraShake(0.009, 500);
         break;
       case 1:       
         counter1.play();
-        game.camera.shake(0.010, 500);
+        gec.cameraShake(0.010, 500);
         break;
     }
   }

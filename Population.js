@@ -47,12 +47,15 @@ class Population {
 
     }
 
+    // 雙殺以上 為多殺
     if(suddenlyDeadNumber >2)
     {
       multi_kill.play();
 
       // 搖鏡頭
-      game.camera.shake(0.05, 500);
+      // game.camera.shake(0.05, 500);
+      // 統一由 gec 管理，一齊控制開關
+      gec.cameraShake(0.05, 500);
     }
 
     // if (showBest && this.bestPlayer && !this.bestPlayer.dead) {
