@@ -1,8 +1,14 @@
+// 中間遊戲區寬度
 const gameWidth = 800;
 const gameHeight = 800;
 const scale = 2;
 
-var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, "", {
+// 畫布寬度
+const canvasWidth = 1000;
+const canvasHeight = 800;
+
+
+var game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, "", {
   preload: preload,
   create: create,
   update: update,
@@ -56,7 +62,7 @@ let population,
 // whether use cameraEffect
 var useCameraEffect =false;  
 
-var gec = new GameEffectCenter(useCameraEffect);
+var gec = new GameEffectCenter();
 
 
 // 遊戲速度常數
@@ -71,7 +77,11 @@ const record = document.getElementById("record");
 const deadnumber = document.getElementById("deadnumber");
 
 
+var muteBtn,cameraEffectBtn;
 
+
+// Mute the screaming kids
+var gameMute = true;
 
 
 function preload() {
@@ -86,6 +96,11 @@ function preload() {
   game.load.spritesheet("player4", "player4.png", 32, 32);
   game.load.spritesheet("player5", "player5.png", 32, 32);
   game.load.spritesheet("player6", "player6.png", 32, 32);
+
+
+  game.load.spritesheet('muteBtn', 'mute.png', 170, 150);
+
+  game.load.spritesheet('cameraEffectBtn', 'cameraEffect.png', 100, 100);
    
   game.load.image("wall", "wall.png");
   game.load.image("ceiling", "ceiling.png");
@@ -175,7 +190,7 @@ function create() {
   createBounders();
   addAudio();
 
-  
+ 
 
   // Create population
   population = new Population(100);
@@ -183,9 +198,13 @@ function create() {
   // createPlayer();
   // createTextsBoard();
 
-  // Mute the screaming kids
-  game.sound.mute = true;
+ 
 
+  muteBtn = game.add.button(950, 50, 'muteBtn', muteBtnOnClick, this, 2, 1, 0);
+  muteBtn.scale.setTo(0.3,0.3);
+
+  cameraEffectBtn = game.add.button(900, 30, 'cameraEffectBtn', cameraEffectBtnOnClick, this, 0, 0, 0);
+  cameraEffectBtn.scale.setTo(0.7,0.7);
  
 }
 
@@ -493,4 +512,20 @@ function restart() {
   distance = 0;
   breakNewRocord = false;
   population.naturalSelection();
+}
+
+
+function muteBtnOnClick () {
+
+  gameMute = !gameMute;
+
+  game.sound.mute = gameMute;
+
+}
+
+
+function cameraEffectBtnOnClick () {
+
+  useCameraEffect = !useCameraEffect;
+
 }
