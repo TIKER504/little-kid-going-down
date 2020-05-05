@@ -54,9 +54,14 @@ let population,
 
 
 // whether use cameraEffect
-var useCameraEffect = true;  
+var useCameraEffect =false;  
 
 var gec = new GameEffectCenter(useCameraEffect);
+
+
+// 遊戲速度常數
+var gameSpeed = 1.5;
+
 
 // Scoreboard elements
 const lifeBar = document.getElementById("life-bar");
@@ -65,10 +70,23 @@ const generation = document.getElementById("generation");
 const record = document.getElementById("record");
 const deadnumber = document.getElementById("deadnumber");
 
+
+
+
+
 function preload() {
   game.load.baseURL = "./assets/";
   game.load.crossOrigin = "anonymous";
-  game.load.spritesheet("player", "player.png", 32, 32);
+  
+  // game.load.spritesheet("player", "player.png", 32, 32);
+  game.load.spritesheet("player0", "player0.png", 32, 32);
+  game.load.spritesheet("player1", "player1.png", 32, 32);
+  game.load.spritesheet("player2", "player2.png", 32, 32);
+  game.load.spritesheet("player3", "player3.png", 32, 32);
+  game.load.spritesheet("player4", "player4.png", 32, 32);
+  game.load.spritesheet("player5", "player5.png", 32, 32);
+  game.load.spritesheet("player6", "player6.png", 32, 32);
+   
   game.load.image("wall", "wall.png");
   game.load.image("ceiling", "ceiling.png");
   game.load.image("normal", "normal.png");
@@ -98,6 +116,49 @@ function preload() {
   game.load.audio("multi_kill", "/sounds/multi_kill.mp3");
 }
 
+// 重新將ｉｍｇ指定色塊轉換顏色用工具，目前只能單一色塊，之後研究一下該如何指定模糊的色群集一起更換
+function recolorImage(img, oldRed, oldGreen, oldBlue, newRed, newGreen, newBlue) {
+
+  var c = document.createElement('canvas');
+  var ctx = c.getContext("2d");
+  var w = img.width;
+  var h = img.height;
+
+  c.width = w;
+  c.height = h;
+
+  // draw the image on the temporary canvas
+  ctx.drawImage(img, 0, 0, w, h);
+
+  // pull the entire image into an array of pixel data
+  var imageData = ctx.getImageData(0, 0, w, h);
+
+  // examine every pixel, 
+  // change any old rgb to the new-rgb
+  for (var i = 0; i < imageData.data.length; i += 4) {
+      // is this pixel the old rgb?
+      if (imageData.data[i] == oldRed && imageData.data[i + 1] == oldGreen && imageData.data[i + 2] == oldBlue) {
+          // change to your new rgb
+          imageData.data[i] = newRed;
+          imageData.data[i + 1] = newGreen;
+          imageData.data[i + 2] = newBlue;
+      }
+  }
+  // put the altered data back on the canvas  
+  ctx.putImageData(imageData, 0, 0);
+  // put the re-colored image back on the image
+  var img1 = document.getElementById("image1");
+  img1.src = c.toDataURL('image/png');
+
+  // var s =  c.toDataURL('newplayer.png')
+
+  // var img1 = new Image();
+  // img1.src = c.toDataURL('newplayer.png');
+
+  // window.win = open(img1);
+  // setTimeout('win.document.execCommand("SaveAs")', 0);
+}
+
 function create() {
   keyboard = game.input.keyboard.addKeys({
     enter: Phaser.Keyboard.ENTER,
@@ -123,7 +184,7 @@ function create() {
   // createTextsBoard();
 
   // Mute the screaming kids
-  game.sound.mute = false;
+  game.sound.mute = true;
 
  
 }
@@ -135,6 +196,11 @@ function update() {
 
   if (population.done()) {
     // Restart because this generation all died
+
+   
+    // recolorImage(img,255,255,0,11,28,214)
+
+
     console.log("dead");
     restart();
     return;
@@ -143,6 +209,8 @@ function update() {
   // 若大於10層
   if(distance>10)
   {
+    
+    
     population.beginLevel =0;
   }
 
@@ -327,35 +395,38 @@ function createOnePlatform() {
 
   let platformType = "normal";
 
-  if (rand < 50) {
+  if (rand < 100) {
     platform = game.add.sprite(x, y, "normal");
-  } else if (rand < 60) {
-    platform = game.add.sprite(x, y, "nails");
-    platformType = "nails";
-    game.physics.arcade.enable(platform);
-    platform.body.setSize(96, 15, 0, 15);
-  } else if (rand < 70) {
-    platform = game.add.sprite(x, y, "conveyorLeft");
-    platformType = "conveyorLeft";
-    platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
-    platform.play("scroll");
-  } else if (rand < 80) {
-    platform = game.add.sprite(x, y, "conveyorRight");
-    platformType = "conveyorRight";
-    platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
-    platform.play("scroll");
   } 
+  // else if (rand < 60) {
+  //   platform = game.add.sprite(x, y, "nails");
+  //   platformType = "nails";
+  //   game.physics.arcade.enable(platform);
+  //   platform.body.setSize(96, 15, 0, 15);
+  // } 
+  // else if (rand < 70) {
+  //   platform = game.add.sprite(x, y, "conveyorLeft");
+  //   platformType = "conveyorLeft";
+  //   platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
+  //   platform.play("scroll");
+  // }
+  //  else if (rand < 80) {
+  //   platform = game.add.sprite(x, y, "conveyorRight");
+  //   platformType = "conveyorRight";
+  //   platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
+  //   platform.play("scroll");
+  // } 
   // else if (rand < 90) {
   //   platform = game.add.sprite(x, y, "trampoline");
   //   platformType = "trampoline";
   //   platform.animations.add("jump", [4, 5, 4, 3, 2, 1, 0, 1, 2, 3], 120);
   //   platform.frame = 3;
   // }
-   else {
-    platform = game.add.sprite(x, y, "fake");
-    platformType = "fake";
-    platform.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
-  }
+  //  else {
+  //   platform = game.add.sprite(x, y, "fake");
+  //   platformType = "fake";
+  //   platform.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
+  // }
 
   platform.scale.setTo(scale, scale);
   game.physics.arcade.enable(platform);
@@ -392,7 +463,10 @@ function createTextsBoard() {
 function updatePlatforms() {
   for (var i = 0; i < platforms.length; i++) {
     var platform = platforms[i];
-    platform.body.position.y -= 2;
+    
+    // 地板移動速度 受到常數加成
+    platform.body.position.y -= 2 * gameSpeed;
+
     if (platform.body.position.y <= -32) {
       platform.destroy();
       platforms.splice(i, 1);

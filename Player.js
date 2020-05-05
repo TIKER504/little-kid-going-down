@@ -6,7 +6,12 @@ class Player {
 
     numOfPlayers++;
 
-    const player = game.add.sprite(gameWidth / 2, 50, "player");
+    
+
+    // const player = game.add.sprite(gameWidth / 2, 50, "player");
+
+    // 隨機從0~6 號　共7 個player 中選擇腳色外觀
+    const player = game.add.sprite(gameWidth / 2, 50, "player" + Math.floor(Math.random()*7));
 
     player.scale.setTo(scale, scale);
     player.direction = 10;
@@ -68,6 +73,10 @@ class Player {
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
   }
+
+
+
+
 
   generateHealthBar(number) {
     if (number <= 0) {
@@ -413,10 +422,10 @@ class Player {
       if (game.time.now > this.player.unbeatableTime) {
         stabbedSound.play();
 
-        // this.player.life -= 3;
+        this.player.life -= 3;
 
         // 直接讓天花板殺害必殺，強迫小朋不要龜
-        this.player.life -= 10;
+        // this.player.life -= 10;
 
 
 
