@@ -69,7 +69,7 @@ class Player {
 
     this.moveState = 0; // 0 = not moving, 1 = move left, 2 = move right
     // Inputs for vision, Outputs for actions
-    this.genomeInputs = 8;
+    this.genomeInputs = 6;
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
   }
@@ -157,7 +157,7 @@ class Player {
     // distance to closest platform's left edge
     // disntace to closest platform's right edge
     // platform type
-    let { x: playerX, y: playerY } = this.player;
+    let { x: playerX, y: playerY ,width:playerWidth} = this.player;
 
     // Only distinguish dangerous one and safe one
     // const platformCode = {
@@ -207,7 +207,7 @@ class Player {
 
       // 忽略正再碰觸的當下地板
       if(this.player.touchOn)
-      {
+      {        
         if(this.player.touchOn == platforms[index])
         {
           continue;
@@ -225,11 +225,14 @@ class Player {
     // If no platform appears yet, use these values
     let platformY = gameHeight,
       platformX = 400,
+      platCenter =400,
       distToPlatformLeftEdge = 0,
       distToPlatformRightEdge = 0,
       platformType = 0,
       playerNowLife = 0,
-      playerFromCenter = 0,
+      playerFromCenter = 0,      
+      playerOnLeft = 0,
+      playerOnRight = 0,
       lastChance = 0;
 
 
@@ -239,12 +242,33 @@ class Player {
 
       platformX = x;
 
+      // 平台中心位置
+      platCenter = platformX +width/2;
+
       // 增加視線濾鏡 確定小朋友所見
       closestPlatform.tint = 0xff00ff;
 
       distToPlatformLeftEdge = Math.abs(x - playerX);
       distToPlatformRightEdge = Math.abs(x + width - playerX);
+
       platformType = platformCode[closestPlatform.platformType];
+    }
+
+
+    if(this.player.touchOn)
+    {
+      if((this.player.touchOn.x + this.player.touchOn.width/2)> playerX + playerWidth/2)
+      {
+        playerOnLeft = 1;
+        playerOnRight = 0;
+      }
+      if((this.player.touchOn.x + this.player.touchOn.width/2)< playerX + playerWidth/2)
+      {
+        playerOnLeft = 0;
+        playerOnRight = 1;
+      }
+      // distformLeftEdge = Math.abs(this.player.touchOn.x - playerX);
+      // distformRightEdge = Math.abs(this.player.touchOn.x + this.player.touchOn.width - playerX);
     }
 
     // 腳色距離中線多遠
@@ -260,6 +284,8 @@ class Player {
     platformY = this.normalize(platformY, gameHeight);
 
     platformX = this.normalize(platformX, gameWidth);
+
+    platCenter = this.normalize(platCenter, gameWidth);
 
     playerFromCenter = this.normalize(playerFromCenter, gameWidth/2);
 
@@ -278,10 +304,13 @@ class Player {
     this.vision.push(
       playerY,
       playerX,
-      platformX,
+      // platformX,
+      platCenter,
       platformY,
-      distToPlatformLeftEdge,
-      distToPlatformRightEdge,
+      // distToPlatformLeftEdge,
+      // distToPlatformRightEdge,
+      // playerOnLeft,
+      // playerOnRight,
       platformType,
       playerFromCenter
     );

@@ -11,7 +11,7 @@ const canvasHeight = 800;
 var game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, "", {
   preload: preload,
   create: create,
-  update: update,
+  update: update,  
 });
 
 // var player;
@@ -29,6 +29,17 @@ var status = "loading";
 
 var breakNewRocord =false;
 
+
+
+// Phaser.RequestAnimationFrame(game,true);
+
+// game.raf= new Phaser.RequestAnimationFrame(game, true)
+
+
+
+// var stage =  new Stage(game);
+
+// stage.disableVisibilityChange = true;
 
 // Current Platform to keep track of the platform
 let currentPlatform;
@@ -191,6 +202,9 @@ function create() {
   addAudio();
 
  
+  // 讓遊戲在別的視窗下也能執行， 但有點奇怪， 不論 true、false 都有一樣的效果
+  // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
+  game.stage.disableVisibilityChange = true;
 
   // Create population
   population = new Population(100);
@@ -199,10 +213,11 @@ function create() {
   // createTextsBoard();
 
  
-
+  // 靜音按鈕
   muteBtn = game.add.button(950, 50, 'muteBtn', muteBtnOnClick, this, 2, 1, 0);
   muteBtn.scale.setTo(0.3,0.3);
 
+  // 關閉鏡頭特效按鈕
   cameraEffectBtn = game.add.button(900, 30, 'cameraEffectBtn', cameraEffectBtnOnClick, this, 0, 0, 0);
   cameraEffectBtn.scale.setTo(0.7,0.7);
  
@@ -414,38 +429,38 @@ function createOnePlatform() {
 
   let platformType = "normal";
 
-  if (rand < 100) {
+  if (rand < 50) {
     platform = game.add.sprite(x, y, "normal");
   } 
-  // else if (rand < 60) {
-  //   platform = game.add.sprite(x, y, "nails");
-  //   platformType = "nails";
-  //   game.physics.arcade.enable(platform);
-  //   platform.body.setSize(96, 15, 0, 15);
-  // } 
-  // else if (rand < 70) {
-  //   platform = game.add.sprite(x, y, "conveyorLeft");
-  //   platformType = "conveyorLeft";
-  //   platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
-  //   platform.play("scroll");
-  // }
-  //  else if (rand < 80) {
-  //   platform = game.add.sprite(x, y, "conveyorRight");
-  //   platformType = "conveyorRight";
-  //   platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
-  //   platform.play("scroll");
-  // } 
-  // else if (rand < 90) {
-  //   platform = game.add.sprite(x, y, "trampoline");
-  //   platformType = "trampoline";
-  //   platform.animations.add("jump", [4, 5, 4, 3, 2, 1, 0, 1, 2, 3], 120);
-  //   platform.frame = 3;
-  // }
-  //  else {
-  //   platform = game.add.sprite(x, y, "fake");
-  //   platformType = "fake";
-  //   platform.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
-  // }
+  else if (rand < 60) {
+    platform = game.add.sprite(x, y, "nails");
+    platformType = "nails";
+    game.physics.arcade.enable(platform);
+    platform.body.setSize(96, 15, 0, 15);
+  } 
+  else if (rand < 70) {
+    platform = game.add.sprite(x, y, "conveyorLeft");
+    platformType = "conveyorLeft";
+    platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
+    platform.play("scroll");
+  }
+   else if (rand < 80) {
+    platform = game.add.sprite(x, y, "conveyorRight");
+    platformType = "conveyorRight";
+    platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
+    platform.play("scroll");
+  } 
+  else if (rand < 90) {
+    platform = game.add.sprite(x, y, "trampoline");
+    platformType = "trampoline";
+    platform.animations.add("jump", [4, 5, 4, 3, 2, 1, 0, 1, 2, 3], 120);
+    platform.frame = 3;
+  }
+   else {
+    platform = game.add.sprite(x, y, "fake");
+    platformType = "fake";
+    platform.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
+  }
 
   platform.scale.setTo(scale, scale);
   game.physics.arcade.enable(platform);
