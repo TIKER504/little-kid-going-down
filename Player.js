@@ -27,6 +27,32 @@ class Player {
     player.touchOn = undefined;
     this.player = player;
 
+
+    // var playerGoLeft = 0;
+    // var playerGoRight = 0;
+
+    // this.playerGoLeft = playerGoLeft;
+    // this.playerGoRight = playerGoRight;
+
+    // const playerGoBar = new Phaser.Text(
+    //   game,
+    //   3,
+    //   -45,
+    //   "playerGoLeft:" + this.playerGoLeft + " playerGoRight:" + this.playerGoRight,
+    //   {
+    //     fontSize: 12,
+    //     fontWeight: "thin",
+    //     align: "center",
+    //     // fill: "yellow",
+    //     fill: "#00EC00"        
+    //   }
+    // );
+
+    // this.playerGoBar = playerGoBar;
+
+    // this.player.addChild(this.playerGoBar);
+
+
     const healthBar = new Phaser.Text(
       game,
       3,
@@ -45,6 +71,7 @@ class Player {
 
     this.player.addChild(this.healthBar);
 
+
     // const childName = this.familyName + " " + this.romanize(this.gen);
     const name = new Phaser.Text(game, 3, -15, this.familyName, {
       fontSize: 12,
@@ -54,6 +81,11 @@ class Player {
     });
 
     this.player.addChild(name);
+
+
+
+    
+    
 
     this.fitness = 0;
     this.vision = []; //the input array fed into the neuralNet
@@ -69,7 +101,7 @@ class Player {
 
     this.moveState = 0; // 0 = not moving, 1 = move left, 2 = move right
     // Inputs for vision, Outputs for actions
-    this.genomeInputs = 6;
+    this.genomeInputs = 7;
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
   }
@@ -104,8 +136,8 @@ class Player {
       this.score = distance;
       this.updatePlayer();
       this.checkNailCeiling();
-      this.checkleftWalls();
-      this.checkrightWalls();
+      // this.checkleftWalls();
+      // this.checkrightWalls();
       
 
       this.checkFellPlayer();
@@ -159,6 +191,9 @@ class Player {
     // platform type
     let { x: playerX, y: playerY ,width:playerWidth} = this.player;
 
+    // 是否有接觸地板
+    var isTouched =0;
+
     // Only distinguish dangerous one and safe one
     // const platformCode = {
     //   normal: 0,
@@ -189,8 +224,9 @@ class Player {
       fake: 0.8,
     };
 
-    let closestPlatform,
-      closestDist = gameHeight;
+    let closestPlatform,closestPlatXform,
+      closestDist = gameHeight,
+      closestXDist = gameWidth;
 
     // Find the closest platform
     for (let index = 0; index < platforms.length; index++) {
@@ -198,7 +234,9 @@ class Player {
       const distToPlayer = platforms[index].y - playerY;
 
       // 水平距離
-      // const distToPlayer = Math.abs(platforms[index].x - playerX);
+      const distXToPlayer = Math.abs(platforms[index].x - playerX);
+
+      
             
       // 玩家似乎身高為60 ，超過玩家高度的不考量
       if (distToPlayer <= 0) {
@@ -208,6 +246,8 @@ class Player {
       // 忽略正再碰觸的當下地板
       if(this.player.touchOn)
       {        
+        isTouched = 1;
+
         if(this.player.touchOn == platforms[index])
         {
           continue;
@@ -218,6 +258,14 @@ class Player {
         closestDist = distToPlayer;
         closestPlatform = platforms[index];        
       }
+
+      //水平距離最近的 平台
+      if (distXToPlayer < closestXDist) {
+        closestXDist = distXToPlayer;
+        closestPlatXform = platforms[index];        
+      }
+
+
     }
 
     
@@ -225,7 +273,10 @@ class Player {
     // If no platform appears yet, use these values
     let platformY = gameHeight,
       platformX = 400,
+      platXformY = gameHeight,
+      platXformX = 400,
       platCenter =400,
+      platXCenter =400,      
       distToPlatformLeftEdge = 0,
       distToPlatformRightEdge = 0,
       platformType = 0,
@@ -233,6 +284,8 @@ class Player {
       playerFromCenter = 0,      
       playerOnLeft = 0,
       playerOnRight = 0,
+      playerGoLeft = 0,
+      playerGoRight = 0,
       lastChance = 0;
 
 
@@ -252,6 +305,38 @@ class Player {
       distToPlatformRightEdge = Math.abs(x + width - playerX);
 
       platformType = platformCode[closestPlatform.platformType];
+
+
+      if((x+width/2)> (playerX + playerWidth/2))
+      {
+        playerGoLeft = 0;
+        playerGoRight = 1;
+
+        // 綠
+        this.player.tint = 0x42f54e;
+      }
+      if((x+width/2)< (playerX + playerWidth/2))
+      {
+        playerGoLeft = 1;
+        playerGoRight = 0;
+
+        // 紅
+        this.player.tint = 0xff3300;
+      }
+    }
+
+    if (closestPlatXform) {
+      const { x, y, width } = closestPlatXform;
+     
+      platXformY = y;
+
+      platXformX = x;
+
+      // 平台中心位置
+      platXCenter = platXformX +width/2;
+
+      // 增加視線濾鏡 確定小朋友所見
+      closestPlatXform.tint = 0xFF6F61;      
     }
 
 
@@ -287,6 +372,8 @@ class Player {
 
     platCenter = this.normalize(platCenter, gameWidth);
 
+    platXCenter = this.normalize(platXCenter, gameWidth);
+
     playerFromCenter = this.normalize(playerFromCenter, gameWidth/2);
 
     distToPlatformLeftEdge = this.normalize(distToPlatformLeftEdge, gameWidth);
@@ -304,13 +391,16 @@ class Player {
     this.vision.push(
       playerY,
       playerX,
-      // platformX,
-      platCenter,
-      platformY,
+      // platformX,        
+      // platformY,
+      platCenter,    
+      // isTouched,
       // distToPlatformLeftEdge,
       // distToPlatformRightEdge,
       // playerOnLeft,
       // playerOnRight,
+      playerGoLeft,
+      playerGoRight,
       platformType,
       playerFromCenter
     );
@@ -456,8 +546,6 @@ class Player {
         // 直接讓天花板殺害必殺，強迫小朋不要龜
         // this.player.life -= 10;
 
-
-
         this.healthBar.text = this.generateHealthBar(this.player.life);
         
         // 受傷紅光
@@ -503,8 +591,7 @@ class Player {
         this.dead = true;
 
         console.log("rightWalls to death!");
-      }
-      
+      }      
     }   
   }
 
