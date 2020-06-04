@@ -242,9 +242,7 @@ function update() {
 
   // 若大於10層
   if(distance>10)
-  {
-    
-    
+  {        
     population.beginLevel =0;
   }
 

@@ -26,11 +26,25 @@ class Population {
     var suddenlyDeadNumber = 0;
 
     for (let i = 0; i < this.players.length; i++) {
-      if (!this.players[i].dead) {
+      
+      
+      if (!this.players[i].dead ) {      
         this.players[i].look();
         this.players[i].think();
-        this.players[i].update();
+        this.players[i].update();               
       }
+      // 每6frame 才會更新一次行動邏輯，以節省效能
+      // if (!this.players[i].dead && this.players[i].passframe >=6) {
+      //   this.players[i].look();
+      //   this.players[i].think();
+      //   // this.players[i].update();        
+      //   // 歸零
+      //   this.players[i].passframe = 0;
+      // }
+      // else if(this.players[i].passframe <6)
+      // {
+      //   this.players[i].passframe +=1;
+      // }
       // 計算死亡數
       else if (this.players[i].dead & !this.players[i].reportDead)
       {

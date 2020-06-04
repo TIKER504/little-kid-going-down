@@ -25,6 +25,8 @@ class Player {
     player.life = 10;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
+
+    
     this.player = player;
 
 
@@ -104,6 +106,8 @@ class Player {
     this.genomeInputs = 7;
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
+
+    this.passframe = 0;
   }
 
 
