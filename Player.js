@@ -4,6 +4,8 @@ class Player {
     this.familyName = familyName;
     this.gen = gen;
     this.species =species;
+    
+    this.playerTwitchID="";
 
     numOfPlayers++;
 

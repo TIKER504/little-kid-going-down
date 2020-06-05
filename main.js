@@ -59,10 +59,13 @@ let conveyorSound,
   counter8,
   counter9,
   counter10,
-  multi_kill;
+  multi_kill,
+  born;
   
 // Genetic Algothrithm Stuff
 let population,
+  populationHan,
+  populationTsai,
   populations =[];
   recordScore = 0;
 
@@ -82,7 +85,13 @@ const lifeBar = document.getElementById("life-bar");
 const score = document.getElementById("score");
 const generation = document.getElementById("generation");
 const record = document.getElementById("record");
-const deadnumber = document.getElementById("deadnumber");
+// const deadnumber = document.getElementById("deadnumber");
+
+const deadnumberG = document.getElementById("deadnumberG");
+const deadnumberB = document.getElementById("deadnumberB");
+
+const numberG = document.getElementById("numberG");
+const numberB = document.getElementById("numberB");
 
 
 var muteBtn,cameraEffectBtn;
@@ -95,40 +104,68 @@ var gameMute = true;
 
 ComfyJS.Init( "chimera4956" );
 
+ComfyJS.Init( "Chimera4956", "kjh12bn1hsj78445234");
+
 // var ComfyJS = require("comfy.js");
-// 訂閱者才能使用功能
+
 ComfyJS.onCommand = ( user, command, message, flags, extra ) => {
   
-  if(flags.subscriber && command === "test" ) {
+  if(command === "test" ) {
     console.log( "!test was typed in chat" + "(" + user + ")" );
+
+    ComfyJS.Say( "replying to !test" );
+
     newRecord.play();
   }
 
-  if(flags.subscriber && command === "kill" ) {
+  if(command === "kill" ) {
     console.log( "!kill was typed in chat" + "(" + user + ")"  );
     // population.kill();
   }
 
-  if(flags.subscriber && command === "clone" ) {
+  if(command === "clone" ) {
     console.log( "!clone was typed in chat" + "(" + user + ")"  );
     // 創造新家族
     // populations.push(new Population(10,user)) 
   }
 
 
-  if(flags.subscriber && command === "join_b" ) {
+  if(command === "join_b" ) {
     console.log( "!join_b was typed in chat" + "(" + user + ")"  );    
     
     // B家族新成員
-    populationTsai.newMember(user,0) 
+    populationHan.newMember(user,0) 
+
+    born.play();
   }
 
 
-  if(flags.subscriber && command === "join_g" ) {
+  if(command === "join_g" ) {
     console.log( "!join_g was typed in chat" + "(" + user + ")"  );    
     
     // G家族新成員
     populationTsai.newMember(user,1) 
+
+    born.play();
+  }
+
+  if(command === "kill_b" ) {
+    console.log( "!join_b was typed in chat" + "(" + user + ")"  );    
+    
+    // B家族隨機殺成員
+    populationHan.kill();
+
+    fallSound.play();
+  }
+
+
+  if(command === "kill_g" ) {
+    console.log( "!join_g was typed in chat" + "(" + user + ")"  );    
+    
+    // G家族隨機殺成員
+    populationTsai.kill();
+
+    fallSound.play();
   }
 
 }
@@ -181,6 +218,7 @@ function preload() {
   game.load.audio("counter9", "/sounds/9.mp3");
   game.load.audio("counter10", "/sounds/10.mp3");
   game.load.audio("multi_kill", "/sounds/multi_kill.mp3");
+  game.load.audio("born", "/sounds/born.mp3");
 }
 
 // 重新將ｉｍｇ指定色塊轉換顏色用工具，目前只能單一色塊，之後研究一下該如何指定模糊的色群集一起更換
@@ -250,9 +288,9 @@ function create() {
   // Create population 
   // population = new Population(200);
 
-  populationHan = new Population(5,"BOT",0);
+  populationHan = new Population(100,"BOT",0);
 
-  populationTsai = new Population(5,"BOT",1);
+  populationTsai = new Population(100,"BOT",1);
 
 
   populations.push(populationHan);
@@ -304,6 +342,12 @@ function update() {
   // turnDead  = population.turnDead
 
   // deadnumber.innerHTML = turnDead;
+
+  deadnumberG.innerHTML = populationHan.turnDead;
+  deadnumberB.innerHTML = populationTsai.turnDead;
+
+  numberG.innerHTML = populationHan.nowAlive;
+  numberB.innerHTML = populationTsai.nowAlive;
 
   var allDone = false;
 
@@ -383,6 +427,7 @@ function addAudio() {
   counter9 = game.add.audio("counter9");
   counter10= game.add.audio("counter10");
   multi_kill= game.add.audio("multi_kill");  
+  born= game.add.audio("born");  
 }
 
 function createBounders() {

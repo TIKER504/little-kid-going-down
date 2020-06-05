@@ -9,6 +9,7 @@ class Population {
     this.matingPool = [];
     this.turnDead = 0;
     this.beginLevel = 1;
+    this.nowAlive = 0;
 
     // 假如有傳家族名子，統一命名，要不然就是系統隨機    
     if(FamilyName)
@@ -35,13 +36,20 @@ class Population {
 
   kill()
   {
-    for (let i = 0; i < this.players.length; i++) {
+    // for (let i = 0; i < this.players.length; i++) {
             
-      if (!this.players[i].dead ) {      
-        this.players[i].life -=15;     
-        this.players[i].dead = true; 
-      }     
+    //   if (!this.players[i].dead ) {      
+    //     this.players[i].life -=15;     
+    //     this.players[i].dead = true; 
+    //   }     
+    // }
+
+
+    if (!this.players[Math.floor(Math.random() * this.players.length)].dead ) {      
+      this.players[i].life -=15;     
+      this.players[i].dead = true; 
     }
+
     multi_kill.play();
 
   }
@@ -61,6 +69,8 @@ class Population {
 
     var suddenlyDeadNumber = 0;
 
+    var alive = 0;
+
     for (let i = 0; i < this.players.length; i++) {
       
       
@@ -68,6 +78,8 @@ class Population {
         // this.players[i].look();
         // this.players[i].think();
         this.players[i].update();               
+
+        alive++;
       }
       // 每6frame 才會更新一次行動邏輯，以節省效能
       if (!this.players[i].dead && this.players[i].passframe >=6) {
@@ -113,6 +125,8 @@ class Population {
     //   this.bestPlayer.think();
     //   this.bestPlayer.update();
     // }
+
+    this.nowAlive = alive;
   }
 
   done() {
