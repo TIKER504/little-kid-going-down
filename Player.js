@@ -1,8 +1,9 @@
 let numOfPlayers = 0;
 class Player {
-  constructor(familyName, gen) {
+  constructor(familyName, gen,species) {
     this.familyName = familyName;
     this.gen = gen;
+    this.species =species;
 
     numOfPlayers++;
 
@@ -11,7 +12,18 @@ class Player {
     // const player = game.add.sprite(gameWidth / 2, 50, "player");
 
     // 隨機從0~6 號　共7 個player 中選擇腳色外觀
-    const player = game.add.sprite(gameWidth / 2, 50, "player" + Math.floor(Math.random()*7));
+    // const player = game.add.sprite(gameWidth / 2, 50, "player" + Math.floor(Math.random()*7));
+
+    // Mr.Han MOD
+    // const player = game.add.sprite(gameWidth / 2, 50, "player_han");
+
+    // 兩隻選一隻
+    // const player = game.add.sprite(gameWidth / 2, 50, "player" + Math.floor(Math.random()*2));
+
+
+    // 依傳入的0、1家族而定
+    const player = game.add.sprite(gameWidth / 2, 50, "player" + species);
+
 
     player.scale.setTo(scale, scale);
     player.direction = 10;
@@ -303,7 +315,7 @@ class Player {
       platCenter = platformX +width/2;
 
       // 增加視線濾鏡 確定小朋友所見
-      closestPlatform.tint = 0xff00ff;
+      // closestPlatform.tint = 0xff00ff;
 
       distToPlatformLeftEdge = Math.abs(x - playerX);
       distToPlatformRightEdge = Math.abs(x + width - playerX);
@@ -317,7 +329,7 @@ class Player {
         playerGoRight = 1;
 
         // 綠
-        this.player.tint = 0x42f54e;
+        // this.player.tint = 0x42f54e;
       }
       if((x+width/2)< (playerX + playerWidth/2))
       {
@@ -325,7 +337,7 @@ class Player {
         playerGoRight = 0;
 
         // 紅
-        this.player.tint = 0xff3300;
+        // this.player.tint = 0xff3300;
       }
     }
 
@@ -340,7 +352,7 @@ class Player {
       platXCenter = platXformX +width/2;
 
       // 增加視線濾鏡 確定小朋友所見
-      closestPlatXform.tint = 0xFF6F61;      
+      // closestPlatXform.tint = 0xFF6F61;      
     }
 
 
@@ -468,7 +480,7 @@ class Player {
 
   clone() {
     //Returns a copy of this player
-    let clone = new Player(this.familyName, this.gen);
+    let clone = new Player(this.familyName, this.gen,this.species);
     clone.brain = this.brain.clone();
     return clone;
   }
@@ -516,7 +528,7 @@ class Player {
 
   crossover(parent) {
     //Produce a child
-    let child = new Player(this.familyName, this.gen);
+    let child = new Player(this.familyName, this.gen,this.species);
     if (parent.fitness < this.fitness)
       child.brain = this.brain.crossover(parent.brain);
     else child.brain = parent.brain.crossover(this.brain);

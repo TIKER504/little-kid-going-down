@@ -63,6 +63,7 @@ let conveyorSound,
   
 // Genetic Algothrithm Stuff
 let population,
+  populations =[];
   recordScore = 0;
 
 
@@ -95,15 +96,39 @@ var gameMute = true;
 ComfyJS.Init( "chimera4956" );
 
 // var ComfyJS = require("comfy.js");
+// 訂閱者才能使用功能
 ComfyJS.onCommand = ( user, command, message, flags, extra ) => {
-  if(command === "test" ) {
+  
+  if(flags.subscriber && command === "test" ) {
     console.log( "!test was typed in chat" + "(" + user + ")" );
     newRecord.play();
   }
 
-  if(command === "kill" ) {
+  if(flags.subscriber && command === "kill" ) {
     console.log( "!kill was typed in chat" + "(" + user + ")"  );
-    population.kill();
+    // population.kill();
+  }
+
+  if(flags.subscriber && command === "clone" ) {
+    console.log( "!clone was typed in chat" + "(" + user + ")"  );
+    // 創造新家族
+    // populations.push(new Population(10,user)) 
+  }
+
+
+  if(flags.subscriber && command === "join_b" ) {
+    console.log( "!join_b was typed in chat" + "(" + user + ")"  );    
+    
+    // B家族新成員
+    populationTsai.newMember(user,0) 
+  }
+
+
+  if(flags.subscriber && command === "join_g" ) {
+    console.log( "!join_g was typed in chat" + "(" + user + ")"  );    
+    
+    // G家族新成員
+    populationTsai.newMember(user,1) 
   }
 
 }
@@ -122,6 +147,7 @@ function preload() {
   game.load.spritesheet("player4", "player4.png", 32, 32);
   game.load.spritesheet("player5", "player5.png", 32, 32);
   game.load.spritesheet("player6", "player6.png", 32, 32);
+  // game.load.spritesheet("player_han", "player_han.png", 32, 32);
 
 
   game.load.spritesheet('muteBtn', 'mute.png', 170, 150);
@@ -221,8 +247,16 @@ function create() {
   // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
   game.stage.disableVisibilityChange = true;
 
-  // Create population
-  population = new Population(100);
+  // Create population 
+  // population = new Population(200);
+
+  populationHan = new Population(5,"BOT",0);
+
+  populationTsai = new Population(5,"BOT",1);
+
+
+  populations.push(populationHan);
+  populations.push(populationTsai);
 
   // createPlayer();
   // createTextsBoard();
@@ -235,6 +269,9 @@ function create() {
   // 關閉鏡頭特效按鈕
   cameraEffectBtn = game.add.button(900, 30, 'cameraEffectBtn', cameraEffectBtnOnClick, this, 0, 0, 0);
   cameraEffectBtn.scale.setTo(0.7,0.7);
+
+  //遊戲背景顏色
+  game.stage.backgroundColor = "#4488AA";
  
 }
 
@@ -243,7 +280,48 @@ function update() {
   if (status == "gameOver" && keyboard.enter.isDown) restart();
   if (status != "loading") return;
 
-  if (population.done()) {
+  // if (population.done()) {
+  //   // Restart because this generation all died
+
+   
+  //   // recolorImage(img,255,255,0,11,28,214)
+
+
+  //   console.log("dead");
+  //   restart();
+  //   return;
+  // }
+
+  // 若大於10層
+  // if(distance>10)
+  // {        
+  //   population.beginLevel =0;
+  // }
+
+  // population.update();
+
+
+  // turnDead  = population.turnDead
+
+  // deadnumber.innerHTML = turnDead;
+
+  var allDone = false;
+
+  for (let i = 0; i < populations.length; i++) {
+            
+    if (!populations[i].done() ) {     
+      populations[i].update();           
+      allDone =false
+    }     
+    else
+    {
+      allDone = true;
+    }
+
+  }
+  
+  
+  if (allDone) {
     // Restart because this generation all died
 
    
@@ -255,18 +333,7 @@ function update() {
     return;
   }
 
-  // 若大於10層
-  if(distance>10)
-  {        
-    population.beginLevel =0;
-  }
 
-  population.update();
-
-
-  turnDead  = population.turnDead
-
-  deadnumber.innerHTML = turnDead;
 
   updatePlatforms();
 
@@ -373,8 +440,15 @@ function updateDistance() {
 
   if (recordScore < distance) {
 
+    // // 破紀錄 放音樂
+    // if(!breakNewRocord && population.generation !=0)
+    // {
+    //   newRecord.play();
+    //   breakNewRocord  = true;
+    // }
+
     // 破紀錄 放音樂
-    if(!breakNewRocord && population.generation !=0)
+    if(!breakNewRocord )
     {
       newRecord.play();
       breakNewRocord  = true;
@@ -539,7 +613,15 @@ function restart() {
   platforms = [];
   distance = 0;
   breakNewRocord = false;
-  population.naturalSelection();
+
+  // population.naturalSelection();
+
+
+  for (let i = 0; i < populations.length; i++) {
+            
+    populations[i].naturalSelection();     
+  }
+
 }
 
 

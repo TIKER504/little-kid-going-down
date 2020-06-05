@@ -1,7 +1,7 @@
 let showBest = true;
 
 class Population {
-  constructor(size) {
+  constructor(size,FamilyName,species) {
     this.players = [];
     this.bestPlayer;
     this.bestFitness = 0;
@@ -10,10 +10,22 @@ class Population {
     this.turnDead = 0;
     this.beginLevel = 1;
 
-    for (let i = 0; i < size; i++) {
-      this.players.push(new Player(FamilyNames[i], this.generation));
-      this.players[i].brain.generateNetwork();
-      this.players[i].brain.mutate();
+    // 假如有傳家族名子，統一命名，要不然就是系統隨機    
+    if(FamilyName)
+    {
+      for (let i = 0; i < size; i++) {
+        this.players.push(new Player(FamilyName, this.generation,species));
+        this.players[i].brain.generateNetwork();
+        this.players[i].brain.mutate();
+      }
+    }
+    else
+    {
+      for (let i = 0; i < size; i++) {
+        this.players.push(new Player(FamilyNames[i], this.generation,species));
+        this.players[i].brain.generateNetwork();
+        this.players[i].brain.mutate();
+      }
     }
   }
 
@@ -34,6 +46,17 @@ class Population {
 
   }
 
+  newMember(name,species)
+  {
+    var newMember = new Player(name, this.generation,species);
+
+    newMember.brain.generateNetwork();
+    newMember.brain.mutate();
+
+    this.players.push(newMember);
+
+  }
+
   updateAlive() {
 
     var suddenlyDeadNumber = 0;
@@ -42,22 +65,22 @@ class Population {
       
       
       if (!this.players[i].dead ) {      
-        this.players[i].look();
-        this.players[i].think();
+        // this.players[i].look();
+        // this.players[i].think();
         this.players[i].update();               
       }
       // 每6frame 才會更新一次行動邏輯，以節省效能
-      // if (!this.players[i].dead && this.players[i].passframe >=6) {
-      //   this.players[i].look();
-      //   this.players[i].think();
-      //   // this.players[i].update();        
-      //   // 歸零
-      //   this.players[i].passframe = 0;
-      // }
-      // else if(this.players[i].passframe <6)
-      // {
-      //   this.players[i].passframe +=1;
-      // }
+      if (!this.players[i].dead && this.players[i].passframe >=6) {
+        this.players[i].look();
+        this.players[i].think();
+        // this.players[i].update();        
+        // 歸零
+        this.players[i].passframe = 0;
+      }
+      else if(this.players[i].passframe <6)
+      {
+        this.players[i].passframe +=1;
+      }
       // 計算死亡數
       else if (this.players[i].dead & !this.players[i].reportDead)
       {
@@ -111,9 +134,15 @@ class Population {
     for (let i = 0; i < this.players.length; i++) {
       let parent1 = this.selectPlayer();
       let parent2 = this.selectPlayer();
+
       if (parent1.fitness > parent2.fitness)
+      {
         children.push(parent1.crossover(parent2));
-      else children.push(parent2.crossover(parent1));
+      }        
+      else
+      {
+        children.push(parent2.crossover(parent1));
+      } 
     }
 
     this.players.forEach((element) => {
