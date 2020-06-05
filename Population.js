@@ -21,6 +21,19 @@ class Population {
     this.updateAlive();
   }
 
+  kill()
+  {
+    for (let i = 0; i < this.players.length; i++) {
+            
+      if (!this.players[i].dead ) {      
+        this.players[i].life -=15;     
+        this.players[i].dead = true; 
+      }     
+    }
+    multi_kill.play();
+
+  }
+
   updateAlive() {
 
     var suddenlyDeadNumber = 0;

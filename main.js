@@ -29,13 +29,9 @@ var status = "loading";
 
 var breakNewRocord =false;
 
-
-
 // Phaser.RequestAnimationFrame(game,true);
 
 // game.raf= new Phaser.RequestAnimationFrame(game, true)
-
-
 
 // var stage =  new Stage(game);
 
@@ -93,6 +89,25 @@ var muteBtn,cameraEffectBtn;
 
 // Mute the screaming kids
 var gameMute = true;
+
+// 檢查 twitch 聊天室內容
+
+ComfyJS.Init( "chimera4956" );
+
+// var ComfyJS = require("comfy.js");
+ComfyJS.onCommand = ( user, command, message, flags, extra ) => {
+  if(command === "test" ) {
+    console.log( "!test was typed in chat" + "(" + user + ")" );
+    newRecord.play();
+  }
+
+  if(command === "kill" ) {
+    console.log( "!kill was typed in chat" + "(" + user + ")"  );
+    population.kill();
+  }
+
+}
+
 
 
 function preload() {
