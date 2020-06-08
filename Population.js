@@ -45,7 +45,9 @@ class Population {
     // }
 
 
-    if (!this.players[Math.floor(Math.random() * this.players.length)].dead ) {      
+    var i = Math.floor(Math.random() * this.players.length);
+
+    if (!this.players[i].dead ) {      
       this.players[i].life -=15;     
       this.players[i].dead = true; 
     }
@@ -75,24 +77,24 @@ class Population {
       
       
       if (!this.players[i].dead ) {      
-        // this.players[i].look();
-        // this.players[i].think();
+        this.players[i].look();
+        this.players[i].think();
         this.players[i].update();               
 
         alive++;
       }
-      // 每6frame 才會更新一次行動邏輯，以節省效能
-      if (!this.players[i].dead && this.players[i].passframe >=6) {
-        this.players[i].look();
-        this.players[i].think();
-        // this.players[i].update();        
-        // 歸零
-        this.players[i].passframe = 0;
-      }
-      else if(this.players[i].passframe <6)
-      {
-        this.players[i].passframe +=1;
-      }
+      // // 每6frame 才會更新一次行動邏輯，以節省效能
+      // if (!this.players[i].dead && this.players[i].passframe >=6) {
+      //   this.players[i].look();
+      //   this.players[i].think();
+      //   // this.players[i].update();        
+      //   // 歸零
+      //   this.players[i].passframe = 0;
+      // }
+      // else if(this.players[i].passframe <6)
+      // {
+      //   this.players[i].passframe +=1;
+      // }
       // 計算死亡數
       else if (this.players[i].dead & !this.players[i].reportDead)
       {

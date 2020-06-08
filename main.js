@@ -4,14 +4,14 @@ const gameHeight = 800;
 const scale = 2;
 
 // 畫布寬度
-const canvasWidth = 1000;
+const canvasWidth = 1100;
 const canvasHeight = 800;
 
 
 var game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, "", {
   preload: preload,
   create: create,
-  update: update,  
+  update: update,
 });
 
 // var player;
@@ -27,7 +27,10 @@ var distance = 0;
 var turnDead = 0;
 var status = "loading";
 
-var breakNewRocord =false;
+var breakNewRocord = false;
+
+
+var rageNameList = [];
 
 // Phaser.RequestAnimationFrame(game,true);
 
@@ -60,18 +63,26 @@ let conveyorSound,
   counter9,
   counter10,
   multi_kill,
-  born;
+  born,
+  rageSound
+  ;
+
+// 韓導語錄
+let  hanVoices = [];
+
+// 小英語錄
+let  tsaiVoices = [];
   
 // Genetic Algothrithm Stuff
 let population,
   populationHan,
   populationTsai,
-  populations =[];
-  recordScore = 0;
+  populations = [];
+recordScore = 0;
 
 
 // whether use cameraEffect
-var useCameraEffect =false;  
+var useCameraEffect = false;
 
 var gec = new GameEffectCenter();
 
@@ -79,10 +90,15 @@ var gec = new GameEffectCenter();
 // 遊戲速度常數
 var gameSpeed = 1.5;
 
+// 群眾的憤怒
+let rage;
+
+
 
 // Scoreboard elements
 const lifeBar = document.getElementById("life-bar");
 const score = document.getElementById("score");
+const rageNumber = document.getElementById("rageNumber");
 const generation = document.getElementById("generation");
 const record = document.getElementById("record");
 // const deadnumber = document.getElementById("deadnumber");
@@ -94,7 +110,9 @@ const numberG = document.getElementById("numberG");
 const numberB = document.getElementById("numberB");
 
 
-var muteBtn,cameraEffectBtn;
+var muteBtn, cameraEffectBtn;
+
+var img_Kappa, img_LUL;
 
 
 // Mute the screaming kids
@@ -102,56 +120,62 @@ var gameMute = true;
 
 // 檢查 twitch 聊天室內容
 
-ComfyJS.Init( "chimera4956" );
+ComfyJS.Init("chimera4956");
 
-ComfyJS.Init( "Chimera4956", "kjh12bn1hsj78445234");
+// ComfyJS.Init("chimera4956", "kjh12bn1hsj78445234");
 
 // var ComfyJS = require("comfy.js");
 
-ComfyJS.onCommand = ( user, command, message, flags, extra ) => {
-  
-  if(command === "test" ) {
-    console.log( "!test was typed in chat" + "(" + user + ")" );
+ComfyJS.onCommand = (user, command, message, flags, extra) => {
 
-    ComfyJS.Say( "replying to !test" );
+  if (command === "test") {
+    console.log("!test was typed in chat" + "(" + user + ")");
+
+    ComfyJS.Say("replying to !test");
 
     newRecord.play();
   }
 
-  if(command === "kill" ) {
-    console.log( "!kill was typed in chat" + "(" + user + ")"  );
+  if (command === "kill") {
+    console.log("!kill was typed in chat" + "(" + user + ")");
     // population.kill();
   }
 
-  if(command === "clone" ) {
-    console.log( "!clone was typed in chat" + "(" + user + ")"  );
+  if (command === "clone") {
+    console.log("!clone was typed in chat" + "(" + user + ")");
     // 創造新家族
     // populations.push(new Population(10,user)) 
   }
 
 
-  if(command === "join_b" ) {
-    console.log( "!join_b was typed in chat" + "(" + user + ")"  );    
-    
+  if (command === "join_b") {
+    console.log("!join_b was typed in chat" + "(" + user + ")");
+
     // B家族新成員
-    populationHan.newMember(user,0) 
+    populationHan.newMember(user, 0)
 
-    born.play();
+    // 隨機播放 韓導金句100
+    hanVoices[(1+ Math.floor(Math.random()*99))].play();
+
+    // born.play();
   }
 
 
-  if(command === "join_g" ) {
-    console.log( "!join_g was typed in chat" + "(" + user + ")"  );    
-    
+  if (command === "join_g") {
+    console.log("!join_g was typed in chat" + "(" + user + ")");
+
     // G家族新成員
-    populationTsai.newMember(user,1) 
+    populationTsai.newMember(user, 1)
 
-    born.play();
+    // 隨機播放 小英金句
+    tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
+
+    // born.play();
   }
 
-  if(command === "kill_b" ) {
-    console.log( "!join_b was typed in chat" + "(" + user + ")"  );    
-    
+  if (command === "kill_b") {
+    console.log("!join_b was typed in chat" + "(" + user + ")");
+
     // B家族隨機殺成員
     populationHan.kill();
 
@@ -159,23 +183,147 @@ ComfyJS.onCommand = ( user, command, message, flags, extra ) => {
   }
 
 
-  if(command === "kill_g" ) {
-    console.log( "!join_g was typed in chat" + "(" + user + ")"  );    
-    
+  if (command === "kill_g") {
+    console.log("!join_g was typed in chat" + "(" + user + ")");
+
     // G家族隨機殺成員
     populationTsai.kill();
 
     fallSound.play();
   }
 
+  if (command === "rage") {
+
+    console.log("!rage was typed in chat" + "(" + user + ")");
+
+    rageNameList.push(user);
+
+    if(rageNameList.length >1)
+    {
+      rage = game.add.sprite(0,0, "rage");
+      game.physics.arcade.enable(rage);
+      // rage.body.immovable = true;
+      rage.body.gravity.y = gameHeight;
+
+
+
+3
+
+      var name = new Phaser.Text(game, 3, -60,rageNameList.join(",") , {
+        fontSize: 50,
+        // fontWeight: "thin",
+        align: "center",
+        fill: "white",
+      });
+  
+      rage.addChild(name);
+
+      rageNameList =[];
+
+    }
+            
+  }
+  
 }
 
+
+ComfyJS.onChat =( user, message, flags, self, extra )=>
+{
+  console.log( message +" was typed in chat" + "(" + user + ")");
+
+  if(message==="LUL")
+  {
+    // G家族新成員
+   populationTsai.newMember(user, 1);
+
+   // 隨機播放 小英金句
+   tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
+  }
+
+
+  if(message==="LUL LUL")
+  {
+    // G家族隨機殺成員
+   populationTsai.kill();
+
+   // 隨機播放 小英金句
+   tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
+  }
+
+
+
+  if(message==="Kappa")
+  {
+   // B家族新成員
+   populationHan.newMember(user, 0);
+
+   // 隨機播放 韓導金句100
+   hanVoices[(1+ Math.floor(Math.random()*99))].play();
+  }
+
+  if(message==="Kappa Kappa")
+  {
+    // B家族隨機殺成員
+    populationHan.kill();
+
+   // 隨機播放 韓導金句100
+   hanVoices[(1+ Math.floor(Math.random()*99))].play();
+  }
+
+
+  if(message==="BibleThump")
+  {
+    // console.log("!rage was typed in chat" + "(" + user + ")");
+
+    rageNameList.push(user);
+
+    if(rageNameList.length >= 30)
+    {
+      rage = game.add.sprite(0,0, "rage");
+      game.physics.arcade.enable(rage);
+      // rage.body.immovable = true;
+      rage.body.gravity.y = gameHeight;
+
+
+      var lineNumber = 1;
+
+      lineNumber = Math.ceil(rageNameList.length/3)
+
+
+      for(i = 1; i<=lineNumber; i++)
+      {
+        var name = new Phaser.Text(game, 3, -60 *i,rageNameList.slice((i-1)*3,(i*3)).join(",") , {
+          fontSize: 50,
+          // fontWeight: "thin",
+          align: "center",
+          fill: "white",
+        });
+    
+        rage.addChild(name);
+      }
+      
+      
+
+      rageNameList =[];
+
+      // 隨機播放 韓導金句100
+      hanVoices[(1+ Math.floor(Math.random()*99))].play();
+
+      rageSound.play();
+
+    }
+  }
+
+
+   
+
+}
 
 
 function preload() {
   game.load.baseURL = "./assets/";
   game.load.crossOrigin = "anonymous";
-  
+
   // game.load.spritesheet("player", "player.png", 32, 32);
   game.load.spritesheet("player0", "player0.png", 32, 32);
   game.load.spritesheet("player1", "player1.png", 32, 32);
@@ -187,14 +335,27 @@ function preload() {
   // game.load.spritesheet("player_han", "player_han.png", 32, 32);
 
 
+  //按鈕
   game.load.spritesheet('muteBtn', 'mute.png', 170, 150);
-
   game.load.spritesheet('cameraEffectBtn', 'cameraEffect.png', 100, 100);
-   
+
   game.load.image("wall", "wall.png");
   game.load.image("ceiling", "ceiling.png");
   game.load.image("normal", "normal.png");
   game.load.image("nails", "nails.png");
+
+  game.load.image("rage", "rage.png");
+
+  game.load.image("kappa", "kappa.png");
+  game.load.image("LUL", "LUL.png");
+  game.load.image("BibleThump", "BibleThump.png");
+
+  game.load.image("logo_player0", "logo_player0.png");
+  game.load.image("kill_player0", "kill_player0.png");
+
+  game.load.image("logo_player1", "logo_player1.png");
+  game.load.image("kill_player1", "kill_player1.png");
+
   game.load.spritesheet("conveyorRight", "conveyor_right.png", 96, 16);
   game.load.spritesheet("conveyorLeft", "conveyor_left.png", 96, 16);
   game.load.spritesheet("trampoline", "trampoline.png", 96, 22);
@@ -219,6 +380,23 @@ function preload() {
   game.load.audio("counter10", "/sounds/10.mp3");
   game.load.audio("multi_kill", "/sounds/multi_kill.mp3");
   game.load.audio("born", "/sounds/born.mp3");
+  game.load.audio("rageSound", "/sounds/rageSound.mp3");
+
+  // 批次讀取韓導聲音
+  for (var i = 1; i < 100 ;i ++) {
+
+    game.load.audio("hanVoice (" + i +")", "/sounds/hanVoice/hanVoice (" + i +").mp3");
+    
+  }
+
+  // 批次讀取小英聲音
+  for (var i = 1; i < 11 ;i ++) {
+
+    game.load.audio("tsaiVoice (" + i +")", "/sounds/tsaiVoice/tsaiVoice (" + i +").mp3");
+    
+  }
+
+
 }
 
 // 重新將ｉｍｇ指定色塊轉換顏色用工具，目前只能單一色塊，之後研究一下該如何指定模糊的色群集一起更換
@@ -241,13 +419,13 @@ function recolorImage(img, oldRed, oldGreen, oldBlue, newRed, newGreen, newBlue)
   // examine every pixel, 
   // change any old rgb to the new-rgb
   for (var i = 0; i < imageData.data.length; i += 4) {
-      // is this pixel the old rgb?
-      if (imageData.data[i] == oldRed && imageData.data[i + 1] == oldGreen && imageData.data[i + 2] == oldBlue) {
-          // change to your new rgb
-          imageData.data[i] = newRed;
-          imageData.data[i + 1] = newGreen;
-          imageData.data[i + 2] = newBlue;
-      }
+    // is this pixel the old rgb?
+    if (imageData.data[i] == oldRed && imageData.data[i + 1] == oldGreen && imageData.data[i + 2] == oldBlue) {
+      // change to your new rgb
+      imageData.data[i] = newRed;
+      imageData.data[i + 1] = newGreen;
+      imageData.data[i + 2] = newBlue;
+    }
   }
   // put the altered data back on the canvas  
   ctx.putImageData(imageData, 0, 0);
@@ -280,7 +458,7 @@ function create() {
   createBounders();
   addAudio();
 
- 
+
   // 讓遊戲在別的視窗下也能執行， 但有點奇怪， 不論 true、false 都有一樣的效果
   // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
   game.stage.disableVisibilityChange = true;
@@ -288,29 +466,79 @@ function create() {
   // Create population 
   // population = new Population(200);
 
-  populationHan = new Population(100,"BOT",0);
+  populationHan = new Population(20, "BOT", 0);
 
-  populationTsai = new Population(100,"BOT",1);
+  populationTsai = new Population(20, "BOT", 1);
 
-
-  populations.push(populationHan);
+  // 先後順序會影像 影像前後，後放的可以蓋過前面
   populations.push(populationTsai);
+  populations.push(populationHan);
+  
 
   // createPlayer();
   // createTextsBoard();
 
- 
+
   // 靜音按鈕
   muteBtn = game.add.button(950, 50, 'muteBtn', muteBtnOnClick, this, 2, 1, 0);
-  muteBtn.scale.setTo(0.3,0.3);
+  muteBtn.scale.setTo(0.3, 0.3);
 
   // 關閉鏡頭特效按鈕
   cameraEffectBtn = game.add.button(900, 30, 'cameraEffectBtn', cameraEffectBtnOnClick, this, 0, 0, 0);
-  cameraEffectBtn.scale.setTo(0.7,0.7);
+  cameraEffectBtn.scale.setTo(0.7, 0.7);
+
+  //指令文字
+  var textStyle= { font: "bold 48px Gothic", fill: "#ffffff", align:"center"};
+  var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
+  game.add.text(800,100, "指令:", textStyle);
+  // game.add.text(800,160, "!join_b", textStyleI);
+  // game.add.text(800,210, "!join_g", textStyleI);
+  // game.add.text(800,260, "!kill_b", textStyleI);
+  // game.add.text(800,310, "!kill_g", textStyleI);
+  // game.add.text(800,360, "!rage", textStyleI);
 
   //遊戲背景顏色
   game.stage.backgroundColor = "#4488AA";
- 
+
+
+  img_Kappa = game.add.sprite(800,160, 'kappa');
+  img_Kappa.scale.setTo(0.20, 0.20);
+
+  game.add.text(890,180, "          =", textStyleI);
+
+  game.add.sprite(1010,160, 'logo_player0').scale.setTo(2,2);;
+
+  game.add.sprite(800,260, 'kappa').scale.setTo(0.20, 0.20);
+  game.add.sprite(870,260, 'kappa').scale.setTo(0.20, 0.20);
+
+  game.add.text(890,280, "          =", textStyleI);
+  
+  game.add.sprite(1010,260, 'kill_player0').scale.setTo(2,2);;
+  
+
+  img_LUL = game.add.sprite(800,360, 'LUL');
+  img_LUL.scale.setTo(0.20, 0.20);
+
+  game.add.text(890,380, "          =", textStyleI);
+
+  game.add.sprite(1010,360, 'logo_player1').scale.setTo(2,2);;
+
+  game.add.sprite(800,460, 'LUL').scale.setTo(0.20, 0.20);;
+  game.add.sprite(870,460, 'LUL').scale.setTo(0.20, 0.20);;
+
+  game.add.text(890,480, "          =", textStyleI);
+
+  game.add.sprite(1010,460, 'kill_player1').scale.setTo(2,2);;
+
+  img_BibleThump = game.add.sprite(800,560, 'BibleThump');
+  img_BibleThump.scale.setTo(0.20, 0.20);
+
+  game.add.text(890,580, "X 30  =", textStyleI);
+
+
+  game.add.sprite(1010,580, 'ceiling').scale.setTo(2,2);;
+  
+
 }
 
 function update() {
@@ -321,7 +549,7 @@ function update() {
   // if (population.done()) {
   //   // Restart because this generation all died
 
-   
+
   //   // recolorImage(img,255,255,0,11,28,214)
 
 
@@ -349,26 +577,26 @@ function update() {
   numberG.innerHTML = populationHan.nowAlive;
   numberB.innerHTML = populationTsai.nowAlive;
 
-  var allDone = false;
+  var allDone = 0;
 
   for (let i = 0; i < populations.length; i++) {
-            
-    if (!populations[i].done() ) {     
-      populations[i].update();           
-      allDone =false
-    }     
-    else
-    {
-      allDone = true;
+
+    if (!populations[i].done()) {
+      populations[i].update();
+      
+      
+    }
+    else {
+      allDone++;
     }
 
   }
-  
-  
-  if (allDone) {
+
+  // 兩個家族都死光
+  if (allDone ===2) {
     // Restart because this generation all died
 
-   
+
     // recolorImage(img,255,255,0,11,28,214)
 
 
@@ -382,6 +610,17 @@ function update() {
   updatePlatforms();
 
   createPlatforms();
+
+  // 群眾憤怒
+  // if(rage)
+  // {
+  //   if (rage.body.position.y > 400) {
+  //     rage.destroy();      
+  //   }    
+  // }
+
+  rageNumber.innerText = rageNameList.length;
+  
 }
 
 function updateLifeBar() {
@@ -416,18 +655,37 @@ function addAudio() {
   stabbedSound = game.add.audio("stabbed");
   stabbedScream = game.add.audio("stabbedScream");
   newRecord = game.add.audio("newRecord");
-  counter1 = game.add.audio("counter1");
-  counter2 = game.add.audio("counter2");
-  counter3 = game.add.audio("counter3");
-  counter4 = game.add.audio("counter4");
-  counter5 = game.add.audio("counter5");
-  counter6 = game.add.audio("counter6");
-  counter7 = game.add.audio("counter7");
-  counter8 = game.add.audio("counter8");
-  counter9 = game.add.audio("counter9");
-  counter10= game.add.audio("counter10");
-  multi_kill= game.add.audio("multi_kill");  
-  born= game.add.audio("born");  
+  counter1 = game.add.audio("counter1");
+  counter2 = game.add.audio("counter2");
+  counter3 = game.add.audio("counter3");
+  counter4 = game.add.audio("counter4");
+  counter5 = game.add.audio("counter5");
+  counter6 = game.add.audio("counter6");
+  counter7 = game.add.audio("counter7");
+  counter8 = game.add.audio("counter8");
+  counter9 = game.add.audio("counter9");
+  counter10 = game.add.audio("counter10");
+  multi_kill = game.add.audio("multi_kill");
+  born = game.add.audio("born");
+  rageSound = game.add.audio("rageSound");
+
+    // 批次加入韓導聲音
+    for (var i = 1; i < 100 ;i ++) {
+
+      var hanVoice = game.add.audio("hanVoice (" + i +")");
+
+      hanVoices.push(hanVoice);
+      
+    }
+
+    // 批次加入小英聲音
+    for (var i = 1; i < 11 ;i ++) {
+
+      var tsaiVoice = game.add.audio("tsaiVoice (" + i +")");
+
+      tsaiVoices.push(tsaiVoice);
+    }
+     
 }
 
 function createBounders() {
@@ -493,58 +751,56 @@ function updateDistance() {
     // }
 
     // 破紀錄 放音樂
-    if(!breakNewRocord )
-    {
+    if (!breakNewRocord) {
       newRecord.play();
-      breakNewRocord  = true;
+      breakNewRocord = true;
     }
-    
+
 
     recordScore = distance;
     record.innerHTML = recordScore;
   }
 
   //破記錄前的提示
-  if(recordScore - distance <= 10)
-  {
+  if (recordScore - distance <= 10) {
     switch (recordScore - distance) {
-      case 10: 
+      case 10:
         counter10.play();
         gec.cameraShake(0.001, 500);
         break;
-      case 9:       
+      case 9:
         counter9.play();
         gec.cameraShake(0.002, 500);
         break;
-      case 8:       
+      case 8:
         counter8.play();
         gec.cameraShake(0.003, 500);
         break;
-      case 7:       
+      case 7:
         counter7.play();
         gec.cameraShake(0.004, 500);
         break;
-      case 6:       
+      case 6:
         counter6.play();
         gec.cameraShake(0.005, 500);
         break;
-        case 5: 
+      case 5:
         counter5.play();
         gec.cameraShake(0.006, 500);
         break;
-      case 4:       
+      case 4:
         counter4.play();
         gec.cameraShake(0.007, 500);
         break;
-      case 3:       
+      case 3:
         counter3.play();
         gec.cameraShake(0.008, 500);
         break;
-      case 2:       
+      case 2:
         counter2.play();
         gec.cameraShake(0.009, 500);
         break;
-      case 1:       
+      case 1:
         counter1.play();
         gec.cameraShake(0.010, 500);
         break;
@@ -563,32 +819,32 @@ function createOnePlatform() {
 
   if (rand < 50) {
     platform = game.add.sprite(x, y, "normal");
-  } 
+  }
   else if (rand < 60) {
     platform = game.add.sprite(x, y, "nails");
     platformType = "nails";
     game.physics.arcade.enable(platform);
     platform.body.setSize(96, 15, 0, 15);
-  } 
+  }
   else if (rand < 70) {
     platform = game.add.sprite(x, y, "conveyorLeft");
     platformType = "conveyorLeft";
     platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
     platform.play("scroll");
   }
-   else if (rand < 80) {
+  else if (rand < 80) {
     platform = game.add.sprite(x, y, "conveyorRight");
     platformType = "conveyorRight";
     platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
     platform.play("scroll");
-  } 
+  }
   else if (rand < 90) {
     platform = game.add.sprite(x, y, "trampoline");
     platformType = "trampoline";
     platform.animations.add("jump", [4, 5, 4, 3, 2, 1, 0, 1, 2, 3], 120);
     platform.frame = 3;
   }
-   else {
+  else {
     platform = game.add.sprite(x, y, "fake");
     platformType = "fake";
     platform.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
@@ -629,7 +885,7 @@ function createTextsBoard() {
 function updatePlatforms() {
   for (var i = 0; i < platforms.length; i++) {
     var platform = platforms[i];
-    
+
     // 地板移動速度 受到常數加成
     platform.body.position.y -= 2 * gameSpeed;
 
@@ -663,14 +919,14 @@ function restart() {
 
 
   for (let i = 0; i < populations.length; i++) {
-            
-    populations[i].naturalSelection();     
+
+    populations[i].naturalSelection();
   }
 
 }
 
 
-function muteBtnOnClick () {
+function muteBtnOnClick() {
 
   gameMute = !gameMute;
 
@@ -679,7 +935,7 @@ function muteBtnOnClick () {
 }
 
 
-function cameraEffectBtnOnClick () {
+function cameraEffectBtnOnClick() {
 
   useCameraEffect = !useCameraEffect;
 

@@ -150,6 +150,8 @@ class Player {
       ...ceilings,
     ]);
 
+    game.physics.arcade.collide(this.player, [rage]);
+
     if (!this.dead) {
       this.score = distance;
       this.updatePlayer();
@@ -704,6 +706,32 @@ class Player {
   }
 
   nailsEffect(player, platform) {
+    // So player doesn't get stabbed from the side
+    if (player.body.y > platform.body.y) return;
+    if (player.touchOn !== platform) {
+      if (!stabbedSound.isPlaying) {
+        stabbedSound.play();
+      }
+      player.life -= 3;
+
+
+
+      player.touchOn = platform;
+      
+      // 受傷紅光
+      // game.camera.flash(0xff0000, 100);      
+      gec.cameraFlash(0xff0000, 100);
+
+
+      if (player.life <= 0 && !this.dead) {
+        stabbedScream.play();
+        this.dead = true;
+        console.log("nailsPlatform to death!");
+      }
+    }
+  }
+
+  rageEffect(player, platform) {
     // So player doesn't get stabbed from the side
     if (player.body.y > platform.body.y) return;
     if (player.touchOn !== platform) {
