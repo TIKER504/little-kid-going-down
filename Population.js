@@ -1,7 +1,7 @@
 let showBest = true;
 
 class Population {
-  constructor(size,FamilyName,species) {
+  constructor(size,FamilyName,species,isMonter) {
     this.players = [];
     this.bestPlayer;
     this.bestFitness = 0;
@@ -28,6 +28,17 @@ class Population {
         this.players[i].brain.mutate();
       }
     }
+
+    // 假如有怪獸參數則使用怪獸型別
+    if(isMonter)
+    {
+      for (let i = 0; i < size; i++) {
+        this.players.push(new Monster(FamilyName, this.generation,species));
+        this.players[i].brain.generateNetwork();
+        this.players[i].brain.mutate();
+      }
+    }
+
   }
 
   update() {

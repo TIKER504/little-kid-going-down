@@ -29,8 +29,11 @@ var status = "loading";
 
 var breakNewRocord = false;
 
-
+// 人民法槌集氣條
 var rageNameList = [];
+
+// 苦力怕集氣條
+var creepNameList = [];
 
 // Phaser.RequestAnimationFrame(game,true);
 
@@ -77,6 +80,7 @@ let  tsaiVoices = [];
 let population,
   populationHan,
   populationTsai,
+  populationMoster,
   populations = [];
 recordScore = 0;
 
@@ -278,7 +282,6 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
     // console.log("!rage was typed in chat" + "(" + user + ")");
 
     rageNameList.push(user);
-
     // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
     // var msg = new SpeechSynthesisUtterance(user+'貢獻了人民的法槌，還差一點點了 大家加油');
     // msg.rate = 4; // 0.1 to 10
@@ -390,6 +393,49 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
     }
   }
 
+  if(message==="SSSsss")
+  {
+   // 苦力怕
+  //  console.log('苦力怕要來了!');
+
+  creepNameList.push(user);
+
+   if(creepNameList.length >=2)
+   {
+    // rage = game.add.sprite(0,0, "rage");
+    // game.physics.arcade.enable(rage);
+    // // rage.body.immovable = true;
+    // rage.body.gravity.y = gameHeight;
+
+    // var lineNumber = 1;
+
+    // lineNumber = Math.ceil(rageNameList.length/3)
+
+    // for(i = 1; i<=lineNumber; i++)
+    // {
+    //   var name = new Phaser.Text(game, 3, -60 *i,rageNameList.slice((i-1)*3,(i*3)).join(",") , {
+    //     fontSize: 50,
+    //     // fontWeight: "thin",
+    //     align: "center",
+    //     fill: "white",
+    //   });
+  
+    //   rage.addChild(name);
+    // }               
+
+    ComfyJS.Say('來自:' +creepNameList.join("、")+'的負能量，積壓已久民怨化作怪物誕生!!!其學會了現在最厲害小朋友的思路，且無懼於任何機關陷阱， 小心爆炸!!!');
+
+    populationMoster = new Population(1, "Danger!!!", 2,true);
+
+    populations.push(populationMoster);
+
+    creepNameList =[];
+  }
+
+
+
+  }
+
 
    
 
@@ -425,12 +471,15 @@ function preload() {
   game.load.image("kappa", "kappa.png");
   game.load.image("LUL", "LUL.png");
   game.load.image("BibleThump", "BibleThump.png");
+  game.load.image("ssssss", "ssssss.png");
 
   game.load.image("logo_player0", "logo_player0.png");
   game.load.image("kill_player0", "kill_player0.png");
 
   game.load.image("logo_player1", "logo_player1.png");
   game.load.image("kill_player1", "kill_player1.png");
+
+  game.load.image("logo_player2", "logo_player2.png");
 
   game.load.spritesheet("conveyorRight", "conveyor_right.png", 96, 16);
   game.load.spritesheet("conveyorLeft", "conveyor_left.png", 96, 16);
@@ -611,8 +660,15 @@ function create() {
 
   game.add.text(890,580, "X 20  =", textStyleI);
 
-
   game.add.sprite(1010,580, 'ceiling').scale.setTo(2,2);;
+
+  img_ssssss = game.add.sprite(800,660, 'ssssss');
+  img_ssssss.scale.setTo(0.20, 0.20);
+
+  game.add.text(890,680, "X 20  =", textStyleI);
+
+  game.add.sprite(1010,680, 'logo_player2').scale.setTo(2,2);;
+
   
 
 }
@@ -992,6 +1048,12 @@ function restart() {
   breakNewRocord = false;
 
   // population.naturalSelection();
+
+  // 把後面MOSTER 族群移掉
+  if(populations.length >=3)
+  {
+    populations.pop();
+  }
 
 
   for (let i = 0; i < populations.length; i++) {
