@@ -120,10 +120,12 @@ var gameMute = true;
 
 // 檢查 twitch 聊天室內容
 
-ComfyJS.Init("chimera4956");
+// ComfyJS.Init("chimera4956");
 
-// ComfyJS.Init("chimera4956", "kjh12bn1hsj78445234");
+// 這個可以 Oauth 授權成功!!!!! 痛哭流涕
+ComfyJS.Init("chimera4956", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
 
+// 這是node.js 的套件，先用html 解決之後一起整理。
 // var ComfyJS = require("comfy.js");
 
 ComfyJS.onCommand = (user, command, message, flags, extra) => {
@@ -235,7 +237,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   {
     // G家族新成員
    populationTsai.newMember(user, 1);
-
+  
    // 隨機播放 小英金句
    tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
   }
@@ -277,7 +279,77 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
     rageNameList.push(user);
 
-    if(rageNameList.length >= 30)
+    // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
+    // var msg = new SpeechSynthesisUtterance(user+'貢獻了人民的法槌，還差一點點了 大家加油');
+    // msg.rate = 4; // 0.1 to 10
+    // msg.pitch = 1; //0 to 2        
+    // window.speechSynthesis.speak(msg);
+
+    // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
+    // var msg_ch = new SpeechSynthesisUtterance('貢獻了人民的法槌，還差一點點了 大家加油');
+
+    // var voices = window.speechSynthesis.getVoices();
+    // msg_ch.voice = voices[10]; // Note: some voices don't support altering params
+    // // msg.voiceURI = 'native';
+    // // msg.volume = 1; // 0 to 1
+    // msg_ch.rate = 4; // 0.1 to 10
+    // msg_ch.pitch = 1; //0 to 2
+    // // msg.text = 'Hello World';
+    // msg_ch.lang = 'zh-tw';
+    // window.speechSynthesis.speak(msg_ch);
+    // // msg.onend = function(e) {
+    // //   console.log('Finished in ' + event.elapsedTime + ' seconds.');
+    // // };
+
+    if(rageNameList.length ==1)
+    {      
+    var msg = new SpeechSynthesisUtterance(user+'首先發難舉起了人民法槌' );
+
+    ComfyJS.Say(user+'首先發難舉起了人民法槌'+'(' + rageNameList.length +"/20)");
+
+    msg.rate = 4; // 0.1 to 10
+    msg.pitch = 1; //0 to 2        
+    window.speechSynthesis.speak(msg);
+
+
+    }
+
+    if(rageNameList.length >=2 &&rageNameList.length <=7)
+    {      
+    var msg = new SpeechSynthesisUtterance(user+'響應人民法槌行列步步向前');
+
+    ComfyJS.Say(user+'響應人民法槌行列步步向前'+'(' + rageNameList.length +"/20)");
+
+    msg.rate = 4; // 0.1 to 10
+    msg.pitch = 1; //0 to 2        
+    window.speechSynthesis.speak(msg);
+    }
+
+    if(rageNameList.length >=8 &&rageNameList.length <=14)
+    {      
+    var msg = new SpeechSynthesisUtterance(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆');
+
+    ComfyJS.Say(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆'+'(' + rageNameList.length +"/20)");
+
+    msg.rate = 4; // 0.1 to 10
+    msg.pitch = 1; //0 to 2        
+    window.speechSynthesis.speak(msg);
+    }
+
+    if(rageNameList.length >=15 &&rageNameList.length <=19)
+    {      
+    var msg = new SpeechSynthesisUtterance(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家');
+
+    ComfyJS.Say(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家'+'(' + rageNameList.length +"/20)");
+
+    msg.rate = 4; // 0.1 to 10
+    msg.pitch = 1; //0 to 2        
+    window.speechSynthesis.speak(msg);
+    }
+
+
+
+    if(rageNameList.length >=20)
     {
       rage = game.add.sprite(0,0, "rage");
       game.physics.arcade.enable(rage);
@@ -304,12 +376,16 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       
       
 
-      rageNameList =[];
+      
 
       // 隨機播放 韓導金句100
-      hanVoices[(1+ Math.floor(Math.random()*99))].play();
-
+      // hanVoices[(1+ Math.floor(Math.random()*99))].play();
+    
       rageSound.play();
+
+      ComfyJS.Say('這就是萬民的憤怒!!!來自眾英雄:' +rageNameList.join("、")+'，感受眾志成城的壓迫感吧!!!');
+
+      rageNameList =[];
 
     }
   }
@@ -533,7 +609,7 @@ function create() {
   img_BibleThump = game.add.sprite(800,560, 'BibleThump');
   img_BibleThump.scale.setTo(0.20, 0.20);
 
-  game.add.text(890,580, "X 30  =", textStyleI);
+  game.add.text(890,580, "X 20  =", textStyleI);
 
 
   game.add.sprite(1010,580, 'ceiling').scale.setTo(2,2);;
@@ -940,3 +1016,4 @@ function cameraEffectBtnOnClick() {
   useCameraEffect = !useCameraEffect;
 
 }
+
