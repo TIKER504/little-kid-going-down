@@ -1,4 +1,4 @@
-let numOfPlayers = 0;
+let numOfMonster = 0;
 class Monster {
   constructor(familyName, gen,species) {
     this.familyName = familyName;
@@ -7,9 +7,10 @@ class Monster {
     
     this.playerTwitchID="";
 
-    numOfPlayers++;
+    numOfMonster++;
 
-    
+    // 碰到15個地板後就會爆炸
+    // this.explodedNumer = 15;
 
     // const player = game.add.sprite(gameWidth / 2, 50, "player");
 
@@ -36,7 +37,7 @@ class Monster {
     player.animations.add("flyleft", [18, 19, 20, 21], 12);
     player.animations.add("flyright", [27, 28, 29, 30], 12);
     player.animations.add("fly", [36, 37, 38, 39], 12);
-    player.life = 10;
+    player.life = 15;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
 
@@ -44,6 +45,9 @@ class Monster {
     this.player = player;
 
 
+    
+
+    
     // var playerGoLeft = 0;
     // var playerGoRight = 0;
 
@@ -149,7 +153,7 @@ class Monster {
       ...rightWalls,
       ...ceilings,
     ]);
-
+    
     game.physics.arcade.collide(this.player, [rage]);
 
     if (!this.dead) {
@@ -175,7 +179,7 @@ class Monster {
        }
  
        // 綠血
-       if(this.player.life == 10)
+       if(this.player.life >= 10)
        {
          this.healthBar.fill ='#00EC00';        
        }
@@ -561,7 +565,8 @@ class Monster {
       if (game.time.now > this.player.unbeatableTime) {
         stabbedSound.play();
 
-        this.player.life -= 3;
+        // 怪物不會有傷害
+        // this.player.life -= 3;
 
         // 直接讓天花板殺害必殺，強迫小朋不要龜
         // this.player.life -= 10;
@@ -615,13 +620,29 @@ class Monster {
     }   
   }
 
-
+  // 怪物衰落直接爆炸
   checkFellPlayer() {
     if (this.player.body.y > gameHeight + 100 && !this.dead) {
-      fallSound.play();
-      console.log("fell to death");
-      this.dead = true;
+      
+      // fallSound.play();
+      
+      cheerfulAnnoyance.stop(); // 死掉音樂停止           
 
+      const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
+      img_explosion.scale.setTo(12, 12);
+      img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+      game.physics.arcade.enable(img_explosion);
+
+      game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
+      img_explosion.animations.play("explosion");
+      
+      // 搖鏡頭
+      game.camera.shake(0.050, 500);
+      explosion.play();
+
+      // img_explosion.destroy();
+
+      this.dead = true;                   
       // gameOver();
     }
   }
@@ -630,12 +651,13 @@ class Monster {
     this.player.body.velocity.x = 0;
   }
 
+  // 一般小朋友除為3.2
   goLeft() {
-    this.player.body.velocity.x = -(gameWidth / 3.2);
+    this.player.body.velocity.x = -(gameWidth /4.8);
   }
 
   goRight() {
-    this.player.body.velocity.x = gameWidth / 3.2;
+    this.player.body.velocity.x = gameWidth / 4.8;
   }
 
   updatePlayer() {
@@ -667,30 +689,82 @@ class Monster {
     }
   }
 
+  // 怪物不受板塊影響
   conveyorRightEffect(player, platform) {
     if (player.touchOn !== platform) {
       if (!conveyorSound.isPlaying) {
         conveyorSound.play();
       }
       player.touchOn = platform;
-      if (player.life < 10) {
-        player.life += 1;
-      }
+        // 每碰一個普通地板就會少1滴，血量為0 爆炸
+     this.player.life--;
+
+     // this.player.life = this.player.life -15;
+
+     if (player.life <= 0 && !this.dead) {
+       cheerfulAnnoyance.stop(); // 死掉音樂停止
+
+       const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
+       img_explosion.scale.setTo(12, 12);
+       img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+       game.physics.arcade.enable(img_explosion);
+
+       game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
+       img_explosion.animations.play("explosion");
+       
+       // 搖鏡頭
+       game.camera.shake(0.050, 500);
+      explosion.play();
+
+       // img_explosion.destroy();
+
+       this.dead = true;       
+     }
     }
-    player.body.x += 2;
+    // player.body.x += 2;
+
+   
+
+
   }
 
   conveyorLeftEffect(player, platform) {
     if (player.touchOn !== platform) {
       conveyorSound.play();
       player.touchOn = platform;
-      if (player.life < 10) {
-        player.life += 1;
-      }
-    }
-    player.body.x -= 2;
-  }
+       // 每碰一個普通地板就會少1滴，血量為0 爆炸
+     this.player.life--;
 
+     // this.player.life = this.player.life -15;
+
+     if (player.life <= 0 && !this.dead) {
+       cheerfulAnnoyance.stop(); // 死掉音樂停止
+
+       const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
+       img_explosion.scale.setTo(12, 12);
+       img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+       game.physics.arcade.enable(img_explosion);
+
+       game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
+       img_explosion.animations.play("explosion");
+       
+        // 搖鏡頭
+      game.camera.shake(0.050, 500);
+      explosion.play();
+
+       // img_explosion.destroy();
+
+       this.dead = true;       
+     }
+      }
+        // player.body.x -= 2;
+ }
+
+
+    
+  
+
+  // 怪物彈更高 一般小朋友是2
   trampolineEffect(player, platform) {
     if (player.body.y > platform.body.y) return;
     if (!springSound.isPlaying) {
@@ -698,13 +772,39 @@ class Monster {
     }
 
     if (player.life < 10) {
-      player.life += 1;
+      // player.life += 1;
     }
 
+    // 因為彈簧的BUG 與天花板互夾會觸發連續扣寫，註解掉
+    //  // 每碰一個普通地板就會少1滴，血量為0 爆炸
+    //  this.player.life--;
+
+    //  // this.player.life = this.player.life -15;
+
+    //  if (player.life <= 0 && !this.dead) {
+    //    cheerfulAnnoyance.stop(); // 死掉音樂停止
+
+    //    const  img_explosion = game.add.sprite(this.player.x,this.player.y, "img_explosion");
+    //    img_explosion.scale.setTo(4, 4);
+    //    img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+    //    game.physics.arcade.enable(img_explosion);
+
+    //    game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
+    //    img_explosion.animations.play("explosion");
+       
+    //    explosion.play();
+
+    //    // img_explosion.destroy();
+
+    //    this.dead = true;
+       
+    //  }
+
     platform.animations.play("jump");
-    player.body.velocity.y = -(gameHeight / 2);
+    player.body.velocity.y = -(gameHeight / 1.3);
   }
 
+  // 怪物不會受傷
   nailsEffect(player, platform) {
     // So player doesn't get stabbed from the side
     if (player.body.y > platform.body.y) return;
@@ -712,11 +812,38 @@ class Monster {
       if (!stabbedSound.isPlaying) {
         stabbedSound.play();
       }
-      player.life -= 3;
+      // player.life -= 3;
 
 
 
       player.touchOn = platform;
+
+       // 每碰一個普通地板就會少1滴，血量為0 爆炸
+       this.player.life--;
+
+       // this.player.life = this.player.life -15;
+ 
+       if (player.life <= 0 && !this.dead) {
+         cheerfulAnnoyance.stop(); // 死掉音樂停止
+ 
+         const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
+         img_explosion.scale.setTo(12, 12);
+         img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+         game.physics.arcade.enable(img_explosion);
+ 
+         game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
+         img_explosion.animations.play("explosion");
+
+           // 搖鏡頭
+        game.camera.shake(0.050, 500);
+         
+        explosion.play();
+ 
+         // img_explosion.destroy();
+ 
+         this.dead = true;
+         
+       }
       
       // 受傷紅光
       // game.camera.flash(0xff0000, 100);      
@@ -763,38 +890,70 @@ class Monster {
         platformSound.play();
       }
       if (player.life < 10) {
-        player.life += 1;
+        // player.life += 1;
       }
       player.touchOn = platform;
+      // 每碰一個普通地板就會少1滴，血量為0 爆炸
+      this.player.life--;
+
+      // this.player.life = this.player.life -15;
+
+      if (player.life <= 0 && !this.dead) {
+        cheerfulAnnoyance.stop(); // 死掉音樂停止
+
+        const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
+        img_explosion.scale.setTo(12, 12);
+        img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+        game.physics.arcade.enable(img_explosion);
+
+        game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
+
+
+        // 搖鏡頭
+        game.camera.shake(0.050, 500);
+
+        img_explosion.animations.play("explosion");
+        
+        explosion.play();
+
+        // img_explosion.destroy();
+
+        this.dead = true;
+        
+      }
     }
   }
 
+  // 怪物不會觸發翻轉地板
   fakeEffect(player, platform) {
-    if (player.body.y > platform.body.y) return;
-    if (player.touchOn !== platform) {
-      if (!spinSound.isPlaying) {
-        spinSound.play();
-      }
-      platform.animations.play("turn");
-      setTimeout(function () {
-        platform.body.checkCollision.up = false;
-        setTimeout(() => {
-          platform.body.checkCollision.up = true;
-        }, 200);
-      }, 100);
-      player.touchOn = platform;
-      if (player.life < 10) {
-        player.life += 1;
-      }
-    }
+    // if (player.body.y > platform.body.y) return;
+    // if (player.touchOn !== platform) {
+    //   if (!spinSound.isPlaying) {
+    //     spinSound.play();
+    //   }
+    //   platform.animations.play("turn");
+    //   setTimeout(function () {
+    //     platform.body.checkCollision.up = false;
+    //     setTimeout(() => {
+    //       platform.body.checkCollision.up = true;
+    //     }, 200);
+    //   }, 100);
+    //   player.touchOn = platform;
+    //   if (player.life < 10) {
+    //     player.life += 1;
+    //   }
+    // }
   }
 
   // Effects
   effect(player, platform) {
-    if (platform.key == "conveyorRight") {
+
+    
+
+    if (platform.key == "conveyorRight") {            
       this.conveyorRightEffect(player, platform);
     }
-    if (platform.key == "conveyorLeft") {
+    if (platform.key == "conveyorLeft") {            
       this.conveyorLeftEffect(player, platform);
     }
     if (platform.key == "trampoline") {
@@ -803,12 +962,24 @@ class Monster {
     if (platform.key == "nails") {
       this.nailsEffect(player, platform);
     }
-    if (platform.key == "normal") {
+    if (platform.key == "normal") {   
       this.basicEffect(player, platform);
     }
     if (platform.key == "fake") {
       this.fakeEffect(player, platform);
     }
+  }
+
+  Explodedeffect(explosion, platform)
+  {
+    // if (platform.key == "normal") {   
+    //   // platform.destroy();
+    //   console.log("normal Explodede");
+
+    //   platform.Explodede = true;
+    // }
+
+    platform.Explodede = true;
   }
 
   destroy() {

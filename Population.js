@@ -14,11 +14,23 @@ class Population {
     // 假如有傳家族名子，統一命名，要不然就是系統隨機    
     if(FamilyName)
     {
-      for (let i = 0; i < size; i++) {
-        this.players.push(new Player(FamilyName, this.generation,species));
-        this.players[i].brain.generateNetwork();
-        this.players[i].brain.mutate();
+      if(isMonter)
+      {
+        for (let i = 0; i < size; i++) {
+          this.players.push(new Monster(FamilyName, this.generation,species));
+          this.players[i].brain.generateNetwork();
+          this.players[i].brain.mutate();
+        }
       }
+      else
+      {
+        for (let i = 0; i < size; i++) {
+          this.players.push(new Player(FamilyName, this.generation,species));
+          this.players[i].brain.generateNetwork();
+          this.players[i].brain.mutate();
+        }
+      }
+      
     }
     else
     {
@@ -29,15 +41,6 @@ class Population {
       }
     }
 
-    // 假如有怪獸參數則使用怪獸型別
-    if(isMonter)
-    {
-      for (let i = 0; i < size; i++) {
-        this.players.push(new Monster(FamilyName, this.generation,species));
-        this.players[i].brain.generateNetwork();
-        this.players[i].brain.mutate();
-      }
-    }
 
   }
 
@@ -76,6 +79,35 @@ class Population {
 
     this.players.push(newMember);
 
+  }
+
+  // 複製目前還活著的AI 避免新生兒太笨的問題 拖累進度
+  copyAliveBrain()
+  {
+    // 取得活大腦
+    var aliveBrain;
+
+    for (let i = 0; i < populations.length; i++) {
+      if (!populations[i].done()) {
+        for (let i2 = 0; i2 < populations[i].players.length; i2++)
+        {
+          if (!populations[i].players[i2].dead ) {      
+            aliveBrain = populations[i].players[i2].brain;
+
+            break;
+          }
+        }                             
+      }              
+    }
+
+
+    // 遞給族群內所有人
+    for (let i = 0; i < this.players.length; i++)
+    {
+      if (!this.players[i].dead ) {      
+        this.players[i].brain = aliveBrain;        
+      }
+    }        
   }
 
   updateAlive() {

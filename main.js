@@ -67,7 +67,9 @@ let conveyorSound,
   counter10,
   multi_kill,
   born,
-  rageSound
+  rageSound,
+  explosion,
+  cheerfulAnnoyance
   ;
 
 // 韓導語錄
@@ -427,7 +429,15 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
     populationMoster = new Population(1, "Danger!!!", 2,true);
 
+    // 複製目前存活AI 避免弱智新生兒 拖累進度
+    populationMoster.copyAliveBrain();
+
     populations.push(populationMoster);
+
+    born.play();
+    
+    cheerfulAnnoyance.loop = true;
+    cheerfulAnnoyance.play();
 
     creepNameList =[];
   }
@@ -455,6 +465,8 @@ function preload() {
   game.load.spritesheet("player5", "player5.png", 32, 32);
   game.load.spritesheet("player6", "player6.png", 32, 32);
   // game.load.spritesheet("player_han", "player_han.png", 32, 32);
+
+  game.load.spritesheet("img_explosion", "explosion.png", 32, 32);
 
 
   //按鈕
@@ -506,6 +518,10 @@ function preload() {
   game.load.audio("multi_kill", "/sounds/multi_kill.mp3");
   game.load.audio("born", "/sounds/born.mp3");
   game.load.audio("rageSound", "/sounds/rageSound.mp3");
+  game.load.audio("explosion", "/sounds/explosion.mp3");
+  game.load.audio("cheerfulAnnoyance", "/sounds/CheerfulAnnoyance.mp3");
+  
+  
 
   // 批次讀取韓導聲音
   for (var i = 1; i < 100 ;i ++) {
@@ -583,6 +599,7 @@ function create() {
   createBounders();
   addAudio();
 
+  this.lights.enable().setAmbientColor(0x333333);
 
   // 讓遊戲在別的視窗下也能執行， 但有點奇怪， 不論 true、false 都有一樣的效果
   // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
@@ -665,7 +682,7 @@ function create() {
   img_ssssss = game.add.sprite(800,660, 'ssssss');
   img_ssssss.scale.setTo(0.20, 0.20);
 
-  game.add.text(890,680, "X 20  =", textStyleI);
+  game.add.text(890,680, "X 2  =", textStyleI);
 
   game.add.sprite(1010,680, 'logo_player2').scale.setTo(2,2);;
 
@@ -714,9 +731,9 @@ function update() {
   for (let i = 0; i < populations.length; i++) {
 
     if (!populations[i].done()) {
+      
       populations[i].update();
-      
-      
+            
     }
     else {
       allDone++;
@@ -724,15 +741,15 @@ function update() {
 
   }
 
-  // 兩個家族都死光
-  if (allDone ===2) {
+  // 兩個家族都死光 (有時有怪物時 會大於2)
+  if (allDone >=populations.length) {
     // Restart because this generation all died
 
 
     // recolorImage(img,255,255,0,11,28,214)
 
 
-    console.log("dead");
+    console.log("restart");
     restart();
     return;
   }
@@ -800,6 +817,8 @@ function addAudio() {
   multi_kill = game.add.audio("multi_kill");
   born = game.add.audio("born");
   rageSound = game.add.audio("rageSound");
+  explosion = game.add.audio("explosion");
+  cheerfulAnnoyance = game.add.audio("cheerfulAnnoyance");
 
     // 批次加入韓導聲音
     for (var i = 1; i < 100 ;i ++) {
@@ -1025,6 +1044,10 @@ function updatePlatforms() {
       platform.destroy();
       platforms.splice(i, 1);
     }
+    if (platform.Explodede) {
+      platform.destroy();
+      platforms.splice(i, 1);
+    }
   }
 }
 
@@ -1052,7 +1075,8 @@ function restart() {
   // 把後面MOSTER 族群移掉
   if(populations.length >=3)
   {
-    populations.pop();
+    // 只取前面兩個 家族
+    populations = populations.slice(0,2)
   }
 
 
@@ -1078,4 +1102,5 @@ function cameraEffectBtnOnClick() {
   useCameraEffect = !useCameraEffect;
 
 }
+
 
