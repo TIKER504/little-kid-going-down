@@ -59,14 +59,31 @@ class Population {
     // }
 
 
-    var i = Math.floor(Math.random() * this.players.length);
+    // 找一個來殺
+    for (let i = 0; i < this.players.length; i++)
+    {
+      if (!this.players[i].dead ) {      
+        this.players[i].life =0;     
 
-    if (!this.players[i].dead ) {      
-      this.players[i].life -=15;     
-      this.players[i].dead = true; 
-    }
+        var killmark = game.add.sprite(this.players[i].player.x ,this.players[i].player.y, "killmark");
 
-    multi_kill.play();
+        killmark.scale.setTo(2,2);
+
+        killmark.animations.add("killmark", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+
+        killmark.animations.play("killmark");
+
+        this.players[i].healthBar.text = this.players[i].generateHealthBar(this.players[i].life =0);
+
+        this.players[i].dead = true; 
+        
+        break;
+      }
+    } 
+
+    
+
+   
 
   }
 

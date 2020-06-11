@@ -4,7 +4,7 @@ const gameHeight = 800;
 const scale = 2;
 
 // 畫布寬度
-const canvasWidth = 1100;
+const canvasWidth = 1400;
 const canvasHeight = 800;
 
 
@@ -34,6 +34,12 @@ var rageNameList = [];
 
 // 苦力怕集氣條
 var creepNameList = [];
+
+// 排名系統
+var rankList = [];
+
+// 排名畫面物件，統一清除畫上，要不然塗層會一直疊
+var rankObjectList =[]
 
 // Phaser.RequestAnimationFrame(game,true);
 
@@ -83,6 +89,7 @@ let population,
   populationHan,
   populationTsai,
   populationMoster,
+  populationChiu,
   populations = [];
 recordScore = 0;
 
@@ -243,6 +250,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   {
     // G家族新成員
    populationTsai.newMember(user, 1);
+
+   ComfyJS.Say(user+'加入綠軍新生兒');
   
    // 隨機播放 小英金句
    tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
@@ -253,6 +262,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   {
     // G家族隨機殺成員
    populationTsai.kill();
+
+   ComfyJS.Say(user+'剷除一名綠軍');
 
    // 隨機播放 小英金句
    tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
@@ -265,6 +276,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
    // B家族新成員
    populationHan.newMember(user, 0);
 
+   ComfyJS.Say(user+'加入藍軍新生兒');
+
    // 隨機播放 韓導金句100
    hanVoices[(1+ Math.floor(Math.random()*99))].play();
   }
@@ -273,6 +286,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   {
     // B家族隨機殺成員
     populationHan.kill();
+
+    ComfyJS.Say(user+'剷除一名藍軍');
 
    // 隨機播放 韓導金句100
    hanVoices[(1+ Math.floor(Math.random()*99))].play();
@@ -468,6 +483,8 @@ function preload() {
 
   game.load.spritesheet("img_explosion", "explosion.png", 32, 32);
 
+  game.load.spritesheet("killmark", "killmark.png", 32, 32);
+  
 
   //按鈕
   game.load.spritesheet('muteBtn', 'mute.png', 170, 150);
@@ -479,6 +496,7 @@ function preload() {
   game.load.image("nails", "nails.png");
 
   game.load.image("rage", "rage.png");
+  game.load.image("smallceiling", "smallceiling.png");
 
   game.load.image("kappa", "kappa.png");
   game.load.image("LUL", "LUL.png");
@@ -487,11 +505,14 @@ function preload() {
 
   game.load.image("logo_player0", "logo_player0.png");
   game.load.image("kill_player0", "kill_player0.png");
+  
 
   game.load.image("logo_player1", "logo_player1.png");
   game.load.image("kill_player1", "kill_player1.png");
 
   game.load.image("logo_player2", "logo_player2.png");
+
+  game.load.image("logo_player3", "logo_player3.png");
 
   game.load.spritesheet("conveyorRight", "conveyor_right.png", 96, 16);
   game.load.spritesheet("conveyorLeft", "conveyor_left.png", 96, 16);
@@ -599,8 +620,6 @@ function create() {
   createBounders();
   addAudio();
 
-  this.lights.enable().setAmbientColor(0x333333);
-
   // 讓遊戲在別的視窗下也能執行， 但有點奇怪， 不論 true、false 都有一樣的效果
   // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
   game.stage.disableVisibilityChange = true;
@@ -612,9 +631,12 @@ function create() {
 
   populationTsai = new Population(20, "BOT", 1);
 
+  populationChiu =  new Population(20, "BOT", 3);
+
   // 先後順序會影像 影像前後，後放的可以蓋過前面
   populations.push(populationTsai);
   populations.push(populationHan);
+  populations.push(populationChiu);
   
 
   // createPlayer();
@@ -638,7 +660,7 @@ function create() {
   // game.add.text(800,260, "!kill_b", textStyleI);
   // game.add.text(800,310, "!kill_g", textStyleI);
   // game.add.text(800,360, "!rage", textStyleI);
-
+  
   //遊戲背景顏色
   game.stage.backgroundColor = "#4488AA";
 
@@ -677,7 +699,7 @@ function create() {
 
   game.add.text(890,580, "X 20  =", textStyleI);
 
-  game.add.sprite(1010,580, 'ceiling').scale.setTo(2,2);;
+  game.add.sprite(1010,580, 'smallceiling').scale.setTo(2,2);;
 
   img_ssssss = game.add.sprite(800,660, 'ssssss');
   img_ssssss.scale.setTo(0.20, 0.20);
@@ -687,6 +709,12 @@ function create() {
   game.add.sprite(1010,680, 'logo_player2').scale.setTo(2,2);;
 
   
+  // 排名系統
+  game.add.text(1100,100, "最佳排名:", textStyle);
+
+
+  
+
 
 }
 
@@ -748,7 +776,8 @@ function update() {
 
     // recolorImage(img,255,255,0,11,28,214)
 
-
+    // 先將玩家排序分數，新排行榜
+    checkNewRank();
     console.log("restart");
     restart();
     return;
@@ -1075,8 +1104,8 @@ function restart() {
   // 把後面MOSTER 族群移掉
   if(populations.length >=3)
   {
-    // 只取前面兩個 家族
-    populations = populations.slice(0,2)
+    // 只取前面三個 家族(han tsai chiu)
+    populations = populations.slice(0,3)
   }
 
 
@@ -1100,6 +1129,70 @@ function muteBtnOnClick() {
 function cameraEffectBtnOnClick() {
 
   useCameraEffect = !useCameraEffect;
+
+}
+
+
+// 玩家全死光，遊戲結束後，檢查新排名
+function checkNewRank() {
+
+  // 排名用array
+  var rankPopulation = [];
+
+  // 把所有群集都用在一起
+  for (let i = 0; i < populations.length; i++) {
+    rankPopulation = rankPopulation.concat(populations[i].players);
+  }
+
+  // 跟目前前五名和在一起
+  if(rankList.length>0)
+  {
+    rankPopulation = rankPopulation.concat(rankList)
+  }
+  
+
+  // 新的綜合排名
+  rankPopulation.sort(function (a, b) {      
+    // return a.score - b.score; 小到大排
+     return b.score - a.score  ; //大到小排
+  });
+  
+  // 前五名
+  rankList = rankPopulation.slice(0,6);
+
+  var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
+
+  var textStyleII= { font: "bold 24px Gothic", fill: "#ffffff", align:"center"};
+
+
+  // 印之前，先把舊的畫面排名物件清掉，否則圖會一直疊
+  for (let i = 0; i < rankObjectList.length; i++) {
+   
+    rankObjectList[i].destroy();
+  }
+
+  rankObjectList = [];
+
+    // 自動印前五名
+  for (let i = 0; i < rankList.length; i++) {
+    // 排名
+    var rank = game.add.text(1100,160 + i*100, i+1 +".", textStyleI);    
+
+    var logo_player = game.add.sprite(1140,160 + i*100, 'logo_player' + rankList[i].species);
+
+    logo_player.scale.setTo(2,2);
+
+    var familyName = game.add.text(1140,200 + i*100, rankList[i].familyName, textStyleII);    
+
+    var score = game.add.text(1220,160+ i*100,+ rankList[i].score, textStyleI);    
+
+
+    rankObjectList.push(rank);
+    rankObjectList.push(logo_player);
+    rankObjectList.push(familyName);
+    rankObjectList.push(score);
+
+  }
 
 }
 

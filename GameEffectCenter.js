@@ -15,7 +15,7 @@ class GameEffectCenter {
   cameraFlash(colorCode,duration) {
     if(useCameraEffect)    
     {
-      // 搖鏡頭
+      // 閃鏡頭
       game.camera.flash(colorCode, duration);
     }       
   }

@@ -828,7 +828,7 @@ class Monster {
  
          const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
          img_explosion.scale.setTo(12, 12);
-         img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+         img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;
          game.physics.arcade.enable(img_explosion);
  
          game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
