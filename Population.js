@@ -137,8 +137,12 @@ class Population {
       
       
       if (!this.players[i].dead ) {      
-        this.players[i].look();
-        this.players[i].think();
+
+        if(!this.players[i].isPlayingAnimation)
+        {
+          this.players[i].look();
+          this.players[i].think();
+        }        
         this.players[i].update();               
 
         alive++;

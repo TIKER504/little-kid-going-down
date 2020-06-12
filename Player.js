@@ -1,15 +1,15 @@
 let numOfPlayers = 0;
 class Player {
-  constructor(familyName, gen,species) {
+  constructor(familyName, gen, species) {
     this.familyName = familyName;
     this.gen = gen;
-    this.species =species;
-    
-    this.playerTwitchID="";
+    this.species = species;
+
+    this.playerTwitchID = "";
 
     numOfPlayers++;
 
-    
+
 
     // const player = game.add.sprite(gameWidth / 2, 50, "player");
 
@@ -39,10 +39,13 @@ class Player {
     player.life = 10;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
+    player.touchChopsticksOn = undefined;
 
-    
+
     this.player = player;
 
+    // 是否正在播動畫
+    this.isPlayingAnimation = false;
 
     // var playerGoLeft = 0;
     // var playerGoRight = 0;
@@ -79,7 +82,7 @@ class Player {
         fontWeight: "thin",
         align: "center",
         // fill: "yellow",
-        fill: "#00EC00"        
+        fill: "#00EC00"
       }
     );
 
@@ -100,15 +103,23 @@ class Player {
 
 
 
-    
-    
+
+
 
     this.fitness = 0;
     this.vision = []; //the input array fed into the neuralNet
     this.decision = []; //the out put of the NN
     this.dead = false;
     this.reportDead = false;
+
     this.score = 0;
+
+    // 身上筷子數
+    this.gotChopsticks = 0;
+
+    //切斷筷子數
+    this.cutChopsticks = 0;
+
     this.unadjustedFitness;
     this.lifespan = 0; //how long the player lived for this.fitness
     this.bestScore = 0; //stores the this.score achieved used for replay
@@ -117,7 +128,7 @@ class Player {
 
     this.moveState = 0; // 0 = not moving, 1 = move left, 2 = move right
     // Inputs for vision, Outputs for actions
-    this.genomeInputs = 7;
+    this.genomeInputs = 9;
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
 
@@ -137,13 +148,18 @@ class Player {
       text += "|";
     }
 
-    
+
 
     return text;
   }
 
   update() {
+    // 和板塊的碰撞事件
     game.physics.arcade.collide(this.player, platforms, this.effect.bind(this));
+
+    // 和筷子的重疊事件
+    game.physics.arcade.overlap(this.player, chopsticksList, this.effect.bind(this));
+
     game.physics.arcade.collide(this.player, [
       ...leftWalls,
       ...rightWalls,
@@ -153,33 +169,45 @@ class Player {
     game.physics.arcade.collide(this.player, [rage]);
 
     if (!this.dead) {
-      this.score = distance;
+      // this.score = distance; // 原本分數為跑了多少層
+
+      if(this.species == 0)
+      {
+        this.score = distance + this.gotChopsticks * 3 + this.cutChopsticks *10; // 現在分數多了 取得筷子加權，藍軍每一雙*3
+      }
+      if(this.species == 1)
+      {
+        this.score = distance + this.gotChopsticks * 5 + this.cutChopsticks *10; // 現在分數多了 取得筷子加權，綠軍每一雙*5
+      }
+      if(this.species ==3)
+      {
+        this.score = distance + this.cutChopsticks *10; // 現在分數多了 取得筷子加權，每夾斷一雙 結算 +10
+      }
+
+      
       this.updatePlayer();
       this.checkNailCeiling();
       // this.checkleftWalls();
       // this.checkrightWalls();
-      
+
 
       this.checkFellPlayer();
 
-       // 紅血
-       if(this.player.life <= 3)
-       {
-         this.healthBar.fill ='#FF0000';        
-       }
- 
-       // 黃血
-       if(this.player.life > 3 && this.player.life < 10)
-       {
-         this.healthBar.fill ='#F9F900';        
-       }
- 
-       // 綠血
-       if(this.player.life == 10)
-       {
-         this.healthBar.fill ='#00EC00';        
-       }
-             
+      // 紅血
+      if (this.player.life <= 3) {
+        this.healthBar.fill = '#FF0000';
+      }
+
+      // 黃血
+      if (this.player.life > 3 && this.player.life < 10) {
+        this.healthBar.fill = '#F9F900';
+      }
+
+      // 綠血
+      if (this.player.life == 10) {
+        this.healthBar.fill = '#00EC00';
+      }
+
 
     } else {
       this.destroy();
@@ -209,10 +237,10 @@ class Player {
     // distance to closest platform's left edge
     // disntace to closest platform's right edge
     // platform type
-    let { x: playerX, y: playerY ,width:playerWidth} = this.player;
+    let { x: playerX, y: playerY, width: playerWidth } = this.player;
 
     // 是否有接觸地板
-    var isTouched =0;
+    var isTouched = 0;
 
     // Only distinguish dangerous one and safe one
     // const platformCode = {
@@ -244,7 +272,7 @@ class Player {
       fake: 0.8,
     };
 
-    let closestPlatform,closestPlatXform,
+    let closestPlatform, closestPlatXform, closestChopsticks,
       closestDist = gameHeight,
       closestXDist = gameWidth;
 
@@ -256,57 +284,81 @@ class Player {
       // 水平距離
       const distXToPlayer = Math.abs(platforms[index].x - playerX);
 
-      
-            
+
+
       // 玩家似乎身高為60 ，超過玩家高度的不考量
       if (distToPlayer <= 0) {
         continue;
       }
 
       // 忽略正再碰觸的當下地板
-      if(this.player.touchOn)
-      {        
+      if (this.player.touchOn) {
         isTouched = 1;
 
-        if(this.player.touchOn == platforms[index])
-        {
+        if (this.player.touchOn == platforms[index]) {
           continue;
         }
       }
 
       if (distToPlayer < closestDist) {
         closestDist = distToPlayer;
-        closestPlatform = platforms[index];        
+        closestPlatform = platforms[index];
       }
 
       //水平距離最近的 平台
       if (distXToPlayer < closestXDist) {
         closestXDist = distXToPlayer;
-        closestPlatXform = platforms[index];        
+        closestPlatXform = platforms[index];
       }
 
 
     }
 
-    
+    // Find the closest platform
+    for (let index = 0; index < chopsticksList.length; index++) {
+      // 高度距離
+      const distToPlayer = chopsticksList[index].y - playerY;
 
+      // 玩家似乎身高為60 ，超過玩家高度的不考量
+      if (distToPlayer <= 0) {
+        continue;
+      }
+
+      // 忽略正再碰觸的當下筷子
+      if (this.player.touchChopsticksOn) {
+        if (this.player.touchChopsticksOn == chopsticksList[index]) {
+          continue;
+        }
+      }
+
+      if (distToPlayer < closestDist) {
+        closestDist = distToPlayer;
+        closestChopsticks = chopsticksList[index];
+      }
+    }
+
+
+    //各種 輸入可能性
     // If no platform appears yet, use these values
     let platformY = gameHeight,
       platformX = 400,
       platXformY = gameHeight,
       platXformX = 400,
-      platCenter =400,
-      platXCenter =400,      
+      platCenter = 400,
+      platXCenter = 400,
       distToPlatformLeftEdge = 0,
       distToPlatformRightEdge = 0,
       platformType = 0,
       playerNowLife = 0,
-      playerFromCenter = 0,      
+      playerFromCenter = 0,
       playerOnLeft = 0,
       playerOnRight = 0,
       playerGoLeft = 0,
       playerGoRight = 0,
-      lastChance = 0;
+      lastChance = 0,
+      chopsticksY = gameHeight, // Y方向最近筷子資訊
+      chopsticksX = 400;
+    ;
 
 
     if (closestPlatform) {
@@ -316,7 +368,7 @@ class Player {
       platformX = x;
 
       // 平台中心位置
-      platCenter = platformX +width/2;
+      platCenter = platformX + width / 2;
 
       // 增加視線濾鏡 確定小朋友所見
       // closestPlatform.tint = 0xff00ff;
@@ -327,16 +379,14 @@ class Player {
       platformType = platformCode[closestPlatform.platformType];
 
 
-      if((x+width/2)> (playerX + playerWidth/2))
-      {
+      if ((x + width / 2) > (playerX + playerWidth / 2)) {
         playerGoLeft = 0;
         playerGoRight = 1;
 
         // 綠
         // this.player.tint = 0x42f54e;
       }
-      if((x+width/2)< (playerX + playerWidth/2))
-      {
+      if ((x + width / 2) < (playerX + playerWidth / 2)) {
         playerGoLeft = 1;
         playerGoRight = 0;
 
@@ -347,28 +397,33 @@ class Player {
 
     if (closestPlatXform) {
       const { x, y, width } = closestPlatXform;
-     
+
       platXformY = y;
 
       platXformX = x;
 
       // 平台中心位置
-      platXCenter = platXformX +width/2;
+      platXCenter = platXformX + width / 2;
 
       // 增加視線濾鏡 確定小朋友所見
       // closestPlatXform.tint = 0xFF6F61;      
     }
 
+    if (closestChopsticks) {
+      const { x, y, width } = closestChopsticks;
 
-    if(this.player.touchOn)
-    {
-      if((this.player.touchOn.x + this.player.touchOn.width/2)> playerX + playerWidth/2)
-      {
+      chopsticksY = y;
+
+      chopsticksX = x;
+    }
+
+
+    if (this.player.touchOn) {
+      if ((this.player.touchOn.x + this.player.touchOn.width / 2) > playerX + playerWidth / 2) {
         playerOnLeft = 1;
         playerOnRight = 0;
       }
-      if((this.player.touchOn.x + this.player.touchOn.width/2)< playerX + playerWidth/2)
-      {
+      if ((this.player.touchOn.x + this.player.touchOn.width / 2) < playerX + playerWidth / 2) {
         playerOnLeft = 0;
         playerOnRight = 1;
       }
@@ -379,7 +434,7 @@ class Player {
     // 腳色距離中線多遠
     // playerFromCenter = Math.abs(playerX -gameWidth/2);
 
-    playerFromCenter = playerX -gameWidth/2;
+    playerFromCenter = playerX - gameWidth / 2;
 
 
     // Normalize data
@@ -390,16 +445,20 @@ class Player {
 
     platformX = this.normalize(platformX, gameWidth);
 
+    chopsticksY = this.normalize(chopsticksY, gameHeight);
+
+    chopsticksX = this.normalize(chopsticksX, gameHeight);
+
     platCenter = this.normalize(platCenter, gameWidth);
 
     platXCenter = this.normalize(platXCenter, gameWidth);
 
-    playerFromCenter = this.normalize(playerFromCenter, gameWidth/2);
+    playerFromCenter = this.normalize(playerFromCenter, gameWidth / 2);
 
     distToPlatformLeftEdge = this.normalize(distToPlatformLeftEdge, gameWidth);
-    distToPlatformRightEdge = this.normalize(distToPlatformRightEdge,gameWidth);
+    distToPlatformRightEdge = this.normalize(distToPlatformRightEdge, gameWidth);
 
-    playerNowLife = this.normalize(this.player.life,10);
+    playerNowLife = this.normalize(this.player.life, 10);
 
 
     // if(this.player.life <3)
@@ -413,7 +472,7 @@ class Player {
       playerX,
       // platformX,        
       // platformY,
-      platCenter,    
+      platCenter,
       // isTouched,
       // distToPlatformLeftEdge,
       // distToPlatformRightEdge,
@@ -422,7 +481,9 @@ class Player {
       playerGoLeft,
       playerGoRight,
       platformType,
-      playerFromCenter
+      playerFromCenter,
+      chopsticksY,
+      chopsticksX
     );
   }
 
@@ -484,7 +545,7 @@ class Player {
 
   clone() {
     //Returns a copy of this player
-    let clone = new Player(this.familyName, this.gen,this.species);
+    let clone = new Player(this.familyName, this.gen, this.species);
     clone.brain = this.brain.clone();
     return clone;
   }
@@ -532,7 +593,7 @@ class Player {
 
   crossover(parent) {
     //Produce a child
-    let child = new Player(this.familyName, this.gen,this.species);
+    let child = new Player(this.familyName, this.gen, this.species);
     if (parent.fitness < this.fitness)
       child.brain = this.brain.crossover(parent.brain);
     else child.brain = parent.brain.crossover(this.brain);
@@ -567,7 +628,7 @@ class Player {
         // this.player.life -= 10;
 
         this.healthBar.text = this.generateHealthBar(this.player.life);
-        
+
         // 受傷紅光
         // game.camera.flash(0xff0000, 100);        
         gec.cameraFlash(0xff0000, 100);
@@ -585,10 +646,9 @@ class Player {
   }
 
 
-  checkleftWalls(){
+  checkleftWalls() {
     // 直接讓牆殺小朋友，強迫小朋友學習不要靠牆
-    if (this.player.body.x < 20)
-    {
+    if (this.player.body.x < 20) {
       this.player.life -= 10;
       this.healthBar.text = this.generateHealthBar(this.player.life);
       if (this.player.life <= 0 && !this.dead) {
@@ -596,14 +656,13 @@ class Player {
         this.dead = true;
 
         console.log("leftWalls to death!");
-      }      
-    }    
+      }
+    }
   }
 
-  checkrightWalls(){
+  checkrightWalls() {
     // 直接讓牆殺小朋友，強迫小朋友學習不要靠牆
-    if (this.player.body.x > 715)
-    {
+    if (this.player.body.x > 715) {
       this.player.life -= 10;
       this.healthBar.text = this.generateHealthBar(this.player.life);
       if (this.player.life <= 0 && !this.dead) {
@@ -611,8 +670,8 @@ class Player {
         this.dead = true;
 
         console.log("rightWalls to death!");
-      }      
-    }   
+      }
+    }
   }
 
 
@@ -662,7 +721,8 @@ class Player {
     if (x == 0 && y != 0) {
       player.animations.play("fly");
     }
-    if (x == 0 && y == 0) {
+    // 若沒有這一個 && !this.isPlayingAnimation ，市議員的夾屁股 很容易被站立取代
+    if (x == 0 && y == 0 && !this.isPlayingAnimation) {
       player.frame = 8;
     }
   }
@@ -714,10 +774,8 @@ class Player {
       }
       player.life -= 3;
 
-
-
       player.touchOn = platform;
-      
+
       // 受傷紅光
       // game.camera.flash(0xff0000, 100);      
       gec.cameraFlash(0xff0000, 100);
@@ -743,7 +801,7 @@ class Player {
 
 
       player.touchOn = platform;
-      
+
       // 受傷紅光
       // game.camera.flash(0xff0000, 100);      
       gec.cameraFlash(0xff0000, 100);
@@ -789,6 +847,66 @@ class Player {
     }
   }
 
+  // 觸碰筷子效果
+  chopsticksEffect(player, platform) {
+
+    if (player.touchChopsticksOn !== platform) {
+
+      player.touchChopsticksOn = platform;
+
+      // 取得筷子數增加
+      this.gotChopsticks++;
+
+      if(this.species == 0)
+      {
+        // 系統可能會承受不住，一開始一團人吃到筷子
+        // // 隨機播放 韓導金句100
+        // var rand = 1+ Math.floor(Math.random()*99);
+        // if (!hanVoices[(rand)].isPlaying) {
+        //   hanVoices[(rand)].play();
+        // }        
+        // 藍軍碰觸筷子 可以加三血
+        player.life =player.life +3;
+
+
+      }
+
+
+
+    }
+  }
+
+  // 觸碰夾筷子平台
+  cutEffect(player, platform) {
+
+    if (player.touchOn !== platform) {
+
+      if (!cut.isPlaying) {
+        cut.play(); // 夾筷子音效
+      }
+      if (!cutDone.isPlaying) {
+        cutDone.play(); // 夾筷子得分音效
+      }
+                       
+      this.cutChopsticks = this.gotChopsticks;
+      
+      this.gotChopsticks = 0;
+
+      player.touchOn = platform;
+
+      this.isPlayingAnimation = true;
+
+      player.animations.add("cut", [26, 35, 44], 6,true);
+      player.animations.play("cut");
+
+      setTimeout(() => {
+
+        this.isPlayingAnimation = false;
+      }, 1000);
+    }
+  }
+
+
   // Effects
   effect(player, platform) {
     if (platform.key == "conveyorRight") {
@@ -808,6 +926,16 @@ class Player {
     }
     if (platform.key == "fake") {
       this.fakeEffect(player, platform);
+    }
+    if (platform.key == "chopsticks") {
+      this.chopsticksEffect(player, platform);
+    }
+
+    
+    // 持有筷子 的市議員專用，有筷子才能夾
+    if (platform.key == "cutPlate" && this.species == 3 && this.gotChopsticks >0) {
+
+      this.cutEffect(player, platform);
     }
   }
 

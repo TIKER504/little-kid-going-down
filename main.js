@@ -17,7 +17,11 @@ var game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, "", {
 // var player;
 var keyboard;
 
+// 平台群集
 var platforms = [];
+
+// 筷子群集
+var chopsticksList = [];
 
 var leftWalls = [];
 var rightWalls = [];
@@ -75,7 +79,9 @@ let conveyorSound,
   born,
   rageSound,
   explosion,
-  cheerfulAnnoyance
+  cheerfulAnnoyance,
+  cut,
+  cutDone
   ;
 
 // 韓導語錄
@@ -293,6 +299,30 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
    hanVoices[(1+ Math.floor(Math.random()*99))].play();
   }
 
+  if(message==="PogChamp")
+  {
+   // C家族新成員
+   populationChiu.newMember(user, 3);
+
+   if (!cut.isPlaying) {
+    cut.play(); // 夾筷子音效
+  }
+
+   ComfyJS.Say(user+'加入市議員新生兒');
+  }
+
+  if(message==="PogChamp PogChamp")
+  {
+    // C家族隨機殺成員
+    populationChiu.kill();
+    
+    ComfyJS.Say(user+'剷除一名市議員');
+
+  }
+
+
+   
+
 
   if(message==="BibleThump")
   {
@@ -442,7 +472,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
     ComfyJS.Say('來自:' +creepNameList.join("、")+'的負能量，積壓已久民怨化作怪物誕生!!!其學會了現在最厲害小朋友的思路，且無懼於任何機關陷阱， 小心爆炸!!!');
 
-    populationMoster = new Population(1, "Danger!!!", 2,true);
+    populationMoster = new Population(1, creepNameList.join(" & "), 2,true);
 
     // 複製目前存活AI 避免弱智新生兒 拖累進度
     populationMoster.copyAliveBrain();
@@ -460,10 +490,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
 
   }
-
-
    
-
 }
 
 
@@ -484,6 +511,9 @@ function preload() {
   game.load.spritesheet("img_explosion", "explosion.png", 32, 32);
 
   game.load.spritesheet("killmark", "killmark.png", 32, 32);
+
+  // 筷子
+  game.load.spritesheet("chopsticks", "chopsticks.png", 32, 32);
   
 
   //按鈕
@@ -495,6 +525,8 @@ function preload() {
   game.load.image("normal", "normal.png");
   game.load.image("nails", "nails.png");
 
+  game.load.image("cutPlate", "cutPlate.png"); // 切筷子專用
+
   game.load.image("rage", "rage.png");
   game.load.image("smallceiling", "smallceiling.png");
 
@@ -502,7 +534,7 @@ function preload() {
   game.load.image("LUL", "LUL.png");
   game.load.image("BibleThump", "BibleThump.png");
   game.load.image("ssssss", "ssssss.png");
-
+  
   game.load.image("logo_player0", "logo_player0.png");
   game.load.image("kill_player0", "kill_player0.png");
   
@@ -541,6 +573,8 @@ function preload() {
   game.load.audio("rageSound", "/sounds/rageSound.mp3");
   game.load.audio("explosion", "/sounds/explosion.mp3");
   game.load.audio("cheerfulAnnoyance", "/sounds/CheerfulAnnoyance.mp3");
+  game.load.audio("cut", "/sounds/cut.mp3");
+  game.load.audio("cutDone", "/sounds/cutDone.mp3");
   
   
 
@@ -627,11 +661,11 @@ function create() {
   // Create population 
   // population = new Population(200);
 
-  populationHan = new Population(20, "BOT", 0);
+  populationHan = new Population(50, "BOT", 0);
 
-  populationTsai = new Population(20, "BOT", 1);
+  populationTsai = new Population(50, "BOT", 1);
 
-  populationChiu =  new Population(20, "BOT", 3);
+  populationChiu =  new Population(50, "BOT", 3);
 
   // 先後順序會影像 影像前後，後放的可以蓋過前面
   populations.push(populationTsai);
@@ -786,8 +820,10 @@ function update() {
 
 
   updatePlatforms();
+  updateChopSticks(); // 更新筷子 資訊
 
   createPlatforms();
+  createChopsticks(); // 創建筷子
 
   // 群眾憤怒
   // if(rage)
@@ -848,6 +884,8 @@ function addAudio() {
   rageSound = game.add.audio("rageSound");
   explosion = game.add.audio("explosion");
   cheerfulAnnoyance = game.add.audio("cheerfulAnnoyance");
+  cut = game.add.audio("cut");
+  cutDone = game.add.audio("cutDone");
 
     // 批次加入韓導聲音
     for (var i = 1; i < 100 ;i ++) {
@@ -916,8 +954,29 @@ function createPlatforms() {
   updateDistance();
 }
 
+function createChopsticks() {
+  // console.log(platforms);
+  // Find the last platform created and keep distance
+  const lastChopsticks = chopsticksList[chopsticksList.length - 1];
+  if (lastChopsticks) {
+    const { y } = lastChopsticks;
+
+    const movedBy = gameHeight - y;
+    if (movedBy > 100) {
+      createOneChopsticks();
+    }
+
+    return;
+  } 
+  createOneChopsticks();
+
+}
+
+
+
 function updateDistance() {
   createOnePlatform();
+
   distance += 1;
   score.innerHTML = distance;
 
@@ -997,7 +1056,10 @@ function createOnePlatform() {
 
   let platformType = "normal";
 
-  if (rand < 50) {
+  if (rand < 10) {
+    platform = game.add.sprite(x, y, "cutPlate");
+  }
+  else if (rand < 50) {
     platform = game.add.sprite(x, y, "normal");
   }
   else if (rand < 60) {
@@ -1051,6 +1113,35 @@ function createOnePlatform() {
   platforms.push(platform);
 }
 
+function createOneChopsticks() {
+  var chopsticks;
+  var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale;
+  
+  // var y = gameHeight; // 用這個的話，筷子永遠跟某一個板塊平行
+ 
+  var y = gameHeight + Math.random() * gameHeight;
+  var rand = Math.random() * 100;
+  
+  // if (rand < 90) {
+  //   chopsticks = game.add.sprite(x, y, "chopsticks");
+  // }
+
+  // 只有一種筷子好像也不必用機率分布來算
+  chopsticks = game.add.sprite(x, y, "chopsticks");
+  
+  chopsticks.scale.setTo(scale, scale);
+  game.physics.arcade.enable(chopsticks);
+  chopsticks.body.immovable = true;
+
+  // platform.body.checkCollision.down = false;
+  // platform.body.checkCollision.left = false;
+  // platform.body.checkCollision.right = false;
+  // platform.platformType = platformType;
+  chopsticks.platformType = 'chopsticks';
+  
+  chopsticksList.push(chopsticks);
+}
+
 function createTextsBoard() {
   var style = { fill: "#ff0000", fontSize: "20px" };
   text3 = game.add.text(
@@ -1080,6 +1171,24 @@ function updatePlatforms() {
   }
 }
 
+function updateChopSticks() {
+  for (var i = 0; i < chopsticksList.length; i++) {
+    var chopsticks = chopsticksList[i];
+
+    // 地板移動速度 受到常數加成
+    chopsticks.body.position.y -= 2 * gameSpeed;
+
+    if (chopsticks.body.position.y <= -32) {
+      chopsticks.destroy();
+      chopsticksList.splice(i, 1);
+    }
+    if (chopsticks.Explodede) {
+      chopsticks.destroy();
+      chopsticksList.splice(i, 1);
+    }
+  }
+}
+
 function gameOver() {
   text3.visible = true;
   isStabbedToDeath = false;
@@ -1096,6 +1205,13 @@ function restart() {
     s.destroy();
   });
   platforms = [];
+  
+  chopsticksList.forEach(function (s) {
+    s.destroy();
+  });
+  chopsticksList = [];
+
+  
   distance = 0;
   breakNewRocord = false;
 
@@ -1182,7 +1298,7 @@ function checkNewRank() {
 
     logo_player.scale.setTo(2,2);
 
-    var familyName = game.add.text(1140,200 + i*100, rankList[i].familyName, textStyleII);    
+    var familyName = game.add.text(1140,200 + i*100, rankList[i].familyName + " " +generation.innerHTML +"世", textStyleII);    
 
     var score = game.add.text(1220,160+ i*100,+ rankList[i].score, textStyleI);    
 
