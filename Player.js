@@ -592,8 +592,8 @@ class Player {
   }
 
   crossover(parent) {
-    //Produce a child
-    let child = new Player(this.familyName, this.gen, this.species);
+    //Produce a child (代數+1)
+    let child = new Player(this.familyName, this.gen +1, this.species);
     if (parent.fitness < this.fitness)
       child.brain = this.brain.crossover(parent.brain);
     else child.brain = parent.brain.crossover(this.brain);
@@ -677,7 +677,7 @@ class Player {
 
   checkFellPlayer() {
     if (this.player.body.y > gameHeight + 100 && !this.dead) {
-      fallSound.play();
+      // fallSound.play();
       console.log("fell to death");
       this.dead = true;
 
@@ -690,11 +690,30 @@ class Player {
   }
 
   goLeft() {
-    this.player.body.velocity.x = -(gameWidth / 3.2);
+    
+    // 綠軍的速度
+    if(this.species ==1)
+    {
+      this.player.body.velocity.x = -(gameWidth / 1.6);
+    }
+    else
+    {
+      this.player.body.velocity.x = -(gameWidth / 3.2);
+    }
+    
   }
 
   goRight() {
-    this.player.body.velocity.x = gameWidth / 3.2;
+        
+    // 綠軍的速度
+    if(this.species ==1)
+    {
+      this.player.body.velocity.x = gameWidth / 1.6;
+    }
+    else
+    {
+      this.player.body.velocity.x = gameWidth / 3.2;
+    }
   }
 
   updatePlayer() {

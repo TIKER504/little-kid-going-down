@@ -782,11 +782,11 @@ function update() {
 
   // deadnumber.innerHTML = turnDead;
 
-  deadnumberG.innerHTML = populationHan.turnDead;
-  deadnumberB.innerHTML = populationTsai.turnDead;
+  deadnumberG.innerHTML = populationTsai.turnDead;
+  deadnumberB.innerHTML = populationHan.turnDead;
 
-  numberG.innerHTML = populationHan.nowAlive;
-  numberB.innerHTML = populationTsai.nowAlive;
+  numberG.innerHTML = populationTsai.nowAlive;
+  numberB.innerHTML = populationHan.nowAlive;
 
   var allDone = 0;
 
@@ -1298,7 +1298,7 @@ function checkNewRank() {
 
     logo_player.scale.setTo(2,2);
 
-    var familyName = game.add.text(1140,200 + i*100, rankList[i].familyName + " " +generation.innerHTML +"世", textStyleII);    
+    var familyName = game.add.text(1140,200 + i*100, rankList[i].familyName + " " + rankList[i].gen +" 世", textStyleII);    
 
     var score = game.add.text(1220,160+ i*100,+ rankList[i].score, textStyleI);    
 
