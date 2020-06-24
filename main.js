@@ -108,6 +108,7 @@ var gec = new GameEffectCenter();
 
 // 遊戲速度常數
 var gameSpeed = 1.5;
+// var gameSpeed = 1.0;
 
 // 群眾的憤怒
 let rage;
@@ -251,6 +252,59 @@ ComfyJS.onCommand = (user, command, message, flags, extra) => {
 ComfyJS.onChat =( user, message, flags, self, extra )=>
 {
   console.log( message +" was typed in chat" + "(" + user + ")");
+
+  //代幣系列
+
+
+  // 加入綠軍
+  if(extra.customRewardId==='f43a4039-41c0-45b4-bb87-71e2ddf1d91f')
+  {
+   // G家族新成員
+   populationTsai.newMember(user, 1);
+
+   ComfyJS.Say(user+'加入綠軍新生兒');
+  
+   // 隨機播放 小英金句
+   tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
+  }
+
+  // 加入藍軍
+  if(extra.customRewardId==='44227033-e641-4450-be45-d402dc0e111d')
+  {
+    // B家族新成員
+    populationHan.newMember(user, 0);
+
+    ComfyJS.Say(user+'加入藍軍新生兒');
+
+    // 隨機播放 韓導金句100
+    hanVoices[(1+ Math.floor(Math.random()*99))].play();
+  }
+
+  
+
+  // 人民的法槌
+  if(extra.customRewardId==='b901ce1d-a862-4362-aadb-c553310eee1f')
+  {
+    rage = game.add.sprite(0,0, "rage");
+    game.physics.arcade.enable(rage);
+    // rage.body.immovable = true;
+    rage.body.gravity.y = gameHeight;
+    
+    var name = new Phaser.Text(game, 3, -60,user+"表示:" + message , {
+      fontSize: 80,
+      // fontWeight: "thin",
+      align: "center",
+      fill: "white",
+    });
+
+    rage.addChild(name);
+              
+    rageSound.play();
+
+    ComfyJS.Say(user +'一氣之下直接花費小朋友幣召喚天降之槌');
+  }
+
+
 
   if(message==="LUL")
   {
@@ -1116,6 +1170,8 @@ function createOnePlatform() {
 function createOneChopsticks() {
   var chopsticks;
   var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale;
+
+  
   
   // var y = gameHeight; // 用這個的話，筷子永遠跟某一個板塊平行
  
