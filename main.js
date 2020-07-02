@@ -4,7 +4,7 @@ const gameHeight = 800;
 const scale = 2;
 
 // 畫布寬度
-const canvasWidth = 1400;
+const canvasWidth = 1800;
 const canvasHeight = 800;
 
 
@@ -26,6 +26,8 @@ var chopsticksList = [];
 var leftWalls = [];
 var rightWalls = [];
 var ceilings = [];
+
+var otherPlates = [];
 
 var distance = 0;
 var turnDead = 0;
@@ -122,13 +124,6 @@ const rageNumber = document.getElementById("rageNumber");
 const generation = document.getElementById("generation");
 const record = document.getElementById("record");
 // const deadnumber = document.getElementById("deadnumber");
-
-const deadnumberG = document.getElementById("deadnumberG");
-const deadnumberB = document.getElementById("deadnumberB");
-
-const numberG = document.getElementById("numberG");
-const numberB = document.getElementById("numberB");
-
 
 var muteBtn, cameraEffectBtn;
 
@@ -227,9 +222,6 @@ ComfyJS.onCommand = (user, command, message, flags, extra) => {
       // rage.body.immovable = true;
       rage.body.gravity.y = gameHeight;
 
-
-
-3
 
       var name = new Phaser.Text(game, 3, -60,rageNameList.join(",") , {
         fontSize: 50,
@@ -579,7 +571,7 @@ function preload() {
   game.load.image("normal", "normal.png");
   game.load.image("nails", "nails.png");
 
-  game.load.image("cutPlate", "cutPlate.png"); // 切筷子專用
+  game.load.image("normal400", "normal400.png");
 
   game.load.image("rage", "rage.png");
   game.load.image("smallceiling", "smallceiling.png");
@@ -627,69 +619,25 @@ function preload() {
   game.load.audio("rageSound", "/sounds/rageSound.mp3");
   game.load.audio("explosion", "/sounds/explosion.mp3");
   game.load.audio("cheerfulAnnoyance", "/sounds/CheerfulAnnoyance.mp3");
-  game.load.audio("cut", "/sounds/cut.mp3");
-  game.load.audio("cutDone", "/sounds/cutDone.mp3");
+
   
   
 
   // 批次讀取韓導聲音
   for (var i = 1; i < 100 ;i ++) {
 
-    game.load.audio("hanVoice (" + i +")", "/sounds/hanVoice/hanVoice (" + i +").mp3");
+    // game.load.audio("hanVoice (" + i +")", "/sounds/hanVoice/hanVoice (" + i +").mp3");
     
   }
 
   // 批次讀取小英聲音
   for (var i = 1; i < 11 ;i ++) {
 
-    game.load.audio("tsaiVoice (" + i +")", "/sounds/tsaiVoice/tsaiVoice (" + i +").mp3");
+    // game.load.audio("tsaiVoice (" + i +")", "/sounds/tsaiVoice/tsaiVoice (" + i +").mp3");
     
   }
 
 
-}
-
-// 重新將ｉｍｇ指定色塊轉換顏色用工具，目前只能單一色塊，之後研究一下該如何指定模糊的色群集一起更換
-function recolorImage(img, oldRed, oldGreen, oldBlue, newRed, newGreen, newBlue) {
-
-  var c = document.createElement('canvas');
-  var ctx = c.getContext("2d");
-  var w = img.width;
-  var h = img.height;
-
-  c.width = w;
-  c.height = h;
-
-  // draw the image on the temporary canvas
-  ctx.drawImage(img, 0, 0, w, h);
-
-  // pull the entire image into an array of pixel data
-  var imageData = ctx.getImageData(0, 0, w, h);
-
-  // examine every pixel, 
-  // change any old rgb to the new-rgb
-  for (var i = 0; i < imageData.data.length; i += 4) {
-    // is this pixel the old rgb?
-    if (imageData.data[i] == oldRed && imageData.data[i + 1] == oldGreen && imageData.data[i + 2] == oldBlue) {
-      // change to your new rgb
-      imageData.data[i] = newRed;
-      imageData.data[i + 1] = newGreen;
-      imageData.data[i + 2] = newBlue;
-    }
-  }
-  // put the altered data back on the canvas  
-  ctx.putImageData(imageData, 0, 0);
-  // put the re-colored image back on the image
-  var img1 = document.getElementById("image1");
-  img1.src = c.toDataURL('image/png');
-
-  // var s =  c.toDataURL('newplayer.png')
-
-  // var img1 = new Image();
-  // img1.src = c.toDataURL('newplayer.png');
-
-  // window.win = open(img1);
-  // setTimeout('win.document.execCommand("SaveAs")', 0);
 }
 
 function create() {
@@ -732,17 +680,17 @@ function create() {
 
 
   // 靜音按鈕
-  muteBtn = game.add.button(950, 50, 'muteBtn', muteBtnOnClick, this, 2, 1, 0);
+  muteBtn = game.add.button(1600, 50, 'muteBtn', muteBtnOnClick, this, 2, 1, 0);
   muteBtn.scale.setTo(0.3, 0.3);
 
   // 關閉鏡頭特效按鈕
-  cameraEffectBtn = game.add.button(900, 30, 'cameraEffectBtn', cameraEffectBtnOnClick, this, 0, 0, 0);
+  cameraEffectBtn = game.add.button(1650, 30, 'cameraEffectBtn', cameraEffectBtnOnClick, this, 0, 0, 0);
   cameraEffectBtn.scale.setTo(0.7, 0.7);
 
   //指令文字
   var textStyle= { font: "bold 48px Gothic", fill: "#ffffff", align:"center"};
-  var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
-  game.add.text(800,100, "指令:", textStyle);
+  // var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
+  // game.add.text(800,100, "指令:", textStyle);
   // game.add.text(800,160, "!join_b", textStyleI);
   // game.add.text(800,210, "!join_g", textStyleI);
   // game.add.text(800,260, "!kill_b", textStyleI);
@@ -751,59 +699,10 @@ function create() {
   
   //遊戲背景顏色
   game.stage.backgroundColor = "#4488AA";
-
-
-  img_Kappa = game.add.sprite(800,160, 'kappa');
-  img_Kappa.scale.setTo(0.20, 0.20);
-
-  game.add.text(890,180, "          =", textStyleI);
-
-  game.add.sprite(1010,160, 'logo_player0').scale.setTo(2,2);;
-
-  game.add.sprite(800,260, 'kappa').scale.setTo(0.20, 0.20);
-  game.add.sprite(870,260, 'kappa').scale.setTo(0.20, 0.20);
-
-  game.add.text(890,280, "          =", textStyleI);
-  
-  game.add.sprite(1010,260, 'kill_player0').scale.setTo(2,2);;
-  
-
-  img_LUL = game.add.sprite(800,360, 'LUL');
-  img_LUL.scale.setTo(0.20, 0.20);
-
-  game.add.text(890,380, "          =", textStyleI);
-
-  game.add.sprite(1010,360, 'logo_player1').scale.setTo(2,2);;
-
-  game.add.sprite(800,460, 'LUL').scale.setTo(0.20, 0.20);;
-  game.add.sprite(870,460, 'LUL').scale.setTo(0.20, 0.20);;
-
-  game.add.text(890,480, "          =", textStyleI);
-
-  game.add.sprite(1010,460, 'kill_player1').scale.setTo(2,2);;
-
-  img_BibleThump = game.add.sprite(800,560, 'BibleThump');
-  img_BibleThump.scale.setTo(0.20, 0.20);
-
-  game.add.text(890,580, "X 20  =", textStyleI);
-
-  game.add.sprite(1010,580, 'smallceiling').scale.setTo(2,2);;
-
-  img_ssssss = game.add.sprite(800,660, 'ssssss');
-  img_ssssss.scale.setTo(0.20, 0.20);
-
-  game.add.text(890,680, "X 2  =", textStyleI);
-
-  game.add.sprite(1010,680, 'logo_player2').scale.setTo(2,2);;
-
   
   // 排名系統
-  game.add.text(1100,100, "最佳排名:", textStyle);
-
-
+  game.add.text(1500,100, "最佳排名:", textStyle);
   
-
-
 }
 
 function update() {
@@ -836,11 +735,7 @@ function update() {
 
   // deadnumber.innerHTML = turnDead;
 
-  deadnumberG.innerHTML = populationTsai.turnDead;
-  deadnumberB.innerHTML = populationHan.turnDead;
 
-  numberG.innerHTML = populationTsai.nowAlive;
-  numberB.innerHTML = populationHan.nowAlive;
 
   var allDone = 0;
 
@@ -860,7 +755,6 @@ function update() {
   // 兩個家族都死光 (有時有怪物時 會大於2)
   if (allDone >=populations.length) {
     // Restart because this generation all died
-
 
     // recolorImage(img,255,255,0,11,28,214)
 
@@ -886,9 +780,7 @@ function update() {
   //     rage.destroy();      
   //   }    
   // }
-
-  rageNumber.innerText = rageNameList.length;
-  
+    
 }
 
 function updateLifeBar() {
@@ -962,10 +854,12 @@ function addAudio() {
 
 function createBounders() {
   const ceilingWidth = 400;
-  const numberOfCeilings = Math.round(gameWidth / ceilingWidth);
+  // const numberOfCeilings = Math.round(gameWidth / ceilingWidth);
+
+  const numberOfCeilings = 1;
 
   for (let index = 0; index < numberOfCeilings; index++) {
-    let ceiling = game.add.sprite(ceilingWidth * index, 0, "ceiling");
+    let ceiling = game.add.sprite(400 + ceilingWidth * index, 0, "ceiling");
     ceiling.scale.setTo(scale, scale);
     game.physics.arcade.enable(ceiling);
     ceiling.body.immovable = true;
@@ -975,18 +869,33 @@ function createBounders() {
   const wallHeight = 400;
   const numberOfWalls = Math.round(gameHeight / 400);
   for (let index = 0; index < numberOfWalls; index++) {
-    let leftWall = game.add.sprite(0, wallHeight * index, "wall");
+    // let leftWall = game.add.sprite(0, wallHeight * index, "wall");
+
+    let leftWall = game.add.sprite(400, wallHeight * index, "wall");
+
     game.physics.arcade.enable(leftWall);
     leftWall.body.immovable = true;
 
     leftWalls.push(leftWall);
 
-    let rightWall = game.add.sprite(gameWidth - 17, wallHeight * index, "wall");
+    // let rightWall = game.add.sprite(gameWidth - 17, wallHeight * index, "wall");
+
+    let rightWall = game.add.sprite(400 + gameWidth - 17, wallHeight * index, "wall");
+
     game.physics.arcade.enable(rightWall);
     rightWall.body.immovable = true;
 
     rightWalls.push(rightWall);
   }
+
+  // 左上角平台
+  let normal400 = game.add.sprite(0, 300, "normal400");
+  // normal400.scale.setTo(scale, scale);
+  game.physics.arcade.enable(normal400);
+  normal400.body.immovable = true;
+
+  otherPlates.push(normal400);
+
 }
 
 var lastTime = 0;
@@ -1025,7 +934,6 @@ function createChopsticks() {
   createOneChopsticks();
 
 }
-
 
 
 function updateDistance() {
@@ -1104,16 +1012,13 @@ function updateDistance() {
 
 function createOnePlatform() {
   var platform;
-  var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale;
+  var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale +400;
   var y = gameHeight;
   var rand = Math.random() * 100;
 
   let platformType = "normal";
 
-  if (rand < 10) {
-    platform = game.add.sprite(x, y, "cutPlate");
-  }
-  else if (rand < 50) {
+  if (rand < 50) {
     platform = game.add.sprite(x, y, "normal");
   }
   else if (rand < 60) {
@@ -1169,7 +1074,7 @@ function createOnePlatform() {
 
 function createOneChopsticks() {
   var chopsticks;
-  var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale;
+  var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale + 400;
 
   
   
@@ -1348,15 +1253,15 @@ function checkNewRank() {
     // 自動印前五名
   for (let i = 0; i < rankList.length; i++) {
     // 排名
-    var rank = game.add.text(1100,160 + i*100, i+1 +".", textStyleI);    
+    var rank = game.add.text(1500,160 + i*100, i+1 +".", textStyleI);    
 
-    var logo_player = game.add.sprite(1140,160 + i*100, 'logo_player' + rankList[i].species);
+    var logo_player = game.add.sprite(1540,160 + i*100, 'logo_player' + rankList[i].species);
 
     logo_player.scale.setTo(2,2);
 
-    var familyName = game.add.text(1140,200 + i*100, rankList[i].familyName + " " + rankList[i].gen +" 世", textStyleII);    
+    var familyName = game.add.text(1540,200 + i*100, rankList[i].familyName + " " + rankList[i].gen +" 世", textStyleII);    
 
-    var score = game.add.text(1220,160+ i*100,+ rankList[i].score, textStyleI);    
+    var score = game.add.text(1620,160+ i*100,+ rankList[i].score, textStyleI);    
 
 
     rankObjectList.push(rank);

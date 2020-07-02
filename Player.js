@@ -24,7 +24,7 @@ class Player {
 
 
     // 依傳入的0、1家族而定
-    const player = game.add.sprite(gameWidth / 2, 50, "player" + species);
+    const player = game.add.sprite( 400 + gameWidth / 2, 50, "player" + species);
 
 
     player.scale.setTo(scale, scale);
@@ -1040,35 +1040,36 @@ class Player {
     }
   }
 
+  // 最新的 TLOM 用不到， 先註解起來
   // 觸碰夾筷子平台
-  cutEffect(player, platform) {
+  // cutEffect(player, platform) {
 
-    if (player.touchOn !== platform) {
+  //   if (player.touchOn !== platform) {
 
-      if (!cut.isPlaying) {
-        cut.play(); // 夾筷子音效
-      }
-      if (!cutDone.isPlaying) {
-        cutDone.play(); // 夾筷子得分音效
-      }
+  //     if (!cut.isPlaying) {
+  //       cut.play(); // 夾筷子音效
+  //     }
+  //     if (!cutDone.isPlaying) {
+  //       cutDone.play(); // 夾筷子得分音效
+  //     }
                        
-      this.cutChopsticks = this.gotChopsticks;
+  //     this.cutChopsticks = this.gotChopsticks;
       
-      this.gotChopsticks = 0;
+  //     this.gotChopsticks = 0;
 
-      player.touchOn = platform;
+  //     player.touchOn = platform;
 
-      this.isPlayingAnimation = true;
+  //     this.isPlayingAnimation = true;
 
-      player.animations.add("cut", [26, 35, 44], 6,true);
-      player.animations.play("cut");
+  //     player.animations.add("cut", [26, 35, 44], 6,true);
+  //     player.animations.play("cut");
 
-      setTimeout(() => {
+  //     setTimeout(() => {
 
-        this.isPlayingAnimation = false;
-      }, 1000);
-    }
-  }
+  //       this.isPlayingAnimation = false;
+  //     }, 1000);
+  //   }
+  // }
 
 
   // Effects
@@ -1096,11 +1097,11 @@ class Player {
     }
 
     
-    // 持有筷子 的市議員專用，有筷子才能夾
-    if (platform.key == "cutPlate" && this.species == 3 && this.gotChopsticks >0) {
+    // // 持有筷子 的市議員專用，有筷子才能夾
+    // if (platform.key == "cutPlate" && this.species == 3 && this.gotChopsticks >0) {
 
-      this.cutEffect(player, platform);
-    }
+    //   this.cutEffect(player, platform);
+    // }
   }
 
   destroy() {

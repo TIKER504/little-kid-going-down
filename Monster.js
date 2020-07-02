@@ -25,7 +25,9 @@ class Monster {
 
 
     // 依傳入的0、1家族而定
-    const player = game.add.sprite(gameWidth / 2, 50, "player" + species);
+    // const player = game.add.sprite(400+ gameWidth / 2, 50, "player" + species);
+
+    const player = game.add.sprite(0, 50, "player" + species);
 
 
     player.scale.setTo(scale, scale);
@@ -153,6 +155,7 @@ class Monster {
       ...leftWalls,
       ...rightWalls,
       ...ceilings,
+      ...otherPlates
     ]);
     
     game.physics.arcade.collide(this.player, [rage]);
