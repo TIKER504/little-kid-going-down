@@ -109,12 +109,13 @@ var gec = new GameEffectCenter();
 
 
 // 遊戲速度常數
-var gameSpeed = 1.5;
-// var gameSpeed = 1.0;
+// var gameSpeed = 1.5;
+var gameSpeed = 1.0;
 
 // 群眾的憤怒
 let rage;
 
+var alreadyDown;
 
 
 // Scoreboard elements
@@ -246,7 +247,6 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   console.log( message +" was typed in chat" + "(" + user + ")");
 
   //代幣系列
-
 
   // 加入綠軍
   if(extra.customRewardId==='f43a4039-41c0-45b4-bb87-71e2ddf1d91f')
@@ -566,6 +566,8 @@ function preload() {
   game.load.spritesheet('muteBtn', 'mute.png', 170, 150);
   game.load.spritesheet('cameraEffectBtn', 'cameraEffect.png', 100, 100);
 
+  game.load.image("background", "background.png");
+
   game.load.image("wall", "wall.png");
   game.load.image("ceiling", "ceiling.png");
   game.load.image("normal", "normal.png");
@@ -784,6 +786,26 @@ function update() {
   //     rage.destroy();      
   //   }    
   // }
+
+  
+  
+  // 創造怪物，(每一次的按壓上下算一次，避免一個FRAME 就被計算一次 )
+  if (keyboard.w.isDown){
+    if (!alreadyDown) {
+      populationMoster = new Population(10,'BOT', 2,true);
+
+      // 複製目前存活AI 避免弱智新生兒 拖累進度
+      populationMoster.copyAliveBrain();
+
+      populations.push(populationMoster);    
+       
+      alreadyDown = true;
+    }
+  }
+
+  if (keyboard.w.isUp) {
+    alreadyDown = false;
+  }
     
 }
 
@@ -857,6 +879,20 @@ function addAudio() {
 }
 
 function createBounders() {
+
+  // 增加背景
+  let background = game.add.tileSprite(0 ,0,1000,1000, "background");
+
+  background.scale.setTo(scale, scale);
+
+  
+
+  // background.autoScroll(-16);
+
+  background.autoScroll(0,-30);
+
+  // background.autoScroll(-16,-30);
+
   const ceilingWidth = 400;
   // const numberOfCeilings = Math.round(gameWidth / ceilingWidth);
 

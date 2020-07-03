@@ -163,7 +163,7 @@ class Monster {
             
           if (!populations[po].players[i].dead ) {      
               
-            game.physics.arcade.collide(this.player,populations[po].players[i].player);
+            game.physics.arcade.collide(this.player,populations[po].players[i].player,this.monsterEffect.bind(this));
           }             
         }
               
@@ -1149,6 +1149,43 @@ class Monster {
       this.chopsticksEffect(player, platform);
     }
   }
+
+    // monsterEffects
+    monsterEffect(monster, player) {
+      
+      // 碰到怪物短暫無敵時間，避免 連續判定
+      if (game.time.now > player.unbeatableTime) {
+      
+        player.unbeatableTime = game.time.now + 1000;
+
+          // 碰到扣3滴血
+        player.life -= 3;
+
+        // 受傷玩家 閃紅光
+        game.add.tween(player).to({
+          tint: 0xff3300,
+        }, 400, Phaser.Easing.Exponential.Out, true, 0, 0, true);
+        
+      }
+
+      // 碰觸怪物會擊退回彈
+      if(monster.x > player.x)
+      {        
+        player.x -= 3;
+        // player.body.velocity.x = -(gameWidth / 2);        
+      }
+      else
+      {
+        player.x += 3;
+        // player.body.velocity.x = (gameWidth / 2);     
+      }
+      
+
+      // if(player.life <=0)
+      // {
+      //   player.dead =true;
+      // }          
+    }
 
   Explodedeffect(explosion, platform)
   {

@@ -169,6 +169,14 @@ class Player {
 
     game.physics.arcade.collide(this.player, [rage]);
 
+    // 再次確認無血者死
+    if (this.player.life <= 0 && !this.dead) {
+      
+      this.dead = true;
+      
+    }
+
+
     if (!this.dead) {
       // this.score = distance; // 原本分數為跑了多少層
 
@@ -827,10 +835,15 @@ class Player {
 
         this.player.y = 50;
 
-        this.player.tint = 0xff3300;
+        // this.player.tint = 0xff3300;
 
         // 將Y 方向速度歸零，避免重生時 速度太快入場
         this.player.body.velocity.y =0;        
+
+        // 重生 閃紅光入場
+        game.add.tween(this.player).to({
+          tint: 0xff3300,
+        }, 200, Phaser.Easing.Exponential.Out, true, 0, 0, true);
         
       }
       else
