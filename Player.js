@@ -9,8 +9,6 @@ class Player {
 
     numOfPlayers++;
 
-
-
     // const player = game.add.sprite(gameWidth / 2, 50, "player");
 
     // 隨機從0~6 號　共7 個player 中選擇腳色外觀
@@ -102,10 +100,6 @@ class Player {
     this.player.addChild(name);
 
 
-
-
-
-
     this.fitness = 0;
     this.vision = []; //the input array fed into the neuralNet
     this.decision = []; //the out put of the NN
@@ -157,7 +151,6 @@ class Player {
     // 和板塊的碰撞事件
     if(game.physics.arcade.collide(this.player, platforms, this.effect.bind(this)))
     {
-
 
     }
     else
@@ -821,11 +814,30 @@ class Player {
 
 
   checkFellPlayer() {
+
     if (this.player.body.y > gameHeight + 100 && !this.dead) {
       // fallSound.play();
-      console.log("fell to death");
-      this.dead = true;
 
+      // 補償機制，若非一血衰落，會以一滴血重新開始
+      if(this.player.life >1)
+      {
+        this.player.life = 1;
+
+        this.player.x = 400 + gameWidth / 2; 
+
+        this.player.y = 50;
+
+        this.player.tint = 0xff3300;
+
+        // 將Y 方向速度歸零，避免重生時 速度太快入場
+        this.player.body.velocity.y =0;        
+        
+      }
+      else
+      {
+        console.log("fell to death");
+        this.dead = true;
+      }      
       // gameOver();
     }
   }

@@ -698,7 +698,11 @@ function create() {
   // game.add.text(800,360, "!rage", textStyleI);
   
   //遊戲背景顏色
-  game.stage.backgroundColor = "#4488AA";
+  // game.stage.backgroundColor = "#4488AA";
+
+  game.stage.backgroundColor = "#9044AA";
+
+  
   
   // 排名系統
   game.add.text(1500,100, "最佳排名:", textStyle);
@@ -1090,7 +1094,8 @@ function createOneChopsticks() {
   // 只有一種筷子好像也不必用機率分布來算
   chopsticks = game.add.sprite(x, y, "chopsticks");
   
-  chopsticks.scale.setTo(scale, scale);
+  // chopsticks.scale.setTo(scale, scale);
+  
   game.physics.arcade.enable(chopsticks);
   chopsticks.body.immovable = true;
 

@@ -25,9 +25,9 @@ class Monster {
 
 
     // 依傳入的0、1家族而定
-    // const player = game.add.sprite(400+ gameWidth / 2, 50, "player" + species);
+    const player = game.add.sprite(400+ gameWidth / 2, 50, "player" + species);
 
-    const player = game.add.sprite(0, 50, "player" + species);
+    // const player = game.add.sprite(0, 50, "player" + species);
 
 
     player.scale.setTo(scale, scale);
@@ -46,11 +46,7 @@ class Monster {
 
     
     this.player = player;
-
-
-    
-
-    
+        
     // var playerGoLeft = 0;
     // var playerGoRight = 0;
 
@@ -105,11 +101,7 @@ class Monster {
 
     this.player.addChild(name);
 
-
-
-    
-    
-
+      
     this.fitness = 0;
     this.vision = []; //the input array fed into the neuralNet
     this.decision = []; //the out put of the NN
@@ -124,7 +116,7 @@ class Monster {
 
     this.moveState = 0; // 0 = not moving, 1 = move left, 2 = move right
     // Inputs for vision, Outputs for actions
-    this.genomeInputs = 9;
+    this.genomeInputs = 12;
     this.genomeOutputs = 3;
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
 
@@ -159,6 +151,25 @@ class Monster {
     ]);
     
     game.physics.arcade.collide(this.player, [rage]);
+
+    // game.physics.arcade.collide(this.player, [...populations[0].players,...populations[1].players,...populations[2].players]);
+
+    // 檢驗活著玩家碰撞
+    for (let po = 0; po < populations.length-1; po++) {
+
+      if (!populations[po].done()) {
+        
+        for (let i = 0; i < populations[po].players.length; i++) {
+            
+          if (!populations[po].players[i].dead ) {      
+              
+            game.physics.arcade.collide(this.player,populations[po].players[i].player);
+          }             
+        }
+              
+      }       
+    }
+
 
     if (!this.dead) {
       this.score = distance;
@@ -217,10 +228,10 @@ class Monster {
     // distance to closest platform's left edge
     // disntace to closest platform's right edge
     // platform type
-    let { x: playerX, y: playerY ,width:playerWidth} = this.player;
+    let { x: playerX, y: playerY, width: playerWidth } = this.player;
 
     // 是否有接觸地板
-    var isTouched =0;
+    var isTouched = 0;
 
     // Only distinguish dangerous one and safe one
     // const platformCode = {
@@ -252,7 +263,7 @@ class Monster {
       fake: 0.8,
     };
 
-    let closestPlatform,closestPlatXform,closestChopsticks,
+    let closestPlatform, closestPlatXform, closestChopsticks,platform0,platform1,platform2,platform3,platform4,platform5,platform6,platform7,
       closestDist = gameHeight,
       closestXDist = gameWidth;
 
@@ -264,33 +275,31 @@ class Monster {
       // 水平距離
       const distXToPlayer = Math.abs(platforms[index].x - playerX);
 
-      
-            
+
+
       // 玩家似乎身高為60 ，超過玩家高度的不考量
       if (distToPlayer <= 0) {
         continue;
       }
 
       // 忽略正再碰觸的當下地板
-      if(this.player.touchOn)
-      {        
+      if (this.player.touchOn) {
         isTouched = 1;
 
-        if(this.player.touchOn == platforms[index])
-        {
+        if (this.player.touchOn == platforms[index]) {
           continue;
         }
       }
 
       if (distToPlayer < closestDist) {
         closestDist = distToPlayer;
-        closestPlatform = platforms[index];        
+        closestPlatform = platforms[index];
       }
 
       //水平距離最近的 平台
       if (distXToPlayer < closestXDist) {
         closestXDist = distXToPlayer;
-        closestPlatXform = platforms[index];        
+        closestPlatXform = platforms[index];
       }
 
 
@@ -319,27 +328,104 @@ class Monster {
       }
     }
 
-    
 
+    //各種 輸入可能性
     // If no platform appears yet, use these values
     let platformY = gameHeight,
       platformX = 400,
       platXformY = gameHeight,
       platXformX = 400,
-      platCenter =400,
-      platXCenter =400,      
+      platCenter = 400,
+      platXCenter = 400,
       distToPlatformLeftEdge = 0,
       distToPlatformRightEdge = 0,
       platformType = 0,
       playerNowLife = 0,
-      playerFromCenter = 0,      
+      playerFromCenter = 0,
       playerOnLeft = 0,
       playerOnRight = 0,
       playerGoLeft = 0,
       playerGoRight = 0,
       lastChance = 0,
-      chopsticksY = gameHeight, // Y方向最近筷子資訊
-      chopsticksX = 400;
+      chopsticksY = -gameHeight, // Y方向最近筷子資訊
+      chopsticksX = -400,
+      platform0Y = -gameHeight, // 加入畫面所有地板資訊(最多八個)
+      platform0X = -400,
+      platform1Y = -gameHeight,
+      platform1X = -400,
+      platform2Y = -gameHeight,
+      platform2X = -400,
+      platform3Y = -gameHeight,
+      platform3X = -400,
+      platform4Y = -gameHeight,
+      platform4X = -400,
+      platform5Y = -gameHeight,
+      platform5X = -400,
+      platform6Y = -gameHeight,
+      platform6X = -400,
+      platform7Y = -gameHeight,
+      platform7X = -400;
+
+
+    if(this.score > 10)
+    {
+      platformX = -400;
+    }
+
+    // // 直接抓出 畫面中所有的地板的位置(最多8個)
+    // for (let index = 0; index < platforms.length; index++) {
+
+    //   if(index ==0)
+    //   {
+    //     platform0 = platforms[0];
+    //     platform0X = platform0.x;
+    //     platform0Y = platform0.y;
+    //   }
+    //   if(index ==1)
+    //   {
+    //     platform1 = platforms[1];
+    //     platform1X = platform1.x;
+    //     platform1Y = platform1.y;
+    //   }
+    //   if(index ==2)
+    //   {
+    //     platform2 = platforms[2];
+    //     platform2X = platform2.x;
+    //     platform2Y = platform2.y;
+    //   }
+    //   if(index ==3)
+    //   {
+    //     platform3 = platforms[3];
+    //     platform3X = platform3.x;
+    //     platform3Y = platform3.y;
+    //   }
+    //   if(index ==4)
+    //   {
+    //     platform4 = platforms[4];
+    //     platform4X = platform4.x;
+    //     platform4Y = platform4.y;
+    //   }
+    //   if(index ==5)
+    //   {
+    //     platform5 = platforms[5];
+    //     platform5X = platform5.x;
+    //     platform5Y = platform5.y;
+    //   }
+    //   if(index ==6)
+    //   {
+    //     platform6 = platforms[6];
+    //     platform6X = platform6.x;
+    //     platform6Y = platform6.y;
+    //   }
+    //   if(index ==7)
+    //   {
+    //     platform7 = platforms[7];
+    //     platform7X = platform7.x;
+    //     platform7Y = platform7.y;
+    //   }
+    
+
+    // }
 
 
     if (closestPlatform) {
@@ -349,7 +435,7 @@ class Monster {
       platformX = x;
 
       // 平台中心位置
-      platCenter = platformX +width/2;
+      platCenter = platformX + width / 2;
 
       // 增加視線濾鏡 確定小朋友所見
       // closestPlatform.tint = 0xff00ff;
@@ -360,17 +446,15 @@ class Monster {
       platformType = platformCode[closestPlatform.platformType];
 
 
-      if((x+width/2)> (playerX + playerWidth/2))
-      {
+      if ((x + width / 2) > (playerX + playerWidth / 2)) {
         playerGoLeft = 0;
-        playerGoRight = 1;
+        playerGoRight = 10;
 
         // 綠
         // this.player.tint = 0x42f54e;
       }
-      if((x+width/2)< (playerX + playerWidth/2))
-      {
-        playerGoLeft = 1;
+      if ((x + width / 2) < (playerX + playerWidth / 2)) {
+        playerGoLeft = 10;
         playerGoRight = 0;
 
         // 紅
@@ -380,13 +464,13 @@ class Monster {
 
     if (closestPlatXform) {
       const { x, y, width } = closestPlatXform;
-     
+
       platXformY = y;
 
       platXformX = x;
 
       // 平台中心位置
-      platXCenter = platXformX +width/2;
+      platXCenter = platXformX + width / 2;
 
       // 增加視線濾鏡 確定小朋友所見
       // closestPlatXform.tint = 0xFF6F61;      
@@ -401,15 +485,12 @@ class Monster {
     }
 
 
-    if(this.player.touchOn)
-    {
-      if((this.player.touchOn.x + this.player.touchOn.width/2)> playerX + playerWidth/2)
-      {
+    if (this.player.touchOn) {
+      if ((this.player.touchOn.x + this.player.touchOn.width / 2) > playerX + playerWidth / 2) {
         playerOnLeft = 1;
         playerOnRight = 0;
       }
-      if((this.player.touchOn.x + this.player.touchOn.width/2)< playerX + playerWidth/2)
-      {
+      if ((this.player.touchOn.x + this.player.touchOn.width / 2) < playerX + playerWidth / 2) {
         playerOnLeft = 0;
         playerOnRight = 1;
       }
@@ -420,7 +501,7 @@ class Monster {
     // 腳色距離中線多遠
     // playerFromCenter = Math.abs(playerX -gameWidth/2);
 
-    playerFromCenter = playerX -gameWidth/2;
+    playerFromCenter = playerX - gameWidth / 2;
 
 
     // Normalize data
@@ -431,6 +512,24 @@ class Monster {
 
     platformX = this.normalize(platformX, gameWidth);
 
+    platform0Y = this.normalize(platform0Y, gameWidth);
+    platform0X = this.normalize(platform0X, gameWidth);
+    platform1Y = this.normalize(platform1Y, gameWidth);
+    platform1X = this.normalize(platform1X, gameWidth);
+    platform2Y = this.normalize(platform2Y, gameWidth);
+    platform2X = this.normalize(platform2X, gameWidth);
+    platform3Y = this.normalize(platform3Y, gameWidth);
+    platform3X = this.normalize(platform3X, gameWidth);
+    platform4Y = this.normalize(platform4Y, gameWidth);
+    platform4X = this.normalize(platform4X, gameWidth);
+    platform5Y = this.normalize(platform5Y, gameWidth);
+    platform5X = this.normalize(platform5Y, gameWidth);
+    platform6Y = this.normalize(platform6Y, gameWidth);
+    platform6X = this.normalize(platform6X, gameWidth);
+    platform7Y = this.normalize(platform7Y, gameWidth);
+    platform7X = this.normalize(platform7X, gameWidth);
+
+
     chopsticksY = this.normalize(chopsticksY, gameHeight);
 
     chopsticksX = this.normalize(chopsticksX, gameHeight);
@@ -439,12 +538,12 @@ class Monster {
 
     platXCenter = this.normalize(platXCenter, gameWidth);
 
-    playerFromCenter = this.normalize(playerFromCenter, gameWidth/2);
+    playerFromCenter = this.normalize(playerFromCenter, gameWidth / 2);
 
     distToPlatformLeftEdge = this.normalize(distToPlatformLeftEdge, gameWidth);
-    distToPlatformRightEdge = this.normalize(distToPlatformRightEdge,gameWidth);
+    distToPlatformRightEdge = this.normalize(distToPlatformRightEdge, gameWidth);
 
-    playerNowLife = this.normalize(this.player.life,10);
+    playerNowLife = this.normalize(this.player.life, 10);
 
 
     // if(this.player.life <3)
@@ -456,10 +555,10 @@ class Monster {
     this.vision.push(
       playerY,
       playerX,
-      // platformX,        
-      // platformY,
-      platCenter,    
-      // isTouched,
+      platformX,        
+      platformY,
+      platCenter,
+      isTouched,
       // distToPlatformLeftEdge,
       // distToPlatformRightEdge,
       // playerOnLeft,
@@ -471,7 +570,31 @@ class Monster {
       chopsticksY,
       chopsticksX
     );
-  }
+  // }
+
+  // this.vision.push(
+  //   playerY,
+  //   playerX,
+  //   playerGoLeft,
+  //   playerGoRight,
+  //   platform0Y,
+  //   platform0X,
+  //   platform1Y,
+  //   platform1X,
+  //   platform2Y,
+  //   platform2X,
+  //   platform3Y,
+  //   platform3X,
+  //   platform4Y,
+  //   platform4X,
+  //   platform5Y,
+  //   platform5X,
+  //   platform6Y,
+  //   platform6X,
+  //   platform7Y,
+  //   platform7X,
+  // );
+}
 
   think() {
     // Just Move Randomly
