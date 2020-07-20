@@ -792,19 +792,7 @@ class Monster {
       
       // fallSound.play();
       
-      cheerfulAnnoyance.stop(); // 死掉音樂停止           
-
-      const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
-      img_explosion.scale.setTo(12, 12);
-      img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
-      game.physics.arcade.enable(img_explosion);
-
-      game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
-      img_explosion.animations.play("explosion");
-      
-      // 搖鏡頭
-      game.camera.shake(0.050, 500);
-      explosion.play();
+      this.Explode();
 
       // img_explosion.destroy();
 
@@ -868,23 +856,8 @@ class Monster {
      // this.player.life = this.player.life -15;
 
      if (player.life <= 0 && !this.dead) {
-       cheerfulAnnoyance.stop(); // 死掉音樂停止
-
-       const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
-       img_explosion.scale.setTo(12, 12);
-       img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
-       game.physics.arcade.enable(img_explosion);
-
-       game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
-       img_explosion.animations.play("explosion");
-       
-       // 搖鏡頭
-       game.camera.shake(0.050, 500);
-      explosion.play();
-
-       // img_explosion.destroy();
-
-       this.dead = true;       
+      this.Explode();  
+        this.dead = true;       
      }
     }
     // player.body.x += 2;
@@ -904,23 +877,9 @@ class Monster {
      // this.player.life = this.player.life -15;
 
      if (player.life <= 0 && !this.dead) {
-       cheerfulAnnoyance.stop(); // 死掉音樂停止
-
-       const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
-       img_explosion.scale.setTo(12, 12);
-       img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
-       game.physics.arcade.enable(img_explosion);
-
-       game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
-       img_explosion.animations.play("explosion");
-       
-        // 搖鏡頭
-      game.camera.shake(0.050, 500);
-      explosion.play();
-
-       // img_explosion.destroy();
-
-       this.dead = true;       
+        
+      this.Explode();
+        this.dead = true;       
      }
       }
         // player.body.x -= 2;
@@ -980,8 +939,6 @@ class Monster {
       }
       // player.life -= 3;
 
-
-
       player.touchOn = platform;
 
        // 每碰一個普通地板就會少1滴，血量為0 爆炸
@@ -989,26 +946,11 @@ class Monster {
 
        // this.player.life = this.player.life -15;
  
-       if (player.life <= 0 && !this.dead) {
-         cheerfulAnnoyance.stop(); // 死掉音樂停止
- 
-         const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
-         img_explosion.scale.setTo(12, 12);
-         img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;
-         game.physics.arcade.enable(img_explosion);
- 
-         game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
-         img_explosion.animations.play("explosion");
-
-           // 搖鏡頭
-        game.camera.shake(0.050, 500);
-         
-        explosion.play();
- 
-         // img_explosion.destroy();
- 
-         this.dead = true;
-         
+       if (player.life <= 0 && !this.dead) {      
+        
+        this.Explode();
+        
+        this.dead = true;         
        }
       
       // 受傷紅光
@@ -1065,24 +1007,8 @@ class Monster {
       // this.player.life = this.player.life -15;
 
       if (player.life <= 0 && !this.dead) {
-        cheerfulAnnoyance.stop(); // 死掉音樂停止
-
-        const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
-        img_explosion.scale.setTo(12, 12);
-        img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
-        game.physics.arcade.enable(img_explosion);
-
-        game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
-
-
-        // 搖鏡頭
-        game.camera.shake(0.050, 500);
-
-        img_explosion.animations.play("explosion");
         
-        explosion.play();
-
-        // img_explosion.destroy();
+        this.Explode();
 
         this.dead = true;
         
@@ -1201,5 +1127,22 @@ class Monster {
 
   destroy() {
     this.player.destroy();
+  }
+
+  Explode() {
+    cheerfulAnnoyance.stop(); // 死掉音樂停止
+ 
+    const  img_explosion = game.add.sprite(this.player.x -192,this.player.y - 192, "img_explosion");
+    img_explosion.scale.setTo(12, 12);
+    img_explosion.animations.add("explosion", [0, 1, 2, 3,4,5], 8).killOnComplete = true;
+    game.physics.arcade.enable(img_explosion);
+
+    game.physics.arcade.collide(img_explosion, platforms,this.Explodedeffect.bind(img_explosion));
+    img_explosion.animations.play("explosion");
+
+      // 搖鏡頭
+   game.camera.shake(0.050, 500);
+    
+   explosion.play();    
   }
 }

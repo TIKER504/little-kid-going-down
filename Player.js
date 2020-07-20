@@ -34,6 +34,11 @@ class Player {
     player.animations.add("flyleft", [18, 19, 20, 21], 12);
     player.animations.add("flyright", [27, 28, 29, 30], 12);
     player.animations.add("fly", [36, 37, 38, 39], 12);
+
+    // 攻擊動畫
+    player.animations.add("leftAttack", [17, 26], 6);
+    player.animations.add("rightAttack", [35, 44], 6);
+
     player.life = 10;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
@@ -127,6 +132,9 @@ class Player {
     this.brain = new Genome(this.genomeInputs, this.genomeOutputs);
 
     this.passframe = 0;
+
+    // 是否處在攻擊模式
+    this.attackMode = false;
   }
 
 
@@ -168,6 +176,37 @@ class Player {
     ]);
 
     game.physics.arcade.collide(this.player, [rage]);
+
+    // 有怪物populations存活 進入攻擊模式
+    if(populations.length >3)
+    {
+      if (!populations[3].done())
+      {
+        // this.attackMode = true;
+
+        // 隨機開槍
+        this.attackMode = Math.random() >= 0.5;
+
+        // 不開槍的話，這一秒內都不會開槍
+        if(!this.attackMode )
+        {
+          // this.isPlayingAnimation = true;
+    
+          // // setTimeout(() => {
+            
+          // //   this.isPlayingAnimation = false;
+          // // }, 1000);
+        }
+
+      }
+      else
+      {
+        this.attackMode = false;
+      }
+
+
+      
+    }
 
     // 再次確認無血者死
     if (this.player.life <= 0 && !this.dead) {
@@ -864,7 +903,7 @@ class Player {
     // 綠軍的速度
     if(this.species ==1)
     {
-      this.player.body.velocity.x = -(gameWidth / 1.6);
+      this.player.body.velocity.x = -(gameWidth / 2.8);
     }
     else
     {
@@ -878,7 +917,7 @@ class Player {
     // 綠軍的速度
     if(this.species ==1)
     {
-      this.player.body.velocity.x = gameWidth / 1.6;
+      this.player.body.velocity.x = gameWidth / 2.8;
     }
     else
     {
@@ -895,22 +934,71 @@ class Player {
     var x = player.body.velocity.x;
     var y = player.body.velocity.y;
 
-    if (x < 0 && y > 0) {
-      player.animations.play("flyleft");
+    if(this.species  ==0 && !this.isPlayingAnimation)
+    {
+
+      if (this.attackMode ) {
+        
+        player.animations.play("leftAttack");
+  
+        this.isPlayingAnimation = true;
+  
+        setTimeout(() => {
+  
+          this.isPlayingAnimation = false;
+          console.log("isPlayingAnimation =  false")
+        }, 1000);
+  
+        // if (!pistolFire.isPlaying) {
+        //     pistolFire.play();
+        // }
+
+        pistolFire.play();
+
+        this.killMonster();
+        
+      }
+      // if (this.attackMode) {
+      
+      //   player.animations.play("rightAttack");
+  
+      //   this.isPlayingAnimation = true;
+  
+      //   setTimeout(() => {
+  
+      //     this.isPlayingAnimation = false;
+      //   }, 1000);
+  
+      //   if (!pistolFire.isPlaying) {
+      //     pistolFire.play();
+      //  }
+      //  this.killMonster();
+      // }
+
     }
-    if (x > 0 && y > 0) {
-      player.animations.play("flyright");
+
+
+    if (!this.isPlayingAnimation)
+    {
+      if (x < 0 && y > 0) {
+        player.animations.play("flyleft");
+      }
+      if (x > 0 && y > 0) {
+        player.animations.play("flyright");
+      }
+      if (x < 0 && y == 0) {
+        player.animations.play("left");      
+      }
+      if (x > 0 && y == 0) {
+        player.animations.play("right");      
+      }
+      if (x == 0 && y != 0) {
+        player.animations.play("fly");
+      }
     }
-    if (x < 0 && y == 0) {
-      player.animations.play("left");
-    }
-    if (x > 0 && y == 0) {
-      player.animations.play("right");
-    }
-    if (x == 0 && y != 0) {
-      player.animations.play("fly");
-    }
-    // 若沒有這一個 && !this.isPlayingAnimation ，市議員的夾屁股 很容易被站立取代
+
+    
+    // // 若沒有這一個 && !this.isPlayingAnimation ，市議員的夾屁股 很容易被站立取代
     if (x == 0 && y == 0 && !this.isPlayingAnimation) {
       player.frame = 8;
     }
@@ -1132,4 +1220,42 @@ class Player {
   destroy() {
     this.player.destroy();
   }
+
+
+
+  killMonster()
+  {
+    // 找一個來殺
+    if(populations.length>3)
+    {
+      for (let i = 0; i < populations[3].players.length; i++)
+      {
+        if (!populations[3].players[i].dead ) {      
+          
+          populations[3].players[i].player.life -=3 ;     
+
+          this.player.life += 3;// 回血
+
+          var killmark = game.add.sprite(populations[3].players[i].player.x ,populations[3].players[i].player.y, "killmark");
+
+          killmark.scale.setTo(2,2);
+
+          killmark.animations.add("killmark", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+
+          killmark.animations.play("killmark");
+
+          populations[3].players[i].healthBar.text = populations[3].players[i].generateHealthBar(populations[3].players[i].player.life);
+
+          if(populations[3].players[i].player.life  <= 0)
+          {
+            populations[3].players[i].dead = true; 
+          }
+                    
+          break;
+        }
+      }        
+    }
+        
+  }
+
 }

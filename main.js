@@ -81,9 +81,8 @@ let conveyorSound,
   born,
   rageSound,
   explosion,
-  cheerfulAnnoyance,
-  cut,
-  cutDone
+  cheerfulAnnoyance,  
+  pistolFire
   ;
 
 // 韓導語錄
@@ -516,21 +515,21 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
     //   rage.addChild(name);
     // }               
 
-    ComfyJS.Say('來自:' +creepNameList.join("、")+'的負能量，積壓已久民怨化作怪物誕生!!!其學會了現在最厲害小朋友的思路，且無懼於任何機關陷阱， 小心爆炸!!!');
+    // ComfyJS.Say('來自:' +creepNameList.join("、")+'的負能量，積壓已久民怨化作怪物誕生!!!其學會了現在最厲害小朋友的思路，且無懼於任何機關陷阱， 小心爆炸!!!');
 
-    populationMoster = new Population(1, creepNameList.join(" & "), 2,true);
+    // populationMoster = new Population(1, creepNameList.join(" & "), 2,true);
 
-    // 複製目前存活AI 避免弱智新生兒 拖累進度
-    populationMoster.copyAliveBrain();
+    // // 複製目前存活AI 避免弱智新生兒 拖累進度
+    // populationMoster.copyAliveBrain();
 
-    populations.push(populationMoster);
+    // populations.push(populationMoster);
 
-    born.play();
+    // born.play();
     
-    cheerfulAnnoyance.loop = true;
-    cheerfulAnnoyance.play();
+    // cheerfulAnnoyance.loop = true;
+    // cheerfulAnnoyance.play();
 
-    creepNameList =[];
+    // creepNameList =[];
   }
 
 
@@ -621,22 +620,19 @@ function preload() {
   game.load.audio("rageSound", "/sounds/rageSound.mp3");
   game.load.audio("explosion", "/sounds/explosion.mp3");
   game.load.audio("cheerfulAnnoyance", "/sounds/CheerfulAnnoyance.mp3");
+  game.load.audio("pistolFire", "/sounds/pistolFire.mp3");
 
   
   
 
   // 批次讀取韓導聲音
   for (var i = 1; i < 100 ;i ++) {
-
-    // game.load.audio("hanVoice (" + i +")", "/sounds/hanVoice/hanVoice (" + i +").mp3");
-    
+    // game.load.audio("hanVoice (" + i +")", "/sounds/hanVoice/hanVoice (" + i +").mp3");    
   }
 
   // 批次讀取小英聲音
   for (var i = 1; i < 11 ;i ++) {
-
-    // game.load.audio("tsaiVoice (" + i +")", "/sounds/tsaiVoice/tsaiVoice (" + i +").mp3");
-    
+    // game.load.audio("tsaiVoice (" + i +")", "/sounds/tsaiVoice/tsaiVoice (" + i +").mp3");    
   }
 
 
@@ -665,7 +661,7 @@ function create() {
   // Create population 
   // population = new Population(200);
 
-  populationHan = new Population(50, "BOT", 0);
+  populationHan = new Population(10, "BOT", 0);
 
   populationTsai = new Population(50, "BOT", 1);
 
@@ -797,8 +793,15 @@ function update() {
       // 複製目前存活AI 避免弱智新生兒 拖累進度
       populationMoster.copyAliveBrain();
 
-      populations.push(populationMoster);    
-       
+      if(populations.length>3)
+      {
+        populations[3].players = populations[3].players.concat(populationMoster.players);        
+      }
+      else
+      {
+        populations.push(populationMoster);    
+      }
+             
       alreadyDown = true;
     }
   }
@@ -856,8 +859,8 @@ function addAudio() {
   rageSound = game.add.audio("rageSound");
   explosion = game.add.audio("explosion");
   cheerfulAnnoyance = game.add.audio("cheerfulAnnoyance");
-  cut = game.add.audio("cut");
-  cutDone = game.add.audio("cutDone");
+  pistolFire = game.add.audio("pistolFire");
+
 
     // 批次加入韓導聲音
     for (var i = 1; i < 100 ;i ++) {

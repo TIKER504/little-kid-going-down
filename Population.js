@@ -50,14 +50,6 @@ class Population {
 
   kill()
   {
-    // for (let i = 0; i < this.players.length; i++) {
-            
-    //   if (!this.players[i].dead ) {      
-    //     this.players[i].life -=15;     
-    //     this.players[i].dead = true; 
-    //   }     
-    // }
-
 
     // 找一個來殺
     for (let i = 0; i < this.players.length; i++)
@@ -79,12 +71,7 @@ class Population {
         
         break;
       }
-    } 
-
-    
-
-   
-
+    }        
   }
 
   newMember(name,species)
@@ -176,15 +163,15 @@ class Population {
     }
 
     // 雙殺以上 為多殺
-    if(suddenlyDeadNumber >2)
-    {
-      multi_kill.play();
+    // if(suddenlyDeadNumber >2)
+    // {
+    //   multi_kill.play();
 
-      // 搖鏡頭
-      // game.camera.shake(0.05, 500);
-      // 統一由 gec 管理，一齊控制開關
-      gec.cameraShake(0.05, 500);
-    }
+    //   // 搖鏡頭
+    //   // game.camera.shake(0.05, 500);
+    //   // 統一由 gec 管理，一齊控制開關
+    //   gec.cameraShake(0.05, 500);
+    // }
 
     // if (showBest && this.bestPlayer && !this.bestPlayer.dead) {
     //   this.bestPlayer.look();
