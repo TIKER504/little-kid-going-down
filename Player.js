@@ -232,6 +232,16 @@ class Player {
         this.score = distance + this.cutChopsticks *10; // 現在分數多了 取得筷子加權，每夾斷一雙 結算 +10
       }
 
+      if(this.species ==4)
+      {
+        this.score = distance ;
+      }
+
+      if(this.species ==5)
+      {
+        this.score = distance ;
+      }
+
       
       this.updatePlayer();
       this.checkNailCeiling();
@@ -937,27 +947,27 @@ class Player {
     if(this.species  ==0 && !this.isPlayingAnimation)
     {
 
-      if (this.attackMode ) {
+      // if (this.attackMode ) {
         
-        player.animations.play("leftAttack");
+      //   player.animations.play("leftAttack");
   
-        this.isPlayingAnimation = true;
+      //   this.isPlayingAnimation = true;
   
-        setTimeout(() => {
+      //   setTimeout(() => {
   
-          this.isPlayingAnimation = false;
-          console.log("isPlayingAnimation =  false")
-        }, 1000);
+      //     this.isPlayingAnimation = false;
+      //     console.log("isPlayingAnimation =  false")
+      //   }, 1000);
   
-        // if (!pistolFire.isPlaying) {
-        //     pistolFire.play();
-        // }
+      //   // if (!pistolFire.isPlaying) {
+      //   //     pistolFire.play();
+      //   // }
 
-        pistolFire.play();
+      //   pistolFire.play();
 
-        this.killMonster();
+      //   // this.killMonster();
         
-      }
+      // }
       // if (this.attackMode) {
       
       //   player.animations.play("rightAttack");
@@ -1223,39 +1233,39 @@ class Player {
 
 
 
-  killMonster()
-  {
-    // 找一個來殺
-    if(populations.length>3)
-    {
-      for (let i = 0; i < populations[3].players.length; i++)
-      {
-        if (!populations[3].players[i].dead ) {      
+  // killMonster()
+  // {
+  //   // 找一個來殺
+  //   if(populations.length>3)
+  //   {
+  //     for (let i = 0; i < populations[3].players.length; i++)
+  //     {
+  //       if (!populations[3].players[i].dead ) {      
           
-          populations[3].players[i].player.life -=3 ;     
+  //         populations[3].players[i].player.life -=3 ;     
 
-          this.player.life += 3;// 回血
+  //         this.player.life += 3;// 回血
 
-          var killmark = game.add.sprite(populations[3].players[i].player.x ,populations[3].players[i].player.y, "killmark");
+  //         var killmark = game.add.sprite(populations[3].players[i].player.x ,populations[3].players[i].player.y, "killmark");
 
-          killmark.scale.setTo(2,2);
+  //         killmark.scale.setTo(2,2);
 
-          killmark.animations.add("killmark", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+  //         killmark.animations.add("killmark", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
 
-          killmark.animations.play("killmark");
+  //         killmark.animations.play("killmark");
 
-          populations[3].players[i].healthBar.text = populations[3].players[i].generateHealthBar(populations[3].players[i].player.life);
+  //         populations[3].players[i].healthBar.text = populations[3].players[i].generateHealthBar(populations[3].players[i].player.life);
 
-          if(populations[3].players[i].player.life  <= 0)
-          {
-            populations[3].players[i].dead = true; 
-          }
+  //         if(populations[3].players[i].player.life  <= 0)
+  //         {
+  //           populations[3].players[i].dead = true; 
+  //         }
                     
-          break;
-        }
-      }        
-    }
+  //         break;
+  //       }
+  //     }        
+  //   }
         
-  }
+  // }
 
 }

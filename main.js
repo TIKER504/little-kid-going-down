@@ -97,6 +97,8 @@ let population,
   populationTsai,
   populationMoster,
   populationChiu,
+  populationT,
+  populationB,
   populations = [];
 recordScore = 0;
 
@@ -593,6 +595,10 @@ function preload() {
 
   game.load.image("logo_player3", "logo_player3.png");
 
+  game.load.image("logo_player4", "logo_player4.png");
+  
+  game.load.image("logo_player5", "logo_player5.png");
+
   game.load.spritesheet("conveyorRight", "conveyor_right.png", 96, 16);
   game.load.spritesheet("conveyorLeft", "conveyor_left.png", 96, 16);
   game.load.spritesheet("trampoline", "trampoline.png", 96, 22);
@@ -661,16 +667,23 @@ function create() {
   // Create population 
   // population = new Population(200);
 
-  populationHan = new Population(10, "BOT", 0);
+  populationHan = new Population(50, "BOT", 0);
 
   populationTsai = new Population(50, "BOT", 1);
 
   populationChiu =  new Population(50, "BOT", 3);
 
+  populationT =  new Population(50, "BOT", 4);
+
+  populationB =  new Population(50, "BOT", 5);
+
   // 先後順序會影像 影像前後，後放的可以蓋過前面
   populations.push(populationTsai);
   populations.push(populationHan);
   populations.push(populationChiu);
+  populations.push(populationT);
+  populations.push(populationB);
+  
   
 
   // createPlayer();
@@ -703,7 +716,7 @@ function create() {
   
   
   // 排名系統
-  game.add.text(1500,100, "最佳排名:", textStyle);
+  game.add.text(1500,100, "Top Ranks:", textStyle);
   
 }
 
@@ -1055,8 +1068,11 @@ function updateDistance() {
 
 function createOnePlatform() {
   var platform;
+  
   var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale +400;
+  
   var y = gameHeight;
+  
   var rand = Math.random() * 100;
 
   let platformType = "normal";
@@ -1163,7 +1179,12 @@ function updatePlatforms() {
     var platform = platforms[i];
 
     // 地板移動速度 受到常數加成
+
+    // 重直 Y 方向 運動
     platform.body.position.y -= 2 * gameSpeed;
+
+    // 水平 X 方向 運動
+    // platform.body.position.x -= 0.75 * gameSpeed;
 
     if (platform.body.position.y <= -32) {
       platform.destroy();
@@ -1223,10 +1244,10 @@ function restart() {
   // population.naturalSelection();
 
   // 把後面MOSTER 族群移掉
-  if(populations.length >=3)
+  if(populations.length >=5)
   {
-    // 只取前面三個 家族(han tsai chiu)
-    populations = populations.slice(0,3)
+    // 只取前面五個 家族(han tsai chiu T、B)
+    populations = populations.slice(0,5)
   }
 
 
@@ -1303,7 +1324,19 @@ function checkNewRank() {
 
     logo_player.scale.setTo(2,2);
 
-    var familyName = game.add.text(1540,200 + i*100, rankList[i].familyName + " " + rankList[i].gen +" 世", textStyleII);    
+    var generation ='th';
+
+    if(rankList[i].gen  == '2')
+    {
+      generation ='nd';      
+    }
+
+    if(rankList[i].gen  == '3')
+    {
+      generation ='rd';      
+    }
+
+    var familyName = game.add.text(1540,200 + i*100, rankList[i].familyName + " the " + rankList[i].gen + generation, textStyleII);    
 
     var score = game.add.text(1620,160+ i*100,+ rankList[i].score, textStyleI);    
 
