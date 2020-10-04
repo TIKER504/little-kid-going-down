@@ -173,6 +173,7 @@ class Player {
       ...leftWalls,
       ...rightWalls,
       ...ceilings,
+      ...otherPlates
     ]);
 
     game.physics.arcade.collide(this.player, [rage]);

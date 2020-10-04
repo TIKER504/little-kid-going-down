@@ -1,11 +1,18 @@
 // 中間遊戲區寬度
+// const gameWidth = 800;
+// const gameHeight = 800;
+// const scale = 2;
+
 const gameWidth = 800;
-const gameHeight = 800;
+const gameHeight = 950;
 const scale = 2;
 
 // 畫布寬度
+// const canvasWidth = 1800;
+// const canvasHeight = 800;
+
 const canvasWidth = 1800;
-const canvasHeight = 800;
+const canvasHeight = 950;
 
 
 var game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, "", {
@@ -560,7 +567,7 @@ function preload() {
   game.load.spritesheet("killmark", "killmark.png", 32, 32);
 
   // 筷子
-  game.load.spritesheet("chopsticks", "chopsticks.png", 32, 32);
+  game.load.spritesheet("chopsticks", "chopsticks.png", 32, 14);
   
 
   //按鈕
@@ -724,19 +731,9 @@ function update() {
   // bad
   if (status == "gameOver" && keyboard.enter.isDown) restart();
   if (status != "loading") return;
+  
 
-  // if (population.done()) {
-  //   // Restart because this generation all died
-
-
-  //   // recolorImage(img,255,255,0,11,28,214)
-
-
-  //   console.log("dead");
-  //   restart();
-  //   return;
-  // }
-
+  
   // 若大於10層
   // if(distance>10)
   // {        
@@ -752,14 +749,42 @@ function update() {
 
 
 
+
+
+
+
+  updatePlatforms();
+  updateChopSticks(); // 更新筷子 資訊
+
+  createPlatforms();
+  createChopsticks(); // 創建筷子
+
+  // 群眾憤怒
+  // if(rage)
+  // {
+  //   if (rage.body.position.y > 400) {
+  //     rage.destroy();      
+  //   }    
+  // }
+  if(distance >5
+     && otherPlates[1])
+  {
+    otherPlates[1].destroy();
+
+    otherPlates = otherPlates.slice(0,1);
+  }
+  
+
+ 
+
   var allDone = 0;
 
   for (let i = 0; i < populations.length; i++) {
-
+     
     if (!populations[i].done()) {
-      
-      populations[i].update();
-            
+          
+    populations[i].update();
+
     }
     else {
       allDone++;
@@ -778,25 +803,9 @@ function update() {
     console.log("restart");
     restart();
     return;
-  }
+  }  
 
 
-
-  updatePlatforms();
-  updateChopSticks(); // 更新筷子 資訊
-
-  createPlatforms();
-  createChopsticks(); // 創建筷子
-
-  // 群眾憤怒
-  // if(rage)
-  // {
-  //   if (rage.body.position.y > 400) {
-  //     rage.destroy();      
-  //   }    
-  // }
-
-  
   
   // 創造怪物，(每一次的按壓上下算一次，避免一個FRAME 就被計算一次 )
   if (keyboard.w.isDown){
@@ -814,7 +823,7 @@ function update() {
       {
         populations.push(populationMoster);    
       }
-             
+            
       alreadyDown = true;
     }
   }
@@ -923,7 +932,7 @@ function createBounders() {
   }
 
   const wallHeight = 400;
-  const numberOfWalls = Math.round(gameHeight / 400);
+  const numberOfWalls = Math.round(gameHeight / 400) +1 ;
   for (let index = 0; index < numberOfWalls; index++) {
     // let leftWall = game.add.sprite(0, wallHeight * index, "wall");
 
@@ -951,6 +960,16 @@ function createBounders() {
   normal400.body.immovable = true;
 
   otherPlates.push(normal400);
+
+
+  // 起始安全地板，過7層後才會解除
+  let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
+  normal800.scale.setTo(scale, scale);
+  game.physics.arcade.enable(normal800);
+  normal800.body.immovable = true;
+
+  otherPlates.push(normal800);
+  
 
 }
 
@@ -1149,7 +1168,7 @@ function createOneChopsticks() {
   // 只有一種筷子好像也不必用機率分布來算
   chopsticks = game.add.sprite(x, y, "chopsticks");
   
-  // chopsticks.scale.setTo(scale, scale);
+  chopsticks.scale.setTo(scale, scale);
   
   game.physics.arcade.enable(chopsticks);
   chopsticks.body.immovable = true;
@@ -1159,6 +1178,9 @@ function createOneChopsticks() {
   // platform.body.checkCollision.right = false;
   // platform.platformType = platformType;
   chopsticks.platformType = 'chopsticks';
+
+  chopsticks.animations.add("shiny", [0, 1, 2, 3,4], 10, true);
+  chopsticks.play("shiny");
   
   chopsticksList.push(chopsticks);
 }
@@ -1256,6 +1278,14 @@ function restart() {
     populations[i].naturalSelection();
   }
 
+  // 起始安全地板加回來
+  let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
+  normal800.scale.setTo(scale, scale);
+  game.physics.arcade.enable(normal800);
+  normal800.body.immovable = true;
+
+  otherPlates.push(normal800);
+
 }
 
 
@@ -1300,7 +1330,7 @@ function checkNewRank() {
   });
   
   // 前五名
-  rankList = rankPopulation.slice(0,6);
+  rankList = rankPopulation.slice(0,8);
 
   var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
 
