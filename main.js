@@ -117,8 +117,8 @@ var gec = new GameEffectCenter();
 
 
 // 遊戲速度常數
-// var gameSpeed = 1.5;
-var gameSpeed = 1.0;
+var gameSpeed = 1.5;
+// var gameSpeed = 1.0;
 
 // 群眾的憤怒
 let rage;
@@ -147,7 +147,7 @@ var gameMute = true;
 // ComfyJS.Init("chimera4956");
 
 // 這個可以 Oauth 授權成功!!!!! 痛哭流涕
-ComfyJS.Init("chimera4956", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
+ComfyJS.Init("funmoon504", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
 
 // 這是node.js 的套件，先用html 解決之後一起整理。
 // var ComfyJS = require("comfy.js");
@@ -249,6 +249,12 @@ ComfyJS.onCommand = (user, command, message, flags, extra) => {
   
 }
 
+ComfyJS.onReward =( user, reward, cost, message, extra )=>
+{
+  console.log( message +" was reward in chat" + "(" + user + ")");  
+}
+
+
 
 ComfyJS.onChat =( user, message, flags, self, extra )=>
 {
@@ -305,7 +311,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   }
 
 
-
+  // 表情符號
   if(message==="LUL")
   {
     // G家族新成員
@@ -548,6 +554,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 }
 
 
+
+
 function preload() {
   game.load.baseURL = "./assets/";
   game.load.crossOrigin = "anonymous";
@@ -674,15 +682,27 @@ function create() {
   // Create population 
   // population = new Population(200);
 
-  populationHan = new Population(50, "BOT", 0);
+  // populationHan = new Population(50, "BOT", 0);
 
-  populationTsai = new Population(50, "BOT", 1);
+  // populationTsai = new Population(50, "BOT", 1);
 
-  populationChiu =  new Population(50, "BOT", 3);
+  // populationChiu =  new Population(50, "BOT", 3);
 
-  populationT =  new Population(50, "BOT", 4);
+  // populationT =  new Population(50, "BOT", 4);
 
-  populationB =  new Population(50, "BOT", 5);
+  // populationB =  new Population(50, "BOT", 5);
+
+
+  populationHan = new Population(50, "", 0);
+
+  populationTsai = new Population(50, "", 1);
+
+  populationChiu =  new Population(50, "", 3);
+
+  populationT =  new Population(50, "", 4);
+
+  populationB =  new Population(50, "", 5);
+
 
   // 先後順序會影像 影像前後，後放的可以蓋過前面
   populations.push(populationTsai);
@@ -729,8 +749,10 @@ function create() {
 
 function update() {
   // bad
-  if (status == "gameOver" && keyboard.enter.isDown) restart();
+  if (status == "gameOver" && keyboard.enter.isDown) restart();    
   if (status != "loading") return;
+
+  
   
 
   
@@ -749,7 +771,20 @@ function update() {
 
 
 
+  var allDone = 0;
 
+  for (let i = 0; i < populations.length; i++) {
+     
+    if (!populations[i].done()) {
+          
+    populations[i].update();
+
+    }
+    else {
+      allDone++;
+    }
+
+  }
 
 
 
@@ -777,20 +812,7 @@ function update() {
 
  
 
-  var allDone = 0;
 
-  for (let i = 0; i < populations.length; i++) {
-     
-    if (!populations[i].done()) {
-          
-    populations[i].update();
-
-    }
-    else {
-      allDone++;
-    }
-
-  }
 
   // 兩個家族都死光 (有時有怪物時 會大於2)
   if (allDone >=populations.length) {
@@ -1247,6 +1269,7 @@ function gameOver() {
   status = "gameOver";
 }
 
+// 新一輪
 function restart() {
   status = "loading";
   platforms.forEach(function (s) {

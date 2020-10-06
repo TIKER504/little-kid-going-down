@@ -746,6 +746,7 @@ class Player {
     return clone;
   }
 
+  //羅馬數字
   romanize(num) {
     if (isNaN(num)) return NaN;
     var digits = String(+num).split(""),
@@ -789,7 +790,11 @@ class Player {
 
   crossover(parent) {
     //Produce a child (代數+1)
+    // 優勢者的名字會取代弱勢者
     let child = new Player(this.familyName, this.gen +1, this.species);
+    // 弱勢者的名子會保留
+    // let child = new Player(parent.familyName, this.gen +1, this.species);
+
     if (parent.fitness < this.fitness)
       child.brain = this.brain.crossover(parent.brain);
     else child.brain = parent.brain.crossover(this.brain);
@@ -836,6 +841,13 @@ class Player {
           this.dead = true;
 
           console.log("nailsCeiling to death!");
+
+
+        // // 非BOT 死亡會播報
+        // if(this.familyName !="BOT")
+        // {
+        //   ComfyJS.Say(this.familyName + " is killed by nailsCeil");          
+        // }          
         }
       }
     }
