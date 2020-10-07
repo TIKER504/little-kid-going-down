@@ -9,18 +9,7 @@ class Player {
 
     numOfPlayers++;
 
-    // const player = game.add.sprite(gameWidth / 2, 50, "player");
-
-    // 隨機從0~6 號　共7 個player 中選擇腳色外觀
-    // const player = game.add.sprite(gameWidth / 2, 50, "player" + Math.floor(Math.random()*7));
-
-    // Mr.Han MOD
-    // const player = game.add.sprite(gameWidth / 2, 50, "player_han");
-
-    // 兩隻選一隻
-    // const player = game.add.sprite(gameWidth / 2, 50, "player" + Math.floor(Math.random()*2));
-
-
+  
     // 依傳入的0、1家族而定
     const player = game.add.sprite( 400 + gameWidth / 2, 50, "player" + species);
 
@@ -163,8 +152,8 @@ class Player {
       this.player.touchOn = undefined;
     }
 
-    // 和筷子的重疊事件
-    game.physics.arcade.overlap(this.player, itemSticksList, this.effect.bind(this));
+    // 和道具的重疊事件
+    game.physics.arcade.overlap(this.player, itemList, this.effect.bind(this));
 
     game.physics.arcade.collide(this.player, [
       ...leftWalls,
@@ -349,9 +338,9 @@ class Player {
     }
 
     // Find the closest platform
-    for (let index = 0; index < itemSticksList.length; index++) {
+    for (let index = 0; index < itemList.length; index++) {
       // 高度距離
-      const distToPlayer = itemSticksList[index].y - playerY;
+      const distToPlayer = itemList[index].y - playerY;
 
       // 玩家似乎身高為60 ，超過玩家高度的不考量
       if (distToPlayer <= 0) {
@@ -360,14 +349,14 @@ class Player {
 
       // 忽略正再碰觸的當下筷子
       if (this.player.touchItemOn) {
-        if (this.player.touchItemOn == itemSticksList[index]) {
+        if (this.player.touchItemOn == itemList[index]) {
           continue;
         }
       }
 
       if (distToPlayer < closestDist) {
         closestDist = distToPlayer;
-        closestItem = itemSticksList[index];
+        closestItem = itemList[index];
       }
     }
 
@@ -766,9 +755,21 @@ class Player {
   crossover(parent) {
     //Produce a child (代數+1)
     // 優勢者的名字會取代弱勢者
-    let child = new Player(this.familyName, this.gen +1, this.species);
+    // let child = new Player(this.familyName, this.gen +1, this.species);
     // 弱勢者的名子會保留
     // let child = new Player(parent.familyName, this.gen +1, this.species);
+
+    var child;
+
+    // 其實兩個父母都已經是相對全族群分數較高者了，因此姓名父母姓二選一隨機，降低單一  familyName 過快統一 population
+    if(Math.floor(Math.random()*2) ===0)
+    {
+      child = new Player(this.familyName, this.gen +1, this.species);
+    }
+    else
+    {
+      child = new Player(parent.familyName, this.gen +1, this.species);
+    }
 
     if (parent.fitness < this.fitness)
       child.brain = this.brain.crossover(parent.brain);
@@ -795,6 +796,7 @@ class Player {
         this.player.body.velocity.y = 0;
       }
 
+      // 無敵時間，才不會瞬殺
       if (game.time.now > this.player.unbeatableTime) {
         stabbedSound.play();
 
@@ -809,7 +811,6 @@ class Player {
         // game.camera.flash(0xff0000, 100);        
         gec.cameraFlash(0xff0000, 100);
 
-
         this.player.unbeatableTime = game.time.now + 1000;
         if (this.player.life <= 0 && !this.dead) {
           stabbedScream.play();
@@ -817,12 +818,11 @@ class Player {
 
           console.log("nailsCeiling to death!");
 
-
-        // 非BOT 死亡會播報
-        if(this.familyName !="BOT")
-        {
-          ComfyJS.Say(this.familyName + " is killed by nailsCeil");          
-        }          
+          // 非BOT 死亡會播報
+          if(this.familyName !="BOT")
+          {
+            ComfyJS.Say(this.familyName + " is killed by nailsCeil");          
+          }          
         }
       }
     }

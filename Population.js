@@ -96,6 +96,31 @@ class Population {
     }        
   }
 
+  // 回到起始點重生 (brain、素質 相同)
+  reBorn()
+  {    
+    var reBornList = [];
+
+    for (let i = 0; i < this.players.length; i++)
+    {
+      if (!this.players[i].dead ) {      
+                
+        var newMember = new Player(this.players[i].familyName, this.generation,this.players[i].species);
+
+        // 新隨機腦
+        // newMember.brain.generateNetwork();
+        // newMember.brain.mutate();
+
+        //舊cross 後的腦
+        newMember.brain = this.players[i].brain;
+
+        reBornList.push(newMember);
+      }
+    }        
+
+    this.players = reBornList.slice(0);
+  }
+
   newMember(name,species)
   {
     var newMember = new Player(name, this.generation,species);
@@ -219,6 +244,7 @@ class Population {
     let averageSum = this.getAverageScore();
     let children = [];
 
+    var crossoverTimes = 0;
     this.fillMatingPool();
     for (let i = 0; i < this.players.length; i++) {
       let parent1 = this.selectPlayer();
@@ -232,8 +258,11 @@ class Population {
       {
         children.push(parent2.crossover(parent1));
       } 
+
+      crossoverTimes++;
     }
 
+    // 清除舊家族
     this.players.forEach((element) => {
       element.destroy();
     });
@@ -276,6 +305,7 @@ class Population {
     });
   }
 
+  // 分數高的個體，可以獲得較高的抽crossing加權
   fillMatingPool() {
     this.matingPool.splice(0, this.matingPool.length);
     this.players.forEach((element, elementN) => {
@@ -298,13 +328,13 @@ class Population {
     return avSum / this.players.length;
   }
 
+  // population 死光
   done() {
     for (var i = 0; i < this.players.length; i++) {
       if (!this.players[i].dead) {
         return false;
       }
     }
-
     return true;
   }
 }

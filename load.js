@@ -10,7 +10,7 @@ ComfyJS.Init("funmoon504", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
 // 這是node.js 的套件，先用html 解決之後一起整理。
 // var ComfyJS = require("comfy.js");
 
-var initial = false;
+var initialed = false;
 
 var loadState =
 {
@@ -20,7 +20,7 @@ var loadState =
     game.load.baseURL = "./assets/";
     game.load.crossOrigin = "anonymous";
   
-    if(!initial)
+    if(!initialed)
     {
       // game.load.spritesheet("player", "player.png", 32, 32);
     game.load.spritesheet("player0", "player0.png", 32, 32);
@@ -107,8 +107,7 @@ var loadState =
     game.load.audio("cashIn", "/sounds/cashIn.mp3");
   
     
-    
-  
+      
     // 批次讀取韓導聲音
     for (var i = 1; i < 100 ;i ++) {
       // game.load.audio("hanVoice (" + i +")", "/sounds/hanVoice/hanVoice (" + i +").mp3");    
@@ -122,10 +121,12 @@ var loadState =
 
     }
     
-    initial = true;
+   
   
   },create : function ()
   {
+
+    
     game.state.start('play');
   }
 }

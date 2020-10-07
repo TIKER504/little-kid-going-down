@@ -14,7 +14,7 @@ var keyboard;
 var platforms = [];
 
 // 道具群集
-var itemSticksList = [];
+var itemList = [];
 
 var leftWalls = [];
 var rightWalls = [];
@@ -473,6 +473,7 @@ var playState =
       s: Phaser.Keyboard.S,
       d: Phaser.Keyboard.D,
     });
+
   
     createBounders();
     addAudio();
@@ -482,28 +483,30 @@ var playState =
     game.stage.disableVisibilityChange = true;
   
     // Create population 
+    if(!initialed){
+      // populationGreenGuy = new Population(50, "BOT", 0);  
+      // populationRedGirl = new Population(50, "BOT", 1);  
+      // populationDoge =  new Population(50, "BOT", 3);  
+      // populationT =  new Population(50, "BOT", 4);  
+      // populationB =  new Population(50, "BOT", 5);
 
-    // populationGreenGuy = new Population(50, "BOT", 0);  
-    // populationRedGirl = new Population(50, "BOT", 1);  
-    // populationDoge =  new Population(50, "BOT", 3);  
-    // populationT =  new Population(50, "BOT", 4);  
-    // populationB =  new Population(50, "BOT", 5);
-
-    // 不輸入BOT 就會由電腦隨機取名
-    // populationGreenGuy = new Population(50, "", 0);  
-    // populationRedGirl = new Population(50, "", 1);  
-    // populationDoge =  new Population(50, "", 3);  
-    populationT =  new Population(50, "", 4);  
-    populationB =  new Population(50, "", 5);
-  
-  
-    // 先後順序會影像 影像前後，後放的可以蓋過前面
-    // populations.push(populationRedGirl);
-    // populations.push(populationGreenGuy);
-    // populations.push(populationDoge);
-    populations.push(populationT);
-    populations.push(populationB);
-          
+      // 不輸入BOT 就會由電腦隨機取名
+      // populationGreenGuy = new Population(50, "", 0);  
+      // populationRedGirl = new Population(50, "", 1);  
+      // populationDoge =  new Population(50, "", 3);  
+      populationT =  new Population(50, "", 4);  
+      populationB =  new Population(50, "", 5);
+    
+    
+      // 先後順序會影像 影像前後，後放的可以蓋過前面
+      // populations.push(populationRedGirl);
+      // populations.push(populationGreenGuy);
+      // populations.push(populationDoge);
+      populations.push(populationT);
+      populations.push(populationB);
+        
+    }  
+            
     // createPlayer();
     // createTextsBoard();
     
@@ -520,7 +523,46 @@ var playState =
     var textStyle= { font: "bold 48px Gothic", fill: "#ffffff", align:"center"};
     // 排名系統
     game.add.text(1500,100, "Top Ranks:", textStyle);
+
+    score.innerHTML = distance;
+
+    drawNewRank();
+
+    if(initialed)
+    {
+      // function buffer() {                          
+      // }  
+      
+      // setTimeout(buffer, 5000); 
+      
+      // 起始安全地板加回來
+      // let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
+      // normal800.scale.setTo(scale, scale);
+      // game.physics.arcade.enable(normal800);
+      // normal800.body.immovable = true;
+
+      // otherPlates.push(normal800);
+
+      status = "loading";  
+
+      for (let i = 0; i < populations.length; i++) {
+       
+        if (!populations[i].done()) {
+        // 新場景重生，數值一樣，以激發正常物理現象
+        populations[i].reBorn();    
+        }
+        else {
+          allDone++;
+        }
     
+      }      
+      
+      
+
+      
+      
+    }  
+    initialed = true;   
   },
   update : function() {
     // bad
@@ -543,10 +585,10 @@ var playState =
     }
       
     updatePlatforms();
-    updateItemSticks(); // 更新筷子 資訊
+    updateItem(); // 更新筷子 資訊
   
     createPlatforms();
-    createItemsticks(); // 創建筷子
+    createItem(); // 創建筷子
   
     // 群眾憤怒
     // if(rage)
@@ -756,7 +798,7 @@ function createBounders() {
   otherPlates.push(normal400);
 
 
-  // 起始安全地板，過7層後才會解除
+  // 起始安全地板，過5層後才會解除
   let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
   normal800.scale.setTo(scale, scale);
   game.physics.arcade.enable(normal800);
@@ -786,10 +828,10 @@ function createPlatforms() {
   updateDistance();
 }
 
-function createItemsticks() {
+function createItem() {
   // console.log(platforms);
   // Find the last platform created and keep distance
-  const lastiItem = itemSticksList[itemSticksList.length - 1];
+  const lastiItem = itemList[itemList.length - 1];
   if (lastiItem) {
     const { y } = lastiItem;
 
@@ -962,7 +1004,7 @@ function createOneItem() {
   Item.animations.add("shiny", [0, 1, 2, 3,4], 10, true);
   Item.play("shiny");
   
-  itemSticksList.push(Item);
+  itemList.push(Item);
 }
 
 function createTextsBoard() {
@@ -999,20 +1041,20 @@ function updatePlatforms() {
   }
 }
 
-function updateItemSticks() {
-  for (var i = 0; i < itemSticksList.length; i++) {
-    var item = itemSticksList[i];
+function updateItem() {
+  for (var i = 0; i < itemList.length; i++) {
+    var item = itemList[i];
 
     // 地板移動速度 受到常數加成
     item.body.position.y -= 2 * gameSpeed;
 
     if (item.body.position.y <= -32) {
       item.destroy();
-      itemSticksList.splice(i, 1);
+      itemList.splice(i, 1);
     }
     if (item.Explodede) {
       item.destroy();
-      itemSticksList.splice(i, 1);
+      itemList.splice(i, 1);
     }
   }
 }
@@ -1030,46 +1072,11 @@ function gameOver() {
 // 新一輪
 function restart() {
   status = "loading";
+  
+  game.state.start('cross');
 
   
 
-  platforms.forEach(function (s) {
-    s.destroy();
-  });
-  platforms = [];
-  
-  itemSticksList.forEach(function (s) {
-    s.destroy();
-  });
-  itemSticksList = [];
-
-  
-  distance = 0;
-  breakNewRocord = false;
-
-  
-  // game.state.start('load');
-
-  // 把後面MOSTER 族群移掉
-  if(populations.length >=5)
-  {
-    // 只取前面五個 家族(han tsai chiu T、B)
-    populations = populations.slice(0,5)
-  }
-
-
-  for (let i = 0; i < populations.length; i++) {
-
-    populations[i].naturalSelection();
-  }
-
-  // 起始安全地板加回來
-  let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
-  normal800.scale.setTo(scale, scale);
-  game.physics.arcade.enable(normal800);
-  normal800.body.immovable = true;
-
-  otherPlates.push(normal800);
 
 }
 
@@ -1114,14 +1121,19 @@ function checkNewRank() {
      return b.score - a.score  ; //大到小排
   });
   
-  // 前五名
+  // 前八名
   rankList = rankPopulation.slice(0,8);
+
+}
+
+
+// 新遊戲，重畫新排名
+function drawNewRank() {
 
   var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
 
-  var textStyleII= { font: "bold 24px Gothic", fill: "#ffffff", align:"center"};
-
-
+  var textStyleII= { font: "bold 24px Gothic", fill: "#ffffff", align:"center"};   
+ 
   // 印之前，先把舊的畫面排名物件清掉，否則圖會一直疊
   for (let i = 0; i < rankObjectList.length; i++) {
    
@@ -1164,5 +1176,6 @@ function checkNewRank() {
   }
 
 }
+
 
 
