@@ -50,7 +50,6 @@ class Population {
 
   kill()
   {
-
     // 找一個來殺
     for (let i = 0; i < this.players.length; i++)
     {
@@ -70,6 +69,29 @@ class Population {
         this.players[i].dead = true; 
         
         break;
+      }
+    }        
+  }
+
+  // 全殺
+  killAll()
+  {    
+    for (let i = 0; i < this.players.length; i++)
+    {
+      if (!this.players[i].dead ) {      
+        this.players[i].life =0;     
+
+        var killmark = game.add.sprite(this.players[i].player.x ,this.players[i].player.y, "killmark");
+
+        killmark.scale.setTo(2,2);
+
+        killmark.animations.add("killmark", [0, 1, 2, 3,4,5], 8).killOnComplete = true;;
+
+        killmark.animations.play("killmark");
+
+        this.players[i].healthBar.text = this.players[i].generateHealthBar(this.players[i].life =0);
+
+        this.players[i].dead = true;                 
       }
     }        
   }

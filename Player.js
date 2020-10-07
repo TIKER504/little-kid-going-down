@@ -843,11 +843,11 @@ class Player {
           console.log("nailsCeiling to death!");
 
 
-        // // 非BOT 死亡會播報
-        // if(this.familyName !="BOT")
-        // {
-        //   ComfyJS.Say(this.familyName + " is killed by nailsCeil");          
-        // }          
+        // 非BOT 死亡會播報
+        if(this.familyName !="BOT")
+        {
+          ComfyJS.Say(this.familyName + " is killed by nailsCeil");          
+        }          
         }
       }
     }

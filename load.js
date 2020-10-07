@@ -16,7 +16,7 @@ var loadState =
 {
   preload : function () {
 
-    game.add.text(80,150,'loading...',{font: '30px Courier',fill:'#ffffff'})
+    game.add.text(400 + gameWidth / 2, 400,'loading...',{font: '30px Courier',fill:'#ffffff'})
     game.load.baseURL = "./assets/";
     game.load.crossOrigin = "anonymous";
   

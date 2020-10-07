@@ -40,14 +40,6 @@ var rankList = [];
 // 排名畫面物件，統一清除畫上，要不然塗層會一直疊
 var rankObjectList =[]
 
-// Phaser.RequestAnimationFrame(game,true);
-
-// game.raf= new Phaser.RequestAnimationFrame(game, true)
-
-// var stage =  new Stage(game);
-
-// stage.disableVisibilityChange = true;
-
 // Current Platform to keep track of the platform
 let currentPlatform;
 
@@ -85,15 +77,15 @@ let  hanVoices = [];
 let  tsaiVoices = [];
   
 // Genetic Algothrithm Stuff
-let population,
-  populationHan,
-  populationTsai,
+let 
+  populationGreenGuy,
+  populationRedGirl,
   populationMoster,
-  populationChiu,
+  populationDoge,
   populationT,
   populationB,
   populations = [];
-recordScore = 0;
+  recordScore = 0;
 
 
 // whether use cameraEffect
@@ -147,63 +139,6 @@ ComfyJS.onCommand = (user, command, message, flags, extra) => {
 
     newRecord.play();
   }
-
-  if (command === "kill") {
-    console.log("!kill was typed in chat" + "(" + user + ")");
-    // population.kill();
-  }
-
-  if (command === "clone") {
-    console.log("!clone was typed in chat" + "(" + user + ")");
-    // 創造新家族
-    // populations.push(new Population(10,user)) 
-  }
-
-
-  if (command === "join_b") {
-    console.log("!join_b was typed in chat" + "(" + user + ")");
-
-    // B家族新成員
-    populationHan.newMember(user, 0)
-
-    // 隨機播放 韓導金句100
-    hanVoices[(1+ Math.floor(Math.random()*99))].play();
-
-    // born.play();
-  }
-
-
-  if (command === "join_g") {
-    console.log("!join_g was typed in chat" + "(" + user + ")");
-
-    // G家族新成員
-    populationTsai.newMember(user, 1)
-
-    // 隨機播放 小英金句
-    tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
-
-    // born.play();
-  }
-
-  if (command === "kill_b") {
-    console.log("!join_b was typed in chat" + "(" + user + ")");
-
-    // B家族隨機殺成員
-    populationHan.kill();
-
-    fallSound.play();
-  }
-
-
-  if (command === "kill_g") {
-    console.log("!join_g was typed in chat" + "(" + user + ")");
-
-    // G家族隨機殺成員
-    populationTsai.kill();
-
-    fallSound.play();
-  }
-
   if (command === "rage") {
 
     console.log("!rage was typed in chat" + "(" + user + ")");
@@ -231,13 +166,7 @@ ComfyJS.onCommand = (user, command, message, flags, extra) => {
 
     }
             
-  }
-  
-}
-
-ComfyJS.onReward =( user, reward, cost, message, extra )=>
-{
-  console.log( message +" was reward in chat" + "(" + user + ")");  
+  }  
 }
 
 
@@ -252,7 +181,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(extra.customRewardId==='f43a4039-41c0-45b4-bb87-71e2ddf1d91f')
   {
    // G家族新成員
-   populationTsai.newMember(user, 1);
+   populationRedGirl.newMember(user, 1);
 
    ComfyJS.Say(user+'加入綠軍新生兒');
   
@@ -264,7 +193,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(extra.customRewardId==='44227033-e641-4450-be45-d402dc0e111d')
   {
     // B家族新成員
-    populationHan.newMember(user, 0);
+    populationGreenGuy.newMember(user, 0);
 
     ComfyJS.Say(user+'加入藍軍新生兒');
 
@@ -301,7 +230,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(message==="LUL")
   {
     // G家族新成員
-   populationTsai.newMember(user, 1);
+   populationRedGirl.newMember(user, 1);
 
    ComfyJS.Say(user+'加入綠軍新生兒');
   
@@ -313,7 +242,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(message==="LUL LUL")
   {
     // G家族隨機殺成員
-   populationTsai.kill();
+   populationRedGirl.kill();
 
    ComfyJS.Say(user+'剷除一名綠軍');
 
@@ -326,7 +255,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(message==="Kappa")
   {
    // B家族新成員
-   populationHan.newMember(user, 0);
+   populationGreenGuy.newMember(user, 0);
 
    ComfyJS.Say(user+'加入藍軍新生兒');
 
@@ -337,7 +266,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(message==="Kappa Kappa")
   {
     // B家族隨機殺成員
-    populationHan.kill();
+    populationGreenGuy.kill();
 
     ComfyJS.Say(user+'剷除一名藍軍');
 
@@ -348,7 +277,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(message==="PogChamp")
   {
    // C家族新成員
-   populationChiu.newMember(user, 3);
+   populationDoge.newMember(user, 3);
 
    if (!cut.isPlaying) {
     cut.play(); // 夾筷子音效
@@ -360,7 +289,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   if(message==="PogChamp PogChamp")
   {
     // C家族隨機殺成員
-    populationChiu.kill();
+    populationDoge.kill();
     
     ComfyJS.Say(user+'剷除一名市議員');
 
@@ -563,43 +492,32 @@ var playState =
     game.stage.disableVisibilityChange = true;
   
     // Create population 
-    // population = new Population(200);
-  
-    // populationHan = new Population(50, "BOT", 0);
-  
-    // populationTsai = new Population(50, "BOT", 1);
-  
-    // populationChiu =  new Population(50, "BOT", 3);
-  
-    // populationT =  new Population(50, "BOT", 4);
-  
+
+    // populationGreenGuy = new Population(50, "BOT", 0);  
+    // populationRedGirl = new Population(50, "BOT", 1);  
+    // populationDoge =  new Population(50, "BOT", 3);  
+    // populationT =  new Population(50, "BOT", 4);  
     // populationB =  new Population(50, "BOT", 5);
   
-  
-    populationHan = new Population(50, "", 0);
-  
-    populationTsai = new Population(50, "", 1);
-  
-    populationChiu =  new Population(50, "", 3);
-  
-    populationT =  new Population(50, "", 4);
-  
+
+    // 不輸入BOT 就會由電腦隨機取名
+    // populationGreenGuy = new Population(50, "", 0);  
+    // populationRedGirl = new Population(50, "", 1);  
+    // populationDoge =  new Population(50, "", 3);  
+    populationT =  new Population(50, "", 4);  
     populationB =  new Population(50, "", 5);
   
   
     // 先後順序會影像 影像前後，後放的可以蓋過前面
-    populations.push(populationTsai);
-    populations.push(populationHan);
-    populations.push(populationChiu);
+    // populations.push(populationRedGirl);
+    // populations.push(populationGreenGuy);
+    // populations.push(populationDoge);
     populations.push(populationT);
     populations.push(populationB);
-    
-    
-  
+          
     // createPlayer();
     // createTextsBoard();
-  
-  
+    
     // 靜音按鈕
     muteBtn = game.add.button(1600, 50, 'muteBtn', muteBtnOnClick, this, 2, 1, 0);
     muteBtn.scale.setTo(0.3, 0.3);
@@ -607,24 +525,10 @@ var playState =
     // 關閉鏡頭特效按鈕
     cameraEffectBtn = game.add.button(1650, 30, 'cameraEffectBtn', cameraEffectBtnOnClick, this, 0, 0, 0);
     cameraEffectBtn.scale.setTo(0.7, 0.7);
-  
-    //指令文字
+              
+    //遊戲背景顏色  
+    // game.stage.backgroundColor = "#9044AA";
     var textStyle= { font: "bold 48px Gothic", fill: "#ffffff", align:"center"};
-    // var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
-    // game.add.text(800,100, "指令:", textStyle);
-    // game.add.text(800,160, "!join_b", textStyleI);
-    // game.add.text(800,210, "!join_g", textStyleI);
-    // game.add.text(800,260, "!kill_b", textStyleI);
-    // game.add.text(800,310, "!kill_g", textStyleI);
-    // game.add.text(800,360, "!rage", textStyleI);
-    
-    //遊戲背景顏色
-    // game.stage.backgroundColor = "#4488AA";
-  
-    game.stage.backgroundColor = "#9044AA";
-  
-    
-    
     // 排名系統
     game.add.text(1500,100, "Top Ranks:", textStyle);
     
@@ -633,26 +537,7 @@ var playState =
     // bad
     if (status == "gameOver" && keyboard.enter.isDown) restart();    
     if (status != "loading") return;
-  
-    
-    
-  
-    
-    // 若大於10層
-    // if(distance>10)
-    // {        
-    //   population.beginLevel =0;
-    // }
-  
-    // population.update();
-  
-  
-    // turnDead  = population.turnDead
-  
-    // deadnumber.innerHTML = turnDead;
-  
-  
-  
+                              
     var allDone = 0;
   
     for (let i = 0; i < populations.length; i++) {
@@ -667,9 +552,7 @@ var playState =
       }
   
     }
-  
-  
-  
+      
     updatePlatforms();
     updateChopSticks(); // 更新筷子 資訊
   
@@ -733,6 +616,19 @@ var playState =
   
     if (keyboard.w.isUp) {
       alreadyDown = false;
+    }
+
+
+    // 全殺滅族
+    if (keyboard.a.isDown){
+      for (let i = 0; i < populations.length; i++) {
+       
+        if (!populations[i].done()) {
+              
+        populations[i].killAll();
+    
+        }       
+      }
     }
       
   }
@@ -927,19 +823,11 @@ function updateDistance() {
 
   if (recordScore < distance) {
 
-    // // 破紀錄 放音樂
-    // if(!breakNewRocord && population.generation !=0)
-    // {
-    //   newRecord.play();
-    //   breakNewRocord  = true;
-    // }
-
     // 破紀錄 放音樂
     if (!breakNewRocord) {
       newRecord.play();
       breakNewRocord = true;
     }
-
 
     recordScore = distance;
     record.innerHTML = recordScore;
