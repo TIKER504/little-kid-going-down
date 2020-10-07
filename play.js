@@ -13,8 +13,8 @@ var keyboard;
 // 平台群集
 var platforms = [];
 
-// 筷子群集
-var chopsticksList = [];
+// 道具群集
+var itemSticksList = [];
 
 var leftWalls = [];
 var rightWalls = [];
@@ -67,7 +67,8 @@ let conveyorSound,
   rageSound,
   explosion,
   cheerfulAnnoyance,  
-  pistolFire
+  pistolFire,
+  cashIn
   ;
 
 // 韓導語錄
@@ -121,15 +122,6 @@ var img_Kappa, img_LUL;
 var gameMute = true;
 
 // 檢查 twitch 聊天室內容
-
-// ComfyJS.Init("chimera4956");
-
-// 這個可以 Oauth 授權成功!!!!! 痛哭流涕
-// ComfyJS.Init("funmoon504", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
-
-// 這是node.js 的套件，先用html 解決之後一起整理。
-// var ComfyJS = require("comfy.js");
-
 ComfyJS.onCommand = (user, command, message, flags, extra) => {
 
   if (command === "test") {
@@ -168,8 +160,6 @@ ComfyJS.onCommand = (user, command, message, flags, extra) => {
             
   }  
 }
-
-
 
 ComfyJS.onChat =( user, message, flags, self, extra )=>
 {
@@ -498,7 +488,6 @@ var playState =
     // populationDoge =  new Population(50, "BOT", 3);  
     // populationT =  new Population(50, "BOT", 4);  
     // populationB =  new Population(50, "BOT", 5);
-  
 
     // 不輸入BOT 就會由電腦隨機取名
     // populationGreenGuy = new Population(50, "", 0);  
@@ -554,10 +543,10 @@ var playState =
     }
       
     updatePlatforms();
-    updateChopSticks(); // 更新筷子 資訊
+    updateItemSticks(); // 更新筷子 資訊
   
     createPlatforms();
-    createChopsticks(); // 創建筷子
+    createItemsticks(); // 創建筷子
   
     // 群眾憤怒
     // if(rage)
@@ -686,6 +675,7 @@ function addAudio() {
   explosion = game.add.audio("explosion");
   cheerfulAnnoyance = game.add.audio("cheerfulAnnoyance");
   pistolFire = game.add.audio("pistolFire");
+  cashIn = game.add.audio("cashIn");
 
 
     // 批次加入韓導聲音
@@ -796,21 +786,21 @@ function createPlatforms() {
   updateDistance();
 }
 
-function createChopsticks() {
+function createItemsticks() {
   // console.log(platforms);
   // Find the last platform created and keep distance
-  const lastChopsticks = chopsticksList[chopsticksList.length - 1];
-  if (lastChopsticks) {
-    const { y } = lastChopsticks;
+  const lastiItem = itemSticksList[itemSticksList.length - 1];
+  if (lastiItem) {
+    const { y } = lastiItem;
 
     const movedBy = gameHeight - y;
     if (movedBy > 100) {
-      createOneChopsticks();
+      createOneItem();
     }
 
     return;
   } 
-  createOneChopsticks();
+  createOneItem();
 
 }
 
@@ -946,39 +936,33 @@ function createOnePlatform() {
   platforms.push(platform);
 }
 
-function createOneChopsticks() {
-  var chopsticks;
+function createOneItem() {
+  var Item;
   var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale + 400;
-
-  
-  
+    
   // var y = gameHeight; // 用這個的話，筷子永遠跟某一個板塊平行
  
   var y = gameHeight + Math.random() * gameHeight;
   var rand = Math.random() * 100;
   
-  // if (rand < 90) {
-  //   chopsticks = game.add.sprite(x, y, "chopsticks");
-  // }
-
   // 只有一種筷子好像也不必用機率分布來算
-  chopsticks = game.add.sprite(x, y, "chopsticks");
+  Item = game.add.sprite(x, y, "money");
   
-  chopsticks.scale.setTo(scale, scale);
+  Item.scale.setTo(scale, scale);
   
-  game.physics.arcade.enable(chopsticks);
-  chopsticks.body.immovable = true;
+  game.physics.arcade.enable(Item);
+  Item.body.immovable = true;
 
   // platform.body.checkCollision.down = false;
   // platform.body.checkCollision.left = false;
   // platform.body.checkCollision.right = false;
   // platform.platformType = platformType;
-  chopsticks.platformType = 'chopsticks';
+  Item.platformType = 'money';
 
-  chopsticks.animations.add("shiny", [0, 1, 2, 3,4], 10, true);
-  chopsticks.play("shiny");
+  Item.animations.add("shiny", [0, 1, 2, 3,4], 10, true);
+  Item.play("shiny");
   
-  chopsticksList.push(chopsticks);
+  itemSticksList.push(Item);
 }
 
 function createTextsBoard() {
@@ -1015,20 +999,20 @@ function updatePlatforms() {
   }
 }
 
-function updateChopSticks() {
-  for (var i = 0; i < chopsticksList.length; i++) {
-    var chopsticks = chopsticksList[i];
+function updateItemSticks() {
+  for (var i = 0; i < itemSticksList.length; i++) {
+    var item = itemSticksList[i];
 
     // 地板移動速度 受到常數加成
-    chopsticks.body.position.y -= 2 * gameSpeed;
+    item.body.position.y -= 2 * gameSpeed;
 
-    if (chopsticks.body.position.y <= -32) {
-      chopsticks.destroy();
-      chopsticksList.splice(i, 1);
+    if (item.body.position.y <= -32) {
+      item.destroy();
+      itemSticksList.splice(i, 1);
     }
-    if (chopsticks.Explodede) {
-      chopsticks.destroy();
-      chopsticksList.splice(i, 1);
+    if (item.Explodede) {
+      item.destroy();
+      itemSticksList.splice(i, 1);
     }
   }
 }
@@ -1054,10 +1038,10 @@ function restart() {
   });
   platforms = [];
   
-  chopsticksList.forEach(function (s) {
+  itemSticksList.forEach(function (s) {
     s.destroy();
   });
-  chopsticksList = [];
+  itemSticksList = [];
 
   
   distance = 0;

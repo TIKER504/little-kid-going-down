@@ -4,7 +4,7 @@ var status = "loading";
 
 // ComfyJS.Init("chimera4956");
 
-// 這個可以 Oauth 授權成功!!!!! 痛哭流涕
+// 這個可以 Oauth 授權成功!!!!! 痛哭流涕 (透過API連接到我的帳號)
 ComfyJS.Init("funmoon504", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
 
 // 這是node.js 的套件，先用html 解決之後一起整理。
@@ -36,8 +36,8 @@ var loadState =
   
     game.load.spritesheet("killmark", "killmark.png", 32, 32);
   
-    // 筷子
-    game.load.spritesheet("chopsticks", "chopsticks.png", 32, 14);
+    // 錢
+    game.load.spritesheet("money", "money.png", 32, 14);
     
   
     //按鈕
@@ -104,6 +104,7 @@ var loadState =
     game.load.audio("explosion", "/sounds/explosion.mp3");
     game.load.audio("cheerfulAnnoyance", "/sounds/CheerfulAnnoyance.mp3");
     game.load.audio("pistolFire", "/sounds/pistolFire.mp3");
+    game.load.audio("cashIn", "/sounds/cashIn.mp3");
   
     
     

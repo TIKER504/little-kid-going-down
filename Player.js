@@ -42,7 +42,7 @@ class Player {
     player.life = 10;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
-    player.touchChopsticksOn = undefined;
+    player.touchItemOn = undefined;
 
 
     this.player = player;
@@ -113,11 +113,8 @@ class Player {
 
     this.score = 0;
 
-    // 身上筷子數
-    this.gotChopsticks = 0;
-
-    //切斷筷子數
-    this.cutChopsticks = 0;
+    // 身上金錢數
+    this.gotMoney = 0;
 
     this.unadjustedFitness;
     this.lifespan = 0; //how long the player lived for this.fitness
@@ -167,7 +164,7 @@ class Player {
     }
 
     // 和筷子的重疊事件
-    game.physics.arcade.overlap(this.player, chopsticksList, this.effect.bind(this));
+    game.physics.arcade.overlap(this.player, itemSticksList, this.effect.bind(this));
 
     game.physics.arcade.collide(this.player, [
       ...leftWalls,
@@ -220,30 +217,8 @@ class Player {
     if (!this.dead) {
       // this.score = distance; // 原本分數為跑了多少層
 
-      if(this.species == 0)
-      {
-        this.score = distance + this.gotChopsticks * 3 + this.cutChopsticks *10; // 現在分數多了 取得筷子加權，藍軍每一雙*3
-      }
-      if(this.species == 1)
-      {
-        this.score = distance + this.gotChopsticks * 5 + this.cutChopsticks *10; // 現在分數多了 取得筷子加權，綠軍每一雙*5
-      }
-      if(this.species ==3)
-      {
-        this.score = distance + this.cutChopsticks *10; // 現在分數多了 取得筷子加權，每夾斷一雙 結算 +10
-      }
-
-      if(this.species ==4)
-      {
-        this.score = distance ;
-      }
-
-      if(this.species ==5)
-      {
-        this.score = distance ;
-      }
-
-      
+      this.score = distance + this.gotMoney * 10 ; // 現在分數多了 取得錢加權 *10
+          
       this.updatePlayer();
       this.checkNailCeiling();
       // this.checkleftWalls();
@@ -331,7 +306,7 @@ class Player {
       fake: 0.8,
     };
 
-    let closestPlatform, closestPlatXform, closestChopsticks,platform0,platform1,platform2,platform3,platform4,platform5,platform6,platform7,
+    let closestPlatform, closestPlatXform, closestItem,platform0,platform1,platform2,platform3,platform4,platform5,platform6,platform7,
       closestDist = gameHeight,
       closestXDist = gameWidth;
 
@@ -374,9 +349,9 @@ class Player {
     }
 
     // Find the closest platform
-    for (let index = 0; index < chopsticksList.length; index++) {
+    for (let index = 0; index < itemSticksList.length; index++) {
       // 高度距離
-      const distToPlayer = chopsticksList[index].y - playerY;
+      const distToPlayer = itemSticksList[index].y - playerY;
 
       // 玩家似乎身高為60 ，超過玩家高度的不考量
       if (distToPlayer <= 0) {
@@ -384,15 +359,15 @@ class Player {
       }
 
       // 忽略正再碰觸的當下筷子
-      if (this.player.touchChopsticksOn) {
-        if (this.player.touchChopsticksOn == chopsticksList[index]) {
+      if (this.player.touchItemOn) {
+        if (this.player.touchItemOn == itemSticksList[index]) {
           continue;
         }
       }
 
       if (distToPlayer < closestDist) {
         closestDist = distToPlayer;
-        closestChopsticks = chopsticksList[index];
+        closestItem = itemSticksList[index];
       }
     }
 
@@ -415,8 +390,8 @@ class Player {
       playerGoLeft = 0,
       playerGoRight = 0,
       lastChance = 0,
-      chopsticksY = -gameHeight, // Y方向最近筷子資訊
-      chopsticksX = -400,
+      ItemY = -gameHeight, // Y方向最近筷子資訊
+      ItemX = -400,
       platform0Y = -gameHeight, // 加入畫面所有地板資訊(最多八個)
       platform0X = -400,
       platform1Y = -gameHeight,
@@ -544,12 +519,12 @@ class Player {
       // closestPlatXform.tint = 0xFF6F61;      
     }
 
-    if (closestChopsticks) {
-      const { x, y, width } = closestChopsticks;
+    if (closestItem) {
+      const { x, y, width } = closestItem;
 
-      chopsticksY = y;
+      ItemY = y;
 
-      chopsticksX = x;
+      ItemX = x;
     }
 
 
@@ -598,9 +573,9 @@ class Player {
     platform7X = this.normalize(platform7X, gameWidth);
 
 
-    chopsticksY = this.normalize(chopsticksY, gameHeight);
+    ItemY = this.normalize(ItemY, gameHeight);
 
-    chopsticksX = this.normalize(chopsticksX, gameHeight);
+    ItemX = this.normalize(ItemX, gameHeight);
 
     platCenter = this.normalize(platCenter, gameWidth);
 
@@ -635,8 +610,8 @@ class Player {
       playerGoRight,
       platformType,
       playerFromCenter,
-      chopsticksY,
-      chopsticksX
+      ItemY,
+      ItemX
     );
   // }
 
@@ -1148,14 +1123,14 @@ class Player {
   }
 
   // 觸碰筷子效果
-  chopsticksEffect(player, platform) {
+  ItemEffect(player, platform) {
+    // 只能碰一次
+    if (player.touchItemOn !== platform) {
 
-    if (player.touchChopsticksOn !== platform) {
-
-      player.touchChopsticksOn = platform;
+      player.touchItemOn = platform;
 
       // 取得筷子數增加
-      this.gotChopsticks++;
+      this.gotMoney++;
 
       if(this.species == 0)
       {
@@ -1168,11 +1143,11 @@ class Player {
         // 藍軍碰觸筷子 可以加三血
         player.life =player.life +3;
 
-
       }
 
-
-
+      if (!cashIn.isPlaying) {
+        cashIn.play(); 
+      }
     }
   }
 
@@ -1189,9 +1164,9 @@ class Player {
   //       cutDone.play(); // 夾筷子得分音效
   //     }
                        
-  //     this.cutChopsticks = this.gotChopsticks;
+  //     this.cutChopsticks = this.gotMoney;
       
-  //     this.gotChopsticks = 0;
+  //     this.gotMoney = 0;
 
   //     player.touchOn = platform;
 
@@ -1228,13 +1203,13 @@ class Player {
     if (platform.key == "fake") {
       this.fakeEffect(player, platform);
     }
-    if (platform.key == "chopsticks") {
-      this.chopsticksEffect(player, platform);
+    if (platform.key == "money") {
+      this.ItemEffect(player, platform);
     }
 
     
     // // 持有筷子 的市議員專用，有筷子才能夾
-    // if (platform.key == "cutPlate" && this.species == 3 && this.gotChopsticks >0) {
+    // if (platform.key == "cutPlate" && this.species == 3 && this.gotMoney >0) {
 
     //   this.cutEffect(player, platform);
     // }
