@@ -819,10 +819,10 @@ class Player {
           console.log("nailsCeiling to death!");
 
           // 非BOT 死亡會播報
-          if(this.familyName !="BOT")
-          {
-            ComfyJS.Say(this.familyName + " is killed by nailsCeil");          
-          }          
+          // if(this.familyName !="BOT")
+          // {
+          //   ComfyJS.Say(this.familyName + " is killed by nailsCeil");          
+          // }          
         }
       }
     }
@@ -1122,32 +1122,35 @@ class Player {
     }
   }
 
-  // 觸碰筷子效果
+  // 觸碰道具效果
   ItemEffect(player, platform) {
     // 只能碰一次
     if (player.touchItemOn !== platform) {
-
+      
       player.touchItemOn = platform;
 
-      // 取得筷子數增加
-      this.gotMoney++;
-
-      if(this.species == 0)
+      if(platform.platformType=='money')
       {
-        // 系統可能會承受不住，一開始一團人吃到筷子
-        // // 隨機播放 韓導金句100
-        // var rand = 1+ Math.floor(Math.random()*99);
-        // if (!hanVoices[(rand)].isPlaying) {
-        //   hanVoices[(rand)].play();
+        // 取得筷子數增加
+        this.gotMoney++;
+      
+        // if (!cashIn.isPlaying) {
+        //   cashIn.play(); 
         // }        
-        // 藍軍碰觸筷子 可以加三血
-        player.life =player.life +3;
-
+          cashIn.play(); 
+        // 吃完後，形同爆炸，play.js 主程序會回收       
+        platform.Explodede = true;
       }
-
-      if (!cashIn.isPlaying) {
-        cashIn.play(); 
+      // 紅水 補血
+      if(platform.platformType=='redpotion')
+      {
+        player.life =player.life +5;
+        healSound.play(); 
+        // 吃完後，形同爆炸，play.js 主程序會回收
+        platform.Explodede = true;
       }
+      
+      
     }
   }
 
@@ -1204,6 +1207,9 @@ class Player {
       this.fakeEffect(player, platform);
     }
     if (platform.key == "money") {
+      this.ItemEffect(player, platform);
+    }
+    if (platform.key == "redpotion") {
       this.ItemEffect(player, platform);
     }
 

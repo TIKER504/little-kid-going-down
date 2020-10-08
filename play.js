@@ -24,7 +24,7 @@ var otherPlates = [];
 
 var distance = 0;
 var turnDead = 0;
-var status = "loading";
+var status = "playing";
 
 var breakNewRocord = false;
 
@@ -68,7 +68,8 @@ let conveyorSound,
   explosion,
   cheerfulAnnoyance,  
   pistolFire,
-  cashIn
+  cashIn,
+  healSound
   ;
 
 // 韓導語錄
@@ -120,343 +121,6 @@ var img_Kappa, img_LUL;
 
 // Mute the screaming kids
 var gameMute = true;
-
-// 檢查 twitch 聊天室內容
-ComfyJS.onCommand = (user, command, message, flags, extra) => {
-
-  if (command === "test") {
-    console.log("!test was typed in chat" + "(" + user + ")");
-
-    ComfyJS.Say("replying to !test");
-
-    newRecord.play();
-  }
-  if (command === "rage") {
-
-    console.log("!rage was typed in chat" + "(" + user + ")");
-
-    rageNameList.push(user);
-
-    if(rageNameList.length >1)
-    {
-      rage = game.add.sprite(0,0, "rage");
-      game.physics.arcade.enable(rage);
-      // rage.body.immovable = true;
-      rage.body.gravity.y = gameHeight;
-
-
-      var name = new Phaser.Text(game, 3, -60,rageNameList.join(",") , {
-        fontSize: 50,
-        // fontWeight: "thin",
-        align: "center",
-        fill: "white",
-      });
-  
-      rage.addChild(name);
-
-      rageNameList =[];
-
-    }
-            
-  }  
-}
-
-ComfyJS.onChat =( user, message, flags, self, extra )=>
-{
-  console.log( message +" was typed in chat" + "(" + user + ")");
-
-  //代幣系列
-
-  // 加入綠軍
-  if(extra.customRewardId==='f43a4039-41c0-45b4-bb87-71e2ddf1d91f')
-  {
-   // G家族新成員
-   populationRedGirl.newMember(user, 1);
-
-   ComfyJS.Say(user+'加入綠軍新生兒');
-  
-   // 隨機播放 小英金句
-   tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
-  }
-
-  // 加入藍軍
-  if(extra.customRewardId==='44227033-e641-4450-be45-d402dc0e111d')
-  {
-    // B家族新成員
-    populationGreenGuy.newMember(user, 0);
-
-    ComfyJS.Say(user+'加入藍軍新生兒');
-
-    // 隨機播放 韓導金句100
-    hanVoices[(1+ Math.floor(Math.random()*99))].play();
-  }
-
-  
-
-  // 人民的法槌
-  if(extra.customRewardId==='b901ce1d-a862-4362-aadb-c553310eee1f')
-  {
-    rage = game.add.sprite(0,0, "rage");
-    game.physics.arcade.enable(rage);
-    // rage.body.immovable = true;
-    rage.body.gravity.y = gameHeight;
-    
-    var name = new Phaser.Text(game, 3, -60,user+"表示:" + message , {
-      fontSize: 80,
-      // fontWeight: "thin",
-      align: "center",
-      fill: "white",
-    });
-
-    rage.addChild(name);
-              
-    rageSound.play();
-
-    ComfyJS.Say(user +'一氣之下直接花費小朋友幣召喚天降之槌');
-  }
-
-
-  // 表情符號
-  if(message==="LUL")
-  {
-    // G家族新成員
-   populationRedGirl.newMember(user, 1);
-
-   ComfyJS.Say(user+'加入綠軍新生兒');
-  
-   // 隨機播放 小英金句
-   tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
-  }
-
-
-  if(message==="LUL LUL")
-  {
-    // G家族隨機殺成員
-   populationRedGirl.kill();
-
-   ComfyJS.Say(user+'剷除一名綠軍');
-
-   // 隨機播放 小英金句
-   tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
-  }
-
-
-
-  if(message==="Kappa")
-  {
-   // B家族新成員
-   populationGreenGuy.newMember(user, 0);
-
-   ComfyJS.Say(user+'加入藍軍新生兒');
-
-   // 隨機播放 韓導金句100
-   hanVoices[(1+ Math.floor(Math.random()*99))].play();
-  }
-
-  if(message==="Kappa Kappa")
-  {
-    // B家族隨機殺成員
-    populationGreenGuy.kill();
-
-    ComfyJS.Say(user+'剷除一名藍軍');
-
-   // 隨機播放 韓導金句100
-   hanVoices[(1+ Math.floor(Math.random()*99))].play();
-  }
-
-  if(message==="PogChamp")
-  {
-   // C家族新成員
-   populationDoge.newMember(user, 3);
-
-   if (!cut.isPlaying) {
-    cut.play(); // 夾筷子音效
-  }
-
-   ComfyJS.Say(user+'加入市議員新生兒');
-  }
-
-  if(message==="PogChamp PogChamp")
-  {
-    // C家族隨機殺成員
-    populationDoge.kill();
-    
-    ComfyJS.Say(user+'剷除一名市議員');
-
-  }
-
-
-   
-
-
-  if(message==="BibleThump")
-  {
-    // console.log("!rage was typed in chat" + "(" + user + ")");
-
-    rageNameList.push(user);
-    // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
-    // var msg = new SpeechSynthesisUtterance(user+'貢獻了人民的法槌，還差一點點了 大家加油');
-    // msg.rate = 4; // 0.1 to 10
-    // msg.pitch = 1; //0 to 2        
-    // window.speechSynthesis.speak(msg);
-
-    // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
-    // var msg_ch = new SpeechSynthesisUtterance('貢獻了人民的法槌，還差一點點了 大家加油');
-
-    // var voices = window.speechSynthesis.getVoices();
-    // msg_ch.voice = voices[10]; // Note: some voices don't support altering params
-    // // msg.voiceURI = 'native';
-    // // msg.volume = 1; // 0 to 1
-    // msg_ch.rate = 4; // 0.1 to 10
-    // msg_ch.pitch = 1; //0 to 2
-    // // msg.text = 'Hello World';
-    // msg_ch.lang = 'zh-tw';
-    // window.speechSynthesis.speak(msg_ch);
-    // // msg.onend = function(e) {
-    // //   console.log('Finished in ' + event.elapsedTime + ' seconds.');
-    // // };
-
-    if(rageNameList.length ==1)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'首先發難舉起了人民法槌' );
-
-    ComfyJS.Say(user+'首先發難舉起了人民法槌'+'(' + rageNameList.length +"/20)");
-
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-
-
-    }
-
-    if(rageNameList.length >=2 &&rageNameList.length <=7)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'響應人民法槌行列步步向前');
-
-    ComfyJS.Say(user+'響應人民法槌行列步步向前'+'(' + rageNameList.length +"/20)");
-
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-    }
-
-    if(rageNameList.length >=8 &&rageNameList.length <=14)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆');
-
-    ComfyJS.Say(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆'+'(' + rageNameList.length +"/20)");
-
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-    }
-
-    if(rageNameList.length >=15 &&rageNameList.length <=19)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家');
-
-    ComfyJS.Say(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家'+'(' + rageNameList.length +"/20)");
-
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-    }
-
-
-
-    if(rageNameList.length >=20)
-    {
-      rage = game.add.sprite(0,0, "rage");
-      game.physics.arcade.enable(rage);
-      // rage.body.immovable = true;
-      rage.body.gravity.y = gameHeight;
-
-
-      var lineNumber = 1;
-
-      lineNumber = Math.ceil(rageNameList.length/3)
-
-
-      for(i = 1; i<=lineNumber; i++)
-      {
-        var name = new Phaser.Text(game, 3, -60 *i,rageNameList.slice((i-1)*3,(i*3)).join(",") , {
-          fontSize: 50,
-          // fontWeight: "thin",
-          align: "center",
-          fill: "white",
-        });
-    
-        rage.addChild(name);
-      }
-      
-      
-
-      
-
-      // 隨機播放 韓導金句100
-      // hanVoices[(1+ Math.floor(Math.random()*99))].play();
-    
-      rageSound.play();
-
-      ComfyJS.Say('這就是萬民的憤怒!!!來自眾英雄:' +rageNameList.join("、")+'，感受眾志成城的壓迫感吧!!!');
-
-      rageNameList =[];
-
-    }
-  }
-
-  if(message==="SSSsss")
-  {
-   // 苦力怕
-  //  console.log('苦力怕要來了!');
-
-  creepNameList.push(user);
-
-   if(creepNameList.length >=2)
-   {
-    // rage = game.add.sprite(0,0, "rage");
-    // game.physics.arcade.enable(rage);
-    // // rage.body.immovable = true;
-    // rage.body.gravity.y = gameHeight;
-
-    // var lineNumber = 1;
-
-    // lineNumber = Math.ceil(rageNameList.length/3)
-
-    // for(i = 1; i<=lineNumber; i++)
-    // {
-    //   var name = new Phaser.Text(game, 3, -60 *i,rageNameList.slice((i-1)*3,(i*3)).join(",") , {
-    //     fontSize: 50,
-    //     // fontWeight: "thin",
-    //     align: "center",
-    //     fill: "white",
-    //   });
-  
-    //   rage.addChild(name);
-    // }               
-
-    // ComfyJS.Say('來自:' +creepNameList.join("、")+'的負能量，積壓已久民怨化作怪物誕生!!!其學會了現在最厲害小朋友的思路，且無懼於任何機關陷阱， 小心爆炸!!!');
-
-    // populationMoster = new Population(1, creepNameList.join(" & "), 2,true);
-
-    // // 複製目前存活AI 避免弱智新生兒 拖累進度
-    // populationMoster.copyAliveBrain();
-
-    // populations.push(populationMoster);
-
-    // born.play();
-    
-    // cheerfulAnnoyance.loop = true;
-    // cheerfulAnnoyance.play();
-
-    // creepNameList =[];
-  }
-
-
-
-  }
-   
-}
 
 
 var playState =
@@ -530,25 +194,12 @@ var playState =
 
     if(initialed)
     {
-      // function buffer() {                          
-      // }  
-      
-      // setTimeout(buffer, 5000); 
-      
-      // 起始安全地板加回來
-      // let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
-      // normal800.scale.setTo(scale, scale);
-      // game.physics.arcade.enable(normal800);
-      // normal800.body.immovable = true;
-
-      // otherPlates.push(normal800);
-
-      status = "loading";  
+      status = "playing";  
 
       for (let i = 0; i < populations.length; i++) {
        
         if (!populations[i].done()) {
-        // 新場景重生，數值一樣，以激發正常物理現象
+        // 新場景重生，brain數值一樣，以激發正常物理現象
         populations[i].reBorn();    
         }
         else {
@@ -556,10 +207,7 @@ var playState =
         }
     
       }      
-      
-      
-
-      
+                  
       
     }  
     initialed = true;   
@@ -567,7 +215,7 @@ var playState =
   update : function() {
     // bad
     if (status == "gameOver" && keyboard.enter.isDown) restart();    
-    if (status != "loading") return;
+    if (status != "playing") return;
                               
     var allDone = 0;
   
@@ -718,7 +366,8 @@ function addAudio() {
   cheerfulAnnoyance = game.add.audio("cheerfulAnnoyance");
   pistolFire = game.add.audio("pistolFire");
   cashIn = game.add.audio("cashIn");
-
+  healSound = game.add.audio("healSound");
+  
 
     // 批次加入韓導聲音
     for (var i = 1; i < 100 ;i ++) {
@@ -985,8 +634,7 @@ function createOneItem() {
   // var y = gameHeight; // 用這個的話，筷子永遠跟某一個板塊平行
  
   var y = gameHeight + Math.random() * gameHeight;
-  var rand = Math.random() * 100;
-  
+    
   // 只有一種筷子好像也不必用機率分布來算
   Item = game.add.sprite(x, y, "money");
   
@@ -1003,8 +651,26 @@ function createOneItem() {
 
   Item.animations.add("shiny", [0, 1, 2, 3,4], 10, true);
   Item.play("shiny");
+
+
+  x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale + 400;       
+  y = gameHeight + Math.random() * gameHeight;
+  var Item2;
+
+  // 只有一種筷子好像也不必用機率分布來算
+  Item2 = game.add.sprite(x, y, "redpotion");
+  
+  Item2.scale.setTo(scale, scale);
+  
+  game.physics.arcade.enable(Item2);
+  Item2.body.immovable = true;
+  
+  Item2.platformType = 'redpotion';
+
   
   itemList.push(Item);
+
+  itemList.push(Item2);
 }
 
 function createTextsBoard() {
@@ -1071,13 +737,14 @@ function gameOver() {
 
 // 新一輪
 function restart() {
-  status = "loading";
-  
+    
+  // twitch API 報 每一輪 最佳成績
+  ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
+
+
   game.state.start('cross');
 
   
-
-
 }
 
 

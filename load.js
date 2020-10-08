@@ -1,4 +1,4 @@
-var status = "loading";
+status = "loading";
 
 // 檢查 twitch 聊天室內容
 
@@ -38,6 +38,9 @@ var loadState =
   
     // 錢
     game.load.spritesheet("money", "money.png", 32, 14);
+
+    //紅水
+    game.load.spritesheet("redpotion", "redpotion.png", 32, 14);
     
   
     //按鈕
@@ -105,7 +108,8 @@ var loadState =
     game.load.audio("cheerfulAnnoyance", "/sounds/CheerfulAnnoyance.mp3");
     game.load.audio("pistolFire", "/sounds/pistolFire.mp3");
     game.load.audio("cashIn", "/sounds/cashIn.mp3");
-  
+    game.load.audio("healSound", "/sounds/healSound.mp3");
+    healSound
     
       
     // 批次讀取韓導聲音
@@ -124,9 +128,8 @@ var loadState =
    
   
   },create : function ()
-  {
-
-    
+  {    
+    status = "playing";
     game.state.start('play');
   }
 }
