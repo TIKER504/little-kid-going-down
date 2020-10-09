@@ -105,6 +105,8 @@ let rage;
 
 var alreadyDown;
 
+// 此層已經被入侵
+var FloorAlreadyRush;
 
 // Scoreboard elements
 const lifeBar = document.getElementById("life-bar");
@@ -218,7 +220,7 @@ var playState =
     if (status != "playing") return;
                               
     var allDone = 0;
-  
+      
     for (let i = 0; i < populations.length; i++) {
        
       if (!populations[i].done()) {
@@ -245,6 +247,14 @@ var playState =
     //     rage.destroy();      
     //   }    
     // }
+    
+    // 每 50層 怪物入侵一次，且此層尚未被入侵，避免短時間數個update 過於密集
+    if(distance% 50 == 0 && !FloorAlreadyRush)
+    {
+      monsterRush(3);
+      // console.log("monsterRush!");
+      FloorAlreadyRush =true;
+    }
 
     // 大於5層 安全網會解除
     if(distance >5
@@ -262,8 +272,12 @@ var playState =
   
       // recolorImage(img,255,255,0,11,28,214)
   
-      // 先將玩家排序分數，新排行榜
+      // 先將玩家排序分數，新排行榜      
       checkNewRank();
+
+      // 只取前二populations，其他怪物、NPC 都不要
+      populations = populations.slice(0,2);
+
       status = "gameOver";
       console.log("restart");
       restart();
@@ -274,23 +288,7 @@ var playState =
     
     // 創造怪物，(每一次的按壓上下算一次，避免一個FRAME 就被計算一次 )
     if (keyboard.w.isDown){
-      if (!alreadyDown) {
-        populationMoster = new Population(10,'BOT', 2,true);
-  
-        // 複製目前存活AI 避免弱智新生兒 拖累進度
-        populationMoster.copyAliveBrain();
-  
-        if(populations.length>3)
-        {
-          populations[3].players = populations[3].players.concat(populationMoster.players);        
-        }
-        else
-        {
-          populations.push(populationMoster);    
-        }
-              
-        alreadyDown = true;
-      }
+        monsterRush(10);
     }
   
     if (keyboard.w.isUp) {
@@ -298,7 +296,7 @@ var playState =
     }
 
 
-    // 全殺滅族
+    // 全殺滅族 幫助快速測試
     if (keyboard.a.isDown){
       for (let i = 0; i < populations.length; i++) {
        
@@ -309,12 +307,35 @@ var playState =
         }       
       }
     }
+
+    
       
   }
   
 }
 
+// 怪物入侵 (輸入數量)
+function monsterRush(amount)
+{
+  if (!alreadyDown) {
+    populationMoster = new Population(amount,'BOT', 2,true);
 
+    // 複製目前存活AI 避免弱智新生兒 拖累進度
+    populationMoster.copyAliveBrain();
+
+    if(populations.length>2)
+    {
+      populations[2].players = populations[2].players.concat(populationMoster.players);        
+    }
+    else
+    {
+      populations.push(populationMoster);    
+    }
+          
+    alreadyDown = true;
+  }
+
+}
 
 
 function updateLifeBar() {
@@ -513,6 +534,8 @@ function updateDistance() {
     recordScore = distance;
     record.innerHTML = recordScore;
   }
+
+  FloorAlreadyRush =false;
 
   //破記錄前的提示
   if (recordScore - distance <= 10) {
@@ -739,7 +762,7 @@ function gameOver() {
 function restart() {
     
   // twitch API 報 每一輪 最佳成績
-  ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
+  // ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
 
 
   game.state.start('cross');
@@ -772,7 +795,11 @@ function checkNewRank() {
 
   // 把所有群集都用在一起
   for (let i = 0; i < populations.length; i++) {
-    rankPopulation = rankPopulation.concat(populations[i].players);
+    // 非怪物才加入排名
+    if(!populations[i].isMonster)
+    {
+      rankPopulation = rankPopulation.concat(populations[i].players);
+    }    
   }
 
   // 跟目前前五名和在一起

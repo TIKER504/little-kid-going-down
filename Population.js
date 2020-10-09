@@ -1,7 +1,7 @@
 let showBest = true;
 
 class Population {
-  constructor(size,FamilyName,species,isMonter) {
+  constructor(size,FamilyName,species,isMonster) {
     this.players = [];
     this.bestPlayer;
     this.bestFitness = 0;
@@ -10,11 +10,12 @@ class Population {
     this.turnDead = 0;
     this.beginLevel = 1;
     this.nowAlive = 0;
+    this.isMonster =isMonster;
 
     // 假如有傳家族名子，統一命名，要不然就是系統隨機    
     if(FamilyName)
     {
-      if(isMonter)
+      if(isMonster)
       {
         for (let i = 0; i < size; i++) {
           this.players.push(new Monster(FamilyName, this.generation,species));

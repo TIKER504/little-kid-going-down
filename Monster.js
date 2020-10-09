@@ -42,7 +42,7 @@ class Monster {
     player.life = 15;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
-    player.touchChopsticksOn = undefined;
+    player.touchitemOn = undefined;
 
     
     this.player = player;
@@ -263,7 +263,7 @@ class Monster {
       fake: 0.8,
     };
 
-    let closestPlatform, closestPlatXform, closestChopsticks,platform0,platform1,platform2,platform3,platform4,platform5,platform6,platform7,
+    let closestPlatform, closestPlatXform, closestitem,platform0,platform1,platform2,platform3,platform4,platform5,platform6,platform7,
       closestDist = gameHeight,
       closestXDist = gameWidth;
 
@@ -306,9 +306,9 @@ class Monster {
     }
 
     // Find the closest platform
-    for (let index = 0; index < chopsticksList.length; index++) {
+    for (let index = 0; index < itemList.length; index++) {
       // 高度距離
-      const distToPlayer = chopsticksList[index].y - playerY;
+      const distToPlayer = itemList[index].y - playerY;
 
       // 玩家似乎身高為60 ，超過玩家高度的不考量
       if (distToPlayer <= 0) {
@@ -316,15 +316,15 @@ class Monster {
       }
 
       // 忽略正再碰觸的當下筷子
-      if (this.player.touchChopsticksOn) {
-        if (this.player.touchChopsticksOn == chopsticksList[index]) {
+      if (this.player.touchitemOn) {
+        if (this.player.touchitemOn == itemList[index]) {
           continue;
         }
       }
 
       if (distToPlayer < closestDist) {
         closestDist = distToPlayer;
-        closestChopsticks = chopsticksList[index];
+        closestitem = itemList[index];
       }
     }
 
@@ -347,8 +347,8 @@ class Monster {
       playerGoLeft = 0,
       playerGoRight = 0,
       lastChance = 0,
-      chopsticksY = -gameHeight, // Y方向最近筷子資訊
-      chopsticksX = -400,
+      itemY = -gameHeight, // Y方向最近筷子資訊
+      itemX = -400,
       platform0Y = -gameHeight, // 加入畫面所有地板資訊(最多八個)
       platform0X = -400,
       platform1Y = -gameHeight,
@@ -476,12 +476,12 @@ class Monster {
       // closestPlatXform.tint = 0xFF6F61;      
     }
 
-    if (closestChopsticks) {
-      const { x, y, width } = closestChopsticks;
+    if (closestitem) {
+      const { x, y, width } = closestitem;
 
-      chopsticksY = y;
+      itemY = y;
 
-      chopsticksX = x;
+      itemX = x;
     }
 
 
@@ -512,27 +512,27 @@ class Monster {
 
     platformX = this.normalize(platformX, gameWidth);
 
-    platform0Y = this.normalize(platform0Y, gameWidth);
-    platform0X = this.normalize(platform0X, gameWidth);
-    platform1Y = this.normalize(platform1Y, gameWidth);
-    platform1X = this.normalize(platform1X, gameWidth);
-    platform2Y = this.normalize(platform2Y, gameWidth);
-    platform2X = this.normalize(platform2X, gameWidth);
-    platform3Y = this.normalize(platform3Y, gameWidth);
-    platform3X = this.normalize(platform3X, gameWidth);
-    platform4Y = this.normalize(platform4Y, gameWidth);
-    platform4X = this.normalize(platform4X, gameWidth);
-    platform5Y = this.normalize(platform5Y, gameWidth);
-    platform5X = this.normalize(platform5Y, gameWidth);
-    platform6Y = this.normalize(platform6Y, gameWidth);
-    platform6X = this.normalize(platform6X, gameWidth);
-    platform7Y = this.normalize(platform7Y, gameWidth);
-    platform7X = this.normalize(platform7X, gameWidth);
+    // platform0Y = this.normalize(platform0Y, gameWidth);
+    // platform0X = this.normalize(platform0X, gameWidth);
+    // platform1Y = this.normalize(platform1Y, gameWidth);
+    // platform1X = this.normalize(platform1X, gameWidth);
+    // platform2Y = this.normalize(platform2Y, gameWidth);
+    // platform2X = this.normalize(platform2X, gameWidth);
+    // platform3Y = this.normalize(platform3Y, gameWidth);
+    // platform3X = this.normalize(platform3X, gameWidth);
+    // platform4Y = this.normalize(platform4Y, gameWidth);
+    // platform4X = this.normalize(platform4X, gameWidth);
+    // platform5Y = this.normalize(platform5Y, gameWidth);
+    // platform5X = this.normalize(platform5Y, gameWidth);
+    // platform6Y = this.normalize(platform6Y, gameWidth);
+    // platform6X = this.normalize(platform6X, gameWidth);
+    // platform7Y = this.normalize(platform7Y, gameWidth);
+    // platform7X = this.normalize(platform7X, gameWidth);
 
 
-    chopsticksY = this.normalize(chopsticksY, gameHeight);
+    itemY = this.normalize(itemY, gameHeight);
 
-    chopsticksX = this.normalize(chopsticksX, gameHeight);
+    itemX = this.normalize(itemX, gameHeight);
 
     platCenter = this.normalize(platCenter, gameWidth);
 
@@ -567,8 +567,8 @@ class Monster {
       playerGoRight,
       platformType,
       playerFromCenter,
-      chopsticksY,
-      chopsticksX
+      itemY,
+      itemX
     );
   // }
 
@@ -1038,14 +1038,25 @@ class Monster {
   }
 
     // 觸碰筷子效果
-    chopsticksEffect(player, platform) {
+  itemEffect(player, platform) {
 
-      if (player.touchChopsticksOn !== platform) {
-  
-        player.touchChopsticksOn = platform;
+    // 怪物吃道具 無效果，只會讓道具消失
+    // 只能碰一次
+    if (player.touchItemOn !== platform) {
+      
+      player.touchItemOn = platform;
 
+      if(platform.platformType=='money')
+      {        
+        platform.Explodede = true;
       }
+      // 紅水 補血
+      if(platform.platformType=='redpotion')
+      {       
+        platform.Explodede = true;
+      }            
     }
+  }
 
   // Effects
   effect(player, platform) {
@@ -1070,10 +1081,13 @@ class Monster {
     if (platform.key == "fake") {
       this.fakeEffect(player, platform);
     }
-
-    if (platform.key == "chopsticks") {
-      this.chopsticksEffect(player, platform);
+    if (platform.key == "money") {
+      this.ItemEffect(player, platform);
     }
+    if (platform.key == "redpotion") {
+      this.ItemEffect(player, platform);
+    }
+
   }
 
     // monsterEffects

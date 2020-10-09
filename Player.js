@@ -544,22 +544,22 @@ class Player {
 
     platformX = this.normalize(platformX, gameWidth);
 
-    platform0Y = this.normalize(platform0Y, gameWidth);
-    platform0X = this.normalize(platform0X, gameWidth);
-    platform1Y = this.normalize(platform1Y, gameWidth);
-    platform1X = this.normalize(platform1X, gameWidth);
-    platform2Y = this.normalize(platform2Y, gameWidth);
-    platform2X = this.normalize(platform2X, gameWidth);
-    platform3Y = this.normalize(platform3Y, gameWidth);
-    platform3X = this.normalize(platform3X, gameWidth);
-    platform4Y = this.normalize(platform4Y, gameWidth);
-    platform4X = this.normalize(platform4X, gameWidth);
-    platform5Y = this.normalize(platform5Y, gameWidth);
-    platform5X = this.normalize(platform5Y, gameWidth);
-    platform6Y = this.normalize(platform6Y, gameWidth);
-    platform6X = this.normalize(platform6X, gameWidth);
-    platform7Y = this.normalize(platform7Y, gameWidth);
-    platform7X = this.normalize(platform7X, gameWidth);
+    // platform0Y = this.normalize(platform0Y, gameWidth);
+    // platform0X = this.normalize(platform0X, gameWidth);
+    // platform1Y = this.normalize(platform1Y, gameWidth);
+    // platform1X = this.normalize(platform1X, gameWidth);
+    // platform2Y = this.normalize(platform2Y, gameWidth);
+    // platform2X = this.normalize(platform2X, gameWidth);
+    // platform3Y = this.normalize(platform3Y, gameWidth);
+    // platform3X = this.normalize(platform3X, gameWidth);
+    // platform4Y = this.normalize(platform4Y, gameWidth);
+    // platform4X = this.normalize(platform4X, gameWidth);
+    // platform5Y = this.normalize(platform5Y, gameWidth);
+    // platform5X = this.normalize(platform5Y, gameWidth);
+    // platform6Y = this.normalize(platform6Y, gameWidth);
+    // platform6X = this.normalize(platform6X, gameWidth);
+    // platform7Y = this.normalize(platform7Y, gameWidth);
+    // platform7X = this.normalize(platform7X, gameWidth);
 
 
     ItemY = this.normalize(ItemY, gameHeight);
