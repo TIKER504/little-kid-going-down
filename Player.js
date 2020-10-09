@@ -1,6 +1,6 @@
 let numOfPlayers = 0;
 class Player {
-  constructor(familyName, gen, species) {
+  constructor(familyName, gen, species,words) {
     this.familyName = familyName;
     this.gen = gen;
     this.species = species;
@@ -9,7 +9,8 @@ class Player {
 
     numOfPlayers++;
 
-  
+    this.words = words;
+
     // 依傳入的0、1家族而定
     const player = game.add.sprite( 400 + gameWidth / 2, 50, "player" + species);
 
@@ -63,24 +64,71 @@ class Player {
 
     // this.player.addChild(this.playerGoBar);
 
+    // playing 階段才顯示血條
+    if(status == "playing")
+    {
+      const healthBar = new Phaser.Text(
+        game,
+        3,
+        -30,
+        this.generateHealthBar(player.life),
+        {
+          fontSize: 12,
+          fontWeight: "thin",
+          align: "center",
+          // fill: "yellow",
+          fill: "#00EC00"
+        }
+      );
+  
+      this.healthBar = healthBar;
+  
+      this.player.addChild(this.healthBar);
+    }
 
-    const healthBar = new Phaser.Text(
-      game,
-      3,
-      -30,
-      this.generateHealthBar(player.life),
-      {
-        fontSize: 12,
-        fontWeight: "thin",
-        align: "center",
-        // fill: "yellow",
-        fill: "#00EC00"
-      }
-    );
+    // T 軍 代表色為紅
+    if(words && species==4)
+    {
+        // 說話文字
+      const wordtext = new Phaser.Text(
+        game,
+        3,
+        -45,
+        words,
+        {
+          fontSize: 12,
+          fontWeight: "thin",
+          align: "center",
+          fill: "white",     
+          backgroundColor:'red'   
+        }
+      );
 
-    this.healthBar = healthBar;
+      this.player.addChild(wordtext);
+    }
 
-    this.player.addChild(this.healthBar);
+    // B 軍 代表色為藍
+    if(words && species==5)
+    {
+        // 說話文字
+      const wordtext = new Phaser.Text(
+        game,
+        3,
+        -45,
+        words,
+        {
+          fontSize: 12,
+          fontWeight: "thin",
+          align: "center",
+          fill: "white",     
+          backgroundColor:'blue'   
+        }
+      );
+
+      this.player.addChild(wordtext);
+    }
+    
+    
 
 
     // const childName = this.familyName + " " + this.romanize(this.gen);
@@ -216,22 +264,25 @@ class Player {
 
       this.checkFellPlayer();
 
-      // 紅血
-      if (this.player.life <= 3) {
-        this.healthBar.fill = '#FF0000';
+      // playing 階段才顯示血條
+      if(status == "playing")
+      {
+        // 紅血
+        if (this.player.life <= 3) {
+          this.healthBar.fill = '#FF0000';
+        }
+
+        // 黃血
+        if (this.player.life > 3 && this.player.life < 10) {
+          this.healthBar.fill = '#F9F900';
+        }
+
+        // 綠血
+        if (this.player.life == 10) {
+          this.healthBar.fill = '#00EC00';
+        }
       }
-
-      // 黃血
-      if (this.player.life > 3 && this.player.life < 10) {
-        this.healthBar.fill = '#F9F900';
-      }
-
-      // 綠血
-      if (this.player.life == 10) {
-        this.healthBar.fill = '#00EC00';
-      }
-
-
+      
     } else {
       this.destroy();
     }
@@ -925,7 +976,11 @@ class Player {
 
   updatePlayer() {
     this.setPlayerAnimate(this.player);
-    this.healthBar.text = this.generateHealthBar(this.player.life);
+
+    if(status == "playing")
+    {
+      this.healthBar.text = this.generateHealthBar(this.player.life);
+    }    
   }
 
   setPlayerAnimate(player) {

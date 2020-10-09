@@ -149,6 +149,9 @@ class Monster {
       ...ceilings,
       ...otherPlates
     ]);
+
+     // 和道具的重疊事件
+     game.physics.arcade.overlap(this.player, itemList, this.effect.bind(this));
     
     game.physics.arcade.collide(this.player, [rage]);
 
@@ -1082,10 +1085,10 @@ class Monster {
       this.fakeEffect(player, platform);
     }
     if (platform.key == "money") {
-      this.ItemEffect(player, platform);
+      this.itemEffect(player, platform);
     }
     if (platform.key == "redpotion") {
-      this.ItemEffect(player, platform);
+      this.itemEffect(player, platform);
     }
 
   }

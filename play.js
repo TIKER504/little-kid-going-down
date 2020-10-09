@@ -195,9 +195,8 @@ var playState =
     drawNewRank();
 
     if(initialed)
-    {
-      status = "playing";  
-
+    {      
+      status = "playing"; 
       for (let i = 0; i < populations.length; i++) {
        
         if (!populations[i].done()) {
@@ -208,9 +207,7 @@ var playState =
           allDone++;
         }
     
-      }      
-                  
-      
+      }                              
     }  
     initialed = true;   
   },

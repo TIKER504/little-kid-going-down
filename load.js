@@ -40,7 +40,7 @@ var loadState =
     game.load.spritesheet("money", "money.png", 32, 14);
 
     //紅水
-    game.load.spritesheet("redpotion", "redpotion.png", 32, 14);
+    game.load.spritesheet("redpotion", "redpotion.png", 32, 32);
     
   
     //按鈕

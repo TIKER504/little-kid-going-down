@@ -30,10 +30,10 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       // join B population
       if(extra.customRewardId==='f43a4039-41c0-45b4-bb87-71e2ddf1d91f')
       {
+        // 也顯示使用者的話
+        populationB.newMember(user, 5,message);
 
-        populationB.newMember(user, 5);
-
-        ComfyJS.Say(user+' join B population');
+        ComfyJS.Say(user+' join The B population');
       
         //  // 隨機播放 小英金句
         //  tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
@@ -42,9 +42,10 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       // join T population
       if(extra.customRewardId==='44227033-e641-4450-be45-d402dc0e111d')
       {      
-        populationT.newMember(user, 4);
+        // 也顯示使用者的話
+        populationT.newMember(user, 4,message);
 
-        ComfyJS.Say(user+' join T population');
+        ComfyJS.Say(user+' join The T population');
 
         // // 隨機播放 韓導金句100
         // hanVoices[(1+ Math.floor(Math.random()*99))].play();
@@ -55,8 +56,10 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       // join B population later
       if(extra.customRewardId==='f43a4039-41c0-45b4-bb87-71e2ddf1d91f')
       {
-        // 先將名字加入，之後Crossing floor 在補加
-        WaitForJoinNameList_B.push(user);
+        var userData = new User(name, message);
+
+        // 先將使用者資料加入，之後Crossing floor 在補加
+        WaitForJoinNameList_B.push(userData);
 
         ComfyJS.Say('Sorry,this generation has alredy started, ' + user + ' will join B population in next crossing floor');
             
@@ -65,8 +68,10 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       // join T population later
       if(extra.customRewardId==='44227033-e641-4450-be45-d402dc0e111d')
       {      
-        // 先將名字加入，之後Crossing floor 在補加
-        WaitForJoinNameList_T.push(user);
+        var userData = new User(name, message);
+
+        // 先將使用者資料加入，之後Crossing floor 在補加
+        WaitForJoinNameList_T.push(userData);
 
         ComfyJS.Say('Sorry,this generation has alredy started, '+ user + ' will join T population in next crossing floor');
       
@@ -241,6 +246,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
     }
   }   
+
+
 }
 
 var crossState =
@@ -255,6 +262,8 @@ var crossState =
        
   },create : function ()
   { 
+    
+
     crossingTime = 30;
 
     platforms.forEach(function (s) {
@@ -324,16 +333,18 @@ var crossState =
     populations[i].naturalSelection();
   }
 
+  game.add.text(gameWidth / 2, 100,"Now,it's crossing floor,Using channel memeCoin for Joining the evolution" ,{font: '30px Courier',fill:'#ffffff'})
+
   for (let i = 0; i < WaitForJoinNameList_B.length; i++) {
 
-    populationB.newMember(WaitForJoinNameList_B[i], 5);
+    populationB.newMember(WaitForJoinNameList_B[i].name, 5,WaitForJoinNameList_B[i].words);
 
     ComfyJS.Say(WaitForJoinNameList_B[i]+' join B population');
   }
 
   for (let i = 0; i < WaitForJoinNameList_T.length; i++) {
 
-    populationT.newMember(WaitForJoinNameList_T[i], 5);
+    populationT.newMember(WaitForJoinNameList_T[i].name, 4,WaitForJoinNameList_T[i].words);
 
     ComfyJS.Say(WaitForJoinNameList_T[i]+' join T population');
   }
@@ -382,8 +393,8 @@ var crossState =
     }
 
     countDownObjectList = [];
-
-    var countDownText = game.add.text(200+ gameWidth / 2, 400,'Next generation will start...in ' +crossingTime+'s',{font: '30px Courier',fill:'#ffffff'})
+    
+    var countDownText = game.add.text(200+ gameWidth / 2, 300,'Next generation will start in ' +crossingTime+'s...',{font: '30px Courier',fill:'#ffffff'})
 
     countDownObjectList.push(countDownText);
                               

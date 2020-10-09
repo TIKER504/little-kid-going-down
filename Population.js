@@ -122,9 +122,9 @@ class Population {
     this.players = reBornList.slice(0);
   }
 
-  newMember(name,species)
+  newMember(name,species,words)
   {
-    var newMember = new Player(name, this.generation,species);
+    var newMember = new Player(name, this.generation,species,words);
 
     newMember.brain.generateNetwork();
     newMember.brain.mutate();
