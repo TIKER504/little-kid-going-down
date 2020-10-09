@@ -26,6 +26,8 @@ var distance = 0;
 var turnDead = 0;
 var status = "playing";
 
+var platformsStatus ="active";
+
 var breakNewRocord = false;
 
 // 人民法槌集氣條
@@ -212,7 +214,17 @@ var playState =
     initialed = true;   
   },
   update : function() {
-    // bad
+    
+    // 凍結畫面
+    if (keyboard.s.isDown){
+      freeze();
+    }
+
+    // 解凍畫面
+    if (keyboard.d.isDown){
+      unfreeze();
+    }
+
     if (status == "gameOver" && keyboard.enter.isDown) restart();    
     if (status != "playing") return;
                               
@@ -225,18 +237,23 @@ var playState =
       populations[i].update();
   
       }
-      else {
+      else if(populations[i].done() && !populations[i].isMonster ) {
         allDone++;
       }
   
     }
+
+    // 板塊可動時 才執行
+    if(platformsStatus =="active")
+    {
+      updatePlatforms();
+      updateItem(); // 更新筷子 資訊
+    
+      createPlatforms();
+      createItem(); // 創建筷子
+    }
       
-    updatePlatforms();
-    updateItem(); // 更新筷子 資訊
-  
-    createPlatforms();
-    createItem(); // 創建筷子
-  
+    
     // 群眾憤怒
     // if(rage)
     // {
@@ -264,7 +281,7 @@ var playState =
     
        
     // 兩個家族都死光 (有時有怪物時 會大於2)
-    if (allDone >=populations.length) {
+    if (allDone >=2) {
       // Restart because this generation all died
   
       // recolorImage(img,255,255,0,11,28,214)
@@ -292,7 +309,6 @@ var playState =
       alreadyDown = false;
     }
 
-
     // 全殺滅族 幫助快速測試
     if (keyboard.a.isDown){
       for (let i = 0; i < populations.length; i++) {
@@ -304,6 +320,9 @@ var playState =
         }       
       }
     }
+
+
+
 
     
       
@@ -866,6 +885,20 @@ function drawNewRank() {
 
   }
 
+}
+
+// 將板塊卡住;
+function freeze()
+{
+  platformsStatus = "freeze";
+  // console.log("freeze!");
+}
+
+//板塊繼續
+function unfreeze()
+{
+  platformsStatus ="active";
+  // console.log("unfreeze!");
 }
 
 
