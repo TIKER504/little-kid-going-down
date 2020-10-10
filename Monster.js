@@ -1101,8 +1101,10 @@ class Monster {
       
         player.unbeatableTime = game.time.now + 1000;
 
-          // 碰到扣3滴血
+        // 碰到扣3滴血
         player.life -= 3;
+        // 怪物咬音效
+        monsterBite.play();
 
         // 受傷玩家 閃紅光
         game.add.tween(player).to({

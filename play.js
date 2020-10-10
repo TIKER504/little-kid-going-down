@@ -71,14 +71,16 @@ let conveyorSound,
   cheerfulAnnoyance,  
   pistolFire,
   cashIn,
-  healSound
+  healSound,
+  bgm,
+  monsterBite
   ;
 
-// 韓導語錄
-let  hanVoices = [];
+// T語錄
+let  TVoices = [];
 
-// 小英語錄
-let  tsaiVoices = [];
+// B語錄
+let  BVoices = [];
   
 // Genetic Algothrithm Stuff
 let 
@@ -212,6 +214,9 @@ var playState =
       }                              
     }  
     initialed = true;   
+
+    bgm.loop = true;
+    bgm.play();
   },
   update : function() {
     
@@ -404,23 +409,25 @@ function addAudio() {
   pistolFire = game.add.audio("pistolFire");
   cashIn = game.add.audio("cashIn");
   healSound = game.add.audio("healSound");
+  bgm = game.add.audio("bgm");
+  monsterBite =game.add.audio("monsterBite");
   
 
-    // 批次加入韓導聲音
-    for (var i = 1; i < 100 ;i ++) {
+    // 批次加入T聲音
+    for (var i = 1; i < 129 ;i ++) {
 
-      var hanVoice = game.add.audio("hanVoice (" + i +")");
+      var TVoice = game.add.audio("TVoice (" + i +")");
 
-      hanVoices.push(hanVoice);
+      TVoices.push(TVoice);
       
     }
 
-    // 批次加入小英聲音
-    for (var i = 1; i < 11 ;i ++) {
+    // 批次加入B聲音
+    for (var i = 1; i < 32 ;i ++) {
 
-      var tsaiVoice = game.add.audio("tsaiVoice (" + i +")");
+      var BVoice = game.add.audio("BVoice (" + i +")");
 
-      tsaiVoices.push(tsaiVoice);
+      BVoices.push(BVoice);
     }
      
 }
@@ -771,6 +778,7 @@ function gameOver() {
     s.destroy();
   });
   platforms = [];
+
   status = "gameOver";
 }
 
@@ -778,7 +786,9 @@ function gameOver() {
 function restart() {
     
   // twitch API 報 每一輪 最佳成績
-  // ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
+  ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
+  bgm.stop();
+  // bgm.destroy();
 
 
   game.state.start('cross');

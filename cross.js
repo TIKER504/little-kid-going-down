@@ -2,6 +2,8 @@ var crossingTime = 30;
 
 countDownObjectList = [];
 
+var crossingTimeInterval;
+
 // crossing 階段可以使用的代幣
 crossingRewardIDList = [];
 
@@ -35,8 +37,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
         ComfyJS.Say(user+' join The B population');
       
-        //  // 隨機播放 小英金句
-        //  tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
+         // 隨機播放 B金句
+         BVoices[(1+ Math.floor(Math.random()*31))].play();
       }
 
       // join T population
@@ -47,8 +49,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
         ComfyJS.Say(user+' join The T population');
 
-        // // 隨機播放 韓導金句100
-        // hanVoices[(1+ Math.floor(Math.random()*99))].play();
+        // 隨機播放 T金句100
+        TVoices[(1+ Math.floor(Math.random()*128))].play();
       }
     }
     else
@@ -81,171 +83,171 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
     
   // 人民的法槌
-  if(extra.customRewardId==='b901ce1d-a862-4362-aadb-c553310eee1f')
-  {
-    rage = game.add.sprite(0,0, "rage");
-    game.physics.arcade.enable(rage);
-    // rage.body.immovable = true;
-    rage.body.gravity.y = gameHeight;
+  // if(extra.customRewardId==='b901ce1d-a862-4362-aadb-c553310eee1f')
+  // {
+  //   rage = game.add.sprite(0,0, "rage");
+  //   game.physics.arcade.enable(rage);
+  //   // rage.body.immovable = true;
+  //   rage.body.gravity.y = gameHeight;
     
-    var name = new Phaser.Text(game, 3, -60,user+"表示:" + message , {
-      fontSize: 80,
-      // fontWeight: "thin",
-      align: "center",
-      fill: "white",
-    });
+  //   var name = new Phaser.Text(game, 3, -60,user+"表示:" + message , {
+  //     fontSize: 80,
+  //     // fontWeight: "thin",
+  //     align: "center",
+  //     fill: "white",
+  //   });
 
-    rage.addChild(name);
+  //   rage.addChild(name);
               
-    rageSound.play();
+  //   rageSound.play();
 
-    ComfyJS.Say(user +'一氣之下直接花費小朋友幣召喚天降之槌');
-  }
+  //   ComfyJS.Say(user +'一氣之下直接花費小朋友幣召喚天降之槌');
+  // }
 
-  // 表情符號
-  if(message==="LUL")
-  {
-    // G家族新成員
-   populationRedGirl.newMember(user, 1);
+  // // 表情符號
+  // if(message==="LUL")
+  // {
+  //   // G家族新成員
+  //  populationRedGirl.newMember(user, 1);
 
-   ComfyJS.Say(user+'加入綠軍新生兒');
+  //  ComfyJS.Say(user+'加入綠軍新生兒');
   
-   // 隨機播放 小英金句
-   tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
-  }
+  //  // 隨機播放 小英金句
+  //  tsaiVoices[(1+ Math.floor(Math.random()*10))].play();
+  // }
 
-  if(message==="Kappa")
-  {
-   // B家族新成員
-   populationGreenGuy.newMember(user, 0);
+  // if(message==="Kappa")
+  // {
+  //  // B家族新成員
+  //  populationGreenGuy.newMember(user, 0);
 
-   ComfyJS.Say(user+'加入藍軍新生兒');
+  //  ComfyJS.Say(user+'加入藍軍新生兒');
 
-   // 隨機播放 韓導金句100
-   hanVoices[(1+ Math.floor(Math.random()*99))].play();
-  }
+  //  // 隨機播放 韓導金句100
+  //  hanVoices[(1+ Math.floor(Math.random()*99))].play();
+  // }
 
-  if(message==="PogChamp")
-  {
-   // C家族新成員
-   populationDoge.newMember(user, 3);
+  // if(message==="PogChamp")
+  // {
+  //  // C家族新成員
+  //  populationDoge.newMember(user, 3);
 
-   if (!cut.isPlaying) {
-    cut.play(); // 夾筷子音效
-  }
+  //  if (!cut.isPlaying) {
+  //   cut.play(); // 夾筷子音效
+  // }
 
-   ComfyJS.Say(user+'加入市議員新生兒');
-  }
+  //  ComfyJS.Say(user+'加入市議員新生兒');
+  // }
    
 
-  if(message==="BibleThump")
-  {
-    // console.log("!rage was typed in chat" + "(" + user + ")");
+  // if(message==="BibleThump")
+  // {
+  //   // console.log("!rage was typed in chat" + "(" + user + ")");
 
-    rageNameList.push(user);
-    // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
-    // var msg = new SpeechSynthesisUtterance(user+'貢獻了人民的法槌，還差一點點了 大家加油');
-    // msg.rate = 4; // 0.1 to 10
-    // msg.pitch = 1; //0 to 2        
-    // window.speechSynthesis.speak(msg);
+  //   rageNameList.push(user);
+  //   // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
+  //   // var msg = new SpeechSynthesisUtterance(user+'貢獻了人民的法槌，還差一點點了 大家加油');
+  //   // msg.rate = 4; // 0.1 to 10
+  //   // msg.pitch = 1; //0 to 2        
+  //   // window.speechSynthesis.speak(msg);
 
-    // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
-    // var msg_ch = new SpeechSynthesisUtterance('貢獻了人民的法槌，還差一點點了 大家加油');
+  //   // // 網頁支援朗讀文字 (英文 中文之間 有空一格 會是不同的語音，英文的配音無法直接連讀英中文一起)
+  //   // var msg_ch = new SpeechSynthesisUtterance('貢獻了人民的法槌，還差一點點了 大家加油');
 
-    // var voices = window.speechSynthesis.getVoices();
-    // msg_ch.voice = voices[10]; // Note: some voices don't support altering params
-    // // msg.voiceURI = 'native';
-    // // msg.volume = 1; // 0 to 1
-    // msg_ch.rate = 4; // 0.1 to 10
-    // msg_ch.pitch = 1; //0 to 2
-    // // msg.text = 'Hello World';
-    // msg_ch.lang = 'zh-tw';
-    // window.speechSynthesis.speak(msg_ch);
-    // // msg.onend = function(e) {
-    // //   console.log('Finished in ' + event.elapsedTime + ' seconds.');
-    // // };
+  //   // var voices = window.speechSynthesis.getVoices();
+  //   // msg_ch.voice = voices[10]; // Note: some voices don't support altering params
+  //   // // msg.voiceURI = 'native';
+  //   // // msg.volume = 1; // 0 to 1
+  //   // msg_ch.rate = 4; // 0.1 to 10
+  //   // msg_ch.pitch = 1; //0 to 2
+  //   // // msg.text = 'Hello World';
+  //   // msg_ch.lang = 'zh-tw';
+  //   // window.speechSynthesis.speak(msg_ch);
+  //   // // msg.onend = function(e) {
+  //   // //   console.log('Finished in ' + event.elapsedTime + ' seconds.');
+  //   // // };
 
-    if(rageNameList.length ==1)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'首先發難舉起了人民法槌' );
+  //   if(rageNameList.length ==1)
+  //   {      
+  //   var msg = new SpeechSynthesisUtterance(user+'首先發難舉起了人民法槌' );
 
-    ComfyJS.Say(user+'首先發難舉起了人民法槌'+'(' + rageNameList.length +"/20)");
+  //   ComfyJS.Say(user+'首先發難舉起了人民法槌'+'(' + rageNameList.length +"/20)");
 
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-
-
-    }
-
-    if(rageNameList.length >=2 &&rageNameList.length <=7)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'響應人民法槌行列步步向前');
-
-    ComfyJS.Say(user+'響應人民法槌行列步步向前'+'(' + rageNameList.length +"/20)");
-
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-    }
-
-    if(rageNameList.length >=8 &&rageNameList.length <=14)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆');
-
-    ComfyJS.Say(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆'+'(' + rageNameList.length +"/20)");
-
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-    }
-
-    if(rageNameList.length >=15 &&rageNameList.length <=19)
-    {      
-    var msg = new SpeechSynthesisUtterance(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家');
-
-    ComfyJS.Say(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家'+'(' + rageNameList.length +"/20)");
-
-    msg.rate = 4; // 0.1 to 10
-    msg.pitch = 1; //0 to 2        
-    window.speechSynthesis.speak(msg);
-    }
+  //   msg.rate = 4; // 0.1 to 10
+  //   msg.pitch = 1; //0 to 2        
+  //   window.speechSynthesis.speak(msg);
 
 
+  //   }
 
-    if(rageNameList.length >=20)
-    {
-      rage = game.add.sprite(0,0, "rage");
-      game.physics.arcade.enable(rage);
-      // rage.body.immovable = true;
-      rage.body.gravity.y = gameHeight;
+  //   if(rageNameList.length >=2 &&rageNameList.length <=7)
+  //   {      
+  //   var msg = new SpeechSynthesisUtterance(user+'響應人民法槌行列步步向前');
+
+  //   ComfyJS.Say(user+'響應人民法槌行列步步向前'+'(' + rageNameList.length +"/20)");
+
+  //   msg.rate = 4; // 0.1 to 10
+  //   msg.pitch = 1; //0 to 2        
+  //   window.speechSynthesis.speak(msg);
+  //   }
+
+  //   if(rageNameList.length >=8 &&rageNameList.length <=14)
+  //   {      
+  //   var msg = new SpeechSynthesisUtterance(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆');
+
+  //   ComfyJS.Say(user+'忍無可忍手握法槌一磚一瓦築起制裁之牆'+'(' + rageNameList.length +"/20)");
+
+  //   msg.rate = 4; // 0.1 to 10
+  //   msg.pitch = 1; //0 to 2        
+  //   window.speechSynthesis.speak(msg);
+  //   }
+
+  //   if(rageNameList.length >=15 &&rageNameList.length <=19)
+  //   {      
+  //   var msg = new SpeechSynthesisUtterance(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家');
+
+  //   ComfyJS.Say(user+'手握憤怒法槌制裁之牆即將降下驅逐所有玩家'+'(' + rageNameList.length +"/20)");
+
+  //   msg.rate = 4; // 0.1 to 10
+  //   msg.pitch = 1; //0 to 2        
+  //   window.speechSynthesis.speak(msg);
+  //   }
 
 
-      var lineNumber = 1;
 
-      lineNumber = Math.ceil(rageNameList.length/3)
+  //   if(rageNameList.length >=20)
+  //   {
+  //     rage = game.add.sprite(0,0, "rage");
+  //     game.physics.arcade.enable(rage);
+  //     // rage.body.immovable = true;
+  //     rage.body.gravity.y = gameHeight;
 
 
-      for(i = 1; i<=lineNumber; i++)
-      {
-        var name = new Phaser.Text(game, 3, -60 *i,rageNameList.slice((i-1)*3,(i*3)).join(",") , {
-          fontSize: 50,
-          // fontWeight: "thin",
-          align: "center",
-          fill: "white",
-        });
+  //     var lineNumber = 1;
+
+  //     lineNumber = Math.ceil(rageNameList.length/3)
+
+
+  //     for(i = 1; i<=lineNumber; i++)
+  //     {
+  //       var name = new Phaser.Text(game, 3, -60 *i,rageNameList.slice((i-1)*3,(i*3)).join(",") , {
+  //         fontSize: 50,
+  //         // fontWeight: "thin",
+  //         align: "center",
+  //         fill: "white",
+  //       });
     
-        rage.addChild(name);
-      }
+  //       rage.addChild(name);
+  //     }
 
-      rageSound.play();
+  //     rageSound.play();
 
-      ComfyJS.Say('這就是萬民的憤怒!!!來自眾英雄:' +rageNameList.join("、")+'，感受眾志成城的壓迫感吧!!!');
+  //     ComfyJS.Say('這就是萬民的憤怒!!!來自眾英雄:' +rageNameList.join("、")+'，感受眾志成城的壓迫感吧!!!');
 
-      rageNameList =[];
+  //     rageNameList =[];
 
-    }
-  }   
+  //   }
+  // }   
 
 
 }
@@ -262,6 +264,17 @@ var crossState =
        
   },create : function ()
   { 
+    keyboard = game.input.keyboard.addKeys({
+      enter: Phaser.Keyboard.ENTER,
+      up: Phaser.Keyboard.UP,
+      down: Phaser.Keyboard.DOWN,
+      left: Phaser.Keyboard.LEFT,
+      right: Phaser.Keyboard.RIGHT,
+      w: Phaser.Keyboard.W,
+      a: Phaser.Keyboard.A,
+      s: Phaser.Keyboard.S,
+      d: Phaser.Keyboard.D,
+    });
     
 
     crossingTime = 30;
@@ -339,12 +352,18 @@ var crossState =
 
     populationB.newMember(WaitForJoinNameList_B[i].name, 5,WaitForJoinNameList_B[i].words);
 
+    // 隨機播放 B金句
+    BVoices[(1+ Math.floor(Math.random()*31))].play();
+
     ComfyJS.Say(WaitForJoinNameList_B[i]+' join B population');
   }
 
   for (let i = 0; i < WaitForJoinNameList_T.length; i++) {
 
     populationT.newMember(WaitForJoinNameList_T[i].name, 4,WaitForJoinNameList_T[i].words);
+
+    // 隨機播放 T金句
+    TVoices[(1+ Math.floor(Math.random()*128))].play();
 
     ComfyJS.Say(WaitForJoinNameList_T[i]+' join T population');
   }
@@ -369,7 +388,7 @@ var crossState =
 
   
   var timesRun = 0;
-  var interval = setInterval(function() {  // 設置倒數計時: 結束時間 - 當前時間      
+  crossingTimeInterval = setInterval(function() {  // 設置倒數計時: 結束時間 - 當前時間      
     if(timesRun === 30){
     clearInterval(interval);
     }    
@@ -410,9 +429,17 @@ var crossState =
       }  
     }
 
+    // 加快倒數
+    if (keyboard.a.isDown){
+      crossingTime = crossingTime -10;
+    }
+
   // 倒數結束
   if(crossingTime<= 0)
   {
+
+    clearInterval(crossingTimeInterval);
+
     // 把 cross 場景的地板清光
     otherPlates.forEach(function (s) {
       s.destroy();

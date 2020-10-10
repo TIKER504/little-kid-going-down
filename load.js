@@ -106,20 +106,24 @@ var loadState =
     game.load.audio("rageSound", "/sounds/rageSound.mp3");
     game.load.audio("explosion", "/sounds/explosion.mp3");
     game.load.audio("cheerfulAnnoyance", "/sounds/CheerfulAnnoyance.mp3");
+
+    game.load.audio("bgm", "/sounds/bgm.mp3");
+
     game.load.audio("pistolFire", "/sounds/pistolFire.mp3");
     game.load.audio("cashIn", "/sounds/cashIn.mp3");
     game.load.audio("healSound", "/sounds/healSound.mp3");
-    healSound
+    game.load.audio("monsterBite", "/sounds/monsterBite.mp3");
+    
     
       
-    // 批次讀取韓導聲音
-    for (var i = 1; i < 100 ;i ++) {
-      // game.load.audio("hanVoice (" + i +")", "/sounds/hanVoice/hanVoice (" + i +").mp3");    
+    // 批次讀取T聲音
+    for (var i = 1; i < 129 ;i ++) {
+      game.load.audio("TVoice (" + i +")", "/sounds/TVoices/" + i + ".mp3");    
     }
   
-    // 批次讀取小英聲音
-    for (var i = 1; i < 11 ;i ++) {
-      // game.load.audio("tsaiVoice (" + i +")", "/sounds/tsaiVoice/tsaiVoice (" + i +").mp3");    
+    // 批次讀取B聲音
+    for (var i = 1; i < 32 ;i ++) {
+      game.load.audio("BVoice (" + i +")", "/sounds/BVoices/" + i + ".mp3");    
     }
 
 
