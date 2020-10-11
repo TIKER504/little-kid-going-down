@@ -122,6 +122,9 @@ class Population {
       }
     }        
 
+    // 重生後 說過的話數歸零
+    this.populationSpeechCounter =0;
+
     this.players = reBornList.slice(0);
   }
 
@@ -351,8 +354,30 @@ class Population {
       {
         this.populationVoice = BVoices[(1+ Math.floor(Math.random()*30))];
         this.populationVoice.play();
+                
+        // 話說完了
+        this.populationVoice.onStop.add(function() {
+          
+          console.log("B_Speech " + this.populationSpeechCounter);
 
-        this.populationSpeechCounter++;
+          if(this.populationSpeechCounter ==0)
+          {
+            freeze(10);
+          }
+
+          // 活著的傢伙 通通播演講動畫
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].isPlayingAnimation = false;              
+            }
+          }       
+
+
+          this.populationSpeechCounter++;
+
+        }, this);
+
       }
 
       if(!this.populationVoice.isPlaying)
@@ -360,7 +385,29 @@ class Population {
         this.populationVoice = BVoices[(1+ Math.floor(Math.random()*30))];
         this.populationVoice.play();
 
-        this.populationSpeechCounter++;
+              
+        // 話說完了
+        this.populationVoice.onStop.add(function() {
+          
+          console.log("B_Speech " + this.populationSpeechCounter);
+
+          if(this.populationSpeechCounter ==0)
+          {
+            freeze(10);
+          }
+
+          // 活著的傢伙 通通播演講動畫
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].isPlayingAnimation = false;              
+            }
+          }       
+
+
+          this.populationSpeechCounter++;
+
+        }, this);
       }
       
     }
@@ -373,17 +420,67 @@ class Population {
         this.populationVoice = TVoices[(1+ Math.floor(Math.random()*127))];
         this.populationVoice.play();
 
+       // 話說完了
+       this.populationVoice.onStop.add(function() {
+          
+        console.log("T_Speech " + this.populationSpeechCounter);
+
+        if(this.populationSpeechCounter ==0)
+        {
+          freeze(10);
+        }
+
+          // 活著的傢伙 通通播演講動畫
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].isPlayingAnimation = false;              
+            }
+          }       
+
         this.populationSpeechCounter++;
+
+      }, this);
       }
       if(!this.populationVoice.isPlaying)
       {
         this.populationVoice = TVoices[(1+ Math.floor(Math.random()*127))];
         this.populationVoice.play();
 
-        this.populationSpeechCounter++;
+         // 話說完了
+         this.populationVoice.onStop.add(function() {
+          
+          console.log("T_Speech " + this.populationSpeechCounter);
+
+          if(this.populationSpeechCounter ==0)
+          {
+            freeze(10);
+          }
+
+          // 活著的傢伙 通通播演講動畫
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].isPlayingAnimation = false;              
+            }
+          }       
+
+
+          this.populationSpeechCounter++;
+
+        }, this);
       }
       
     }           
+
+    // 活著的傢伙 通通播演講動畫
+    for (let i = 0; i < this.players.length; i++)
+    {
+      if (!this.players[i].dead ) {   
+        this.players[i].isPlayingAnimation = true;
+        this.players[i].player.animations.play("speech",8,true);      
+      }
+    } 
   }
 
 

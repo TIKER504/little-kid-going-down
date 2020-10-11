@@ -29,6 +29,9 @@ class Player {
     player.animations.add("leftAttack", [17, 26], 6);
     player.animations.add("rightAttack", [35, 44], 6);
 
+    // 講話動畫
+    player.animations.add("speech", [8,17], 8);
+
     player.life = 10;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
@@ -940,6 +943,39 @@ class Player {
       else
       {
         console.log("fell to death");
+        this.dead = true;
+      }      
+      // gameOver();
+    }
+
+    
+    // 被怪撞到左邊的回收
+    if (this.player.body.x < 400 && !this.dead && status == "playing") {
+      // fallSound.play();
+
+      // 補償機制，若非一血衰落，會以一滴血重新開始
+      if(this.player.life >1)
+      {
+        this.player.life = 1;
+
+        this.player.x = 400 + gameWidth / 2; 
+
+        this.player.y = 50;
+
+        // this.player.tint = 0xff3300;
+
+        // 將Y 方向速度歸零，避免重生時 速度太快入場
+        this.player.body.velocity.y =0;        
+
+        // 重生 閃紅光入場
+        game.add.tween(this.player).to({
+          tint: 0xff3300,
+        }, 200, Phaser.Easing.Exponential.Out, true, 0, 0, true);
+        
+      }
+      else
+      {
+        console.log("left fell to death");
         this.dead = true;
       }      
       // gameOver();

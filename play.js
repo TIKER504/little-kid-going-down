@@ -988,11 +988,15 @@ function drawNewRank() {
 
 }
 
-// 將板塊卡住;
-function freeze()
+// 將板塊卡住 幾秒;
+function freeze(duration)
 {
   platformsStatus = "freeze";
   // console.log("freeze!");
+
+  
+  //延遲幾秒後 秒後 解凍
+  setTimeout(unfreeze, duration*1000); 
 }
 
 //板塊繼續
