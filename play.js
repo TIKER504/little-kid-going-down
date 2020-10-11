@@ -260,19 +260,22 @@ var playState =
       }
       else if(populations[i].done() && !populations[i].isMonster ) {
         allDone++;
-      }
-      else
-      {
         if(populationBEnd ==false && populations[1].done())
         {
           populationBEnd = true;
           console.log("populationBEnd");
+          ComfyJS.Say( "The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
         } 
         if(populationTEnd ==false && populations[0].done())
         {
           populationTEnd = true;
+          ComfyJS.Say( "The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
           console.log("populationTEnd");
         } 
+      }
+      else
+      {
+       
 
       }
   
@@ -297,8 +300,8 @@ var playState =
     //   }    
     // }
     
-    // 每 50層 怪物入侵一次，且此層尚未被入侵，避免短時間數個update 過於密集
-    if(distance% 50 == 0 && !FloorAlreadyRush)
+    // 每 50層 怪物入侵一次，且此層尚未被入侵，避免短時間數個update 過於密集，第0層 不入侵
+    if(distance% 50 == 0 && !FloorAlreadyRush && distance !=0 )
     {
       monsterRush(3);
       // console.log("monsterRush!");
@@ -395,14 +398,17 @@ var playState =
 
     // 全殺滅族 幫助快速測試
     if (keyboard.a.isDown){
-      for (let i = 0; i < populations.length; i++) {
+      // for (let i = 0; i < populations.length; i++) {
        
-        if (!populations[i].done()) {
+      //   if (!populations[i].done()) {
               
-        populations[i].killAll();
+      //   populations[i].killAll();
     
-        }       
-      }
+      //   }       
+      // }
+
+      populations[0].killAll();
+      populations[1].killAll();
     }
 
 

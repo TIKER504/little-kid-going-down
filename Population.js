@@ -189,7 +189,7 @@ class Population {
         alive++;
       }
       // 每6frame 才會更新一次行動邏輯，以節省效能
-      if (!this.players[i].dead && this.players[i].passframe >=6 &&!this.players[i].isPlayingAnimation) {
+      if (!this.players[i].dead && this.players[i].passframe >=6 ) {
         this.players[i].look();
         this.players[i].think();
         // this.players[i].update();        
@@ -347,23 +347,25 @@ class Population {
 
   // 全家族一起演講(單聲道)
   speech(species) {
-      // 隨機播放 B金句          
+    // 隨機播放 B金句          
     if(species ===5)
     {          
       if(this.populationVoice===undefined)
       {
         this.populationVoice = BVoices[(1+ Math.floor(Math.random()*30))];
         this.populationVoice.play();
+        
+        if(this.populationSpeechCounter ==0)
+        {
+          freeze(10);
+        }
                 
         // 話說完了
         this.populationVoice.onStop.add(function() {
           
           console.log("B_Speech " + this.populationSpeechCounter);
 
-          if(this.populationSpeechCounter ==0)
-          {
-            freeze(10);
-          }
+
 
           // 活著的傢伙 通通播演講動畫
           for (let i = 0; i < this.players.length; i++)
@@ -385,16 +387,15 @@ class Population {
         this.populationVoice = BVoices[(1+ Math.floor(Math.random()*30))];
         this.populationVoice.play();
 
+        if(this.populationSpeechCounter ==0)
+        {
+          freeze(10);
+        }
               
         // 話說完了
         this.populationVoice.onStop.add(function() {
           
           console.log("B_Speech " + this.populationSpeechCounter);
-
-          if(this.populationSpeechCounter ==0)
-          {
-            freeze(10);
-          }
 
           // 活著的傢伙 通通播演講動畫
           for (let i = 0; i < this.players.length; i++)
@@ -420,15 +421,15 @@ class Population {
         this.populationVoice = TVoices[(1+ Math.floor(Math.random()*127))];
         this.populationVoice.play();
 
-       // 話說完了
-       this.populationVoice.onStop.add(function() {
-          
-        console.log("T_Speech " + this.populationSpeechCounter);
-
         if(this.populationSpeechCounter ==0)
         {
           freeze(10);
         }
+
+       // 話說完了
+       this.populationVoice.onStop.add(function() {
+          
+        console.log("T_Speech " + this.populationSpeechCounter);
 
           // 活著的傢伙 通通播演講動畫
           for (let i = 0; i < this.players.length; i++)
@@ -438,24 +439,27 @@ class Population {
             }
           }       
 
-        this.populationSpeechCounter++;
+          this.populationSpeechCounter++;
 
       }, this);
       }
+
       if(!this.populationVoice.isPlaying)
       {
         this.populationVoice = TVoices[(1+ Math.floor(Math.random()*127))];
         this.populationVoice.play();
+
+        
+        if(this.populationSpeechCounter ==0)
+        {
+          freeze(10);
+        }
 
          // 話說完了
          this.populationVoice.onStop.add(function() {
           
           console.log("T_Speech " + this.populationSpeechCounter);
 
-          if(this.populationSpeechCounter ==0)
-          {
-            freeze(10);
-          }
 
           // 活著的傢伙 通通播演講動畫
           for (let i = 0; i < this.players.length; i++)
@@ -476,7 +480,7 @@ class Population {
     // 活著的傢伙 通通播演講動畫
     for (let i = 0; i < this.players.length; i++)
     {
-      if (!this.players[i].dead ) {   
+      if (!this.players[i].dead && !this.players[i].isPlayingAnimation) {   
         this.players[i].isPlayingAnimation = true;
         this.players[i].player.animations.play("speech",8,true);      
       }

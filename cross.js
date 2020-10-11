@@ -59,7 +59,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       // join B population later
       if(extra.customRewardId==='f43a4039-41c0-45b4-bb87-71e2ddf1d91f')
       {
-        var userData = new User(name, message);
+        var userData = new User(user, message);
 
         // 先將使用者資料加入，之後Crossing floor 在補加
         WaitForJoinNameList_B.push(userData);
@@ -71,7 +71,7 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       // join T population later
       if(extra.customRewardId==='44227033-e641-4450-be45-d402dc0e111d')
       {      
-        var userData = new User(name, message);
+        var userData = new User(user, message);
 
         // 先將使用者資料加入，之後Crossing floor 在補加
         WaitForJoinNameList_T.push(userData);
@@ -356,7 +356,7 @@ var crossState =
     // B 軍 說話
     populations[1].speech(5)
 
-    ComfyJS.Say(WaitForJoinNameList_B[i]+' join B population');
+    ComfyJS.Say(WaitForJoinNameList_B[i].name+' join B population');
   }
 
   for (let i = 0; i < WaitForJoinNameList_T.length; i++) {
@@ -366,7 +366,7 @@ var crossState =
     // T 軍 說話
     populations[0].speech(4)
 
-    ComfyJS.Say(WaitForJoinNameList_T[i]+' join T population');
+    ComfyJS.Say(WaitForJoinNameList_T[i].name+' join T population');
   }
 
   WaitForJoinNameList_B=[];
