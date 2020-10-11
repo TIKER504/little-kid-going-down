@@ -73,7 +73,8 @@ let conveyorSound,
   cashIn,
   healSound,
   bgm,
-  monsterBite
+  monsterBite,
+  surprise
   ;
 
 // T語錄
@@ -128,6 +129,14 @@ var img_Kappa, img_LUL;
 // Mute the screaming kids
 var gameMute = true;
 
+// T B 家族是否滅絕
+var populationBEnd = false;
+var populationTEnd = false;
+
+// 長話演說
+var populationBLongSpeech = false;
+var populationTLongSpeech = false;
+
 
 var playState =
 {  
@@ -143,6 +152,11 @@ var playState =
       s: Phaser.Keyboard.S,
       d: Phaser.Keyboard.D,
     });
+
+    populationBEnd = false;
+    populationTEnd = false;
+
+   
 
   
     createBounders();
@@ -174,6 +188,8 @@ var playState =
       // populations.push(populationDoge);
       populations.push(populationT);
       populations.push(populationB);
+
+
         
     }  
             
@@ -245,6 +261,20 @@ var playState =
       else if(populations[i].done() && !populations[i].isMonster ) {
         allDone++;
       }
+      else
+      {
+        if(populationBEnd ==false && populations[1].done())
+        {
+          populationBEnd = true;
+          console.log("populationBEnd");
+        } 
+        if(populationTEnd ==false && populations[0].done())
+        {
+          populationTEnd = true;
+          console.log("populationTEnd");
+        } 
+
+      }
   
     }
 
@@ -275,6 +305,71 @@ var playState =
       FloorAlreadyRush =true;
     }
 
+    // 兩個家族都死光 (有時有怪物時 會大於2)
+    if (allDone >=2) {
+      // Restart because this generation all died
+  
+      // recolorImage(img,255,255,0,11,28,214)
+  
+      // 先將玩家排序分數，新排行榜      
+      checkNewRank();
+      
+      // 只取前二populations，其他怪物、NPC 都不要
+      populations = populations.slice(0,2);
+
+      status = "gameOver";
+      console.log("restart");
+      restart();
+      return;
+    }  
+
+
+    // B 軍死光
+    if(populationBEnd && distance% 8 ===0)
+    {
+      // T 軍 說話
+      populations[0].speech(4);
+
+      // // 地板凍結 把話說完
+      // if(!populations[0].populationVoice.isPlaying)
+      // {        
+      //   unfreeze();
+      //   populationTLongSpeech  =true;
+      // }
+      // else if(populations[0].populationVoice.isPlaying && !populationTLongSpeech)
+      // {
+      //   freeze();
+      // }
+
+      // if(!populationTLongSpeech)
+      // {
+      //   freeze(10);
+      // }
+
+
+
+    }
+
+    // T 軍死光
+    if(populationTEnd && distance% 8 ===0)
+    {     
+      // B 軍 說話
+      populations[1].speech(5);
+      
+
+      // // 地板凍結 把話說完
+      // if(!populations[1].populationVoice.isPlaying)
+      // {        
+      //   unfreeze();
+      //   populationBLongSpeech  =true;
+      // }
+      // else if(populations[1].populationVoice.isPlaying && !populationBLongSpeech)
+      // {
+      //   freeze();
+      // }
+
+    }
+
     // 大於5層 安全網會解除
     if(distance >5
        && otherPlates[1])
@@ -285,23 +380,7 @@ var playState =
     }
     
        
-    // 兩個家族都死光 (有時有怪物時 會大於2)
-    if (allDone >=2) {
-      // Restart because this generation all died
-  
-      // recolorImage(img,255,255,0,11,28,214)
-  
-      // 先將玩家排序分數，新排行榜      
-      checkNewRank();
 
-      // 只取前二populations，其他怪物、NPC 都不要
-      populations = populations.slice(0,2);
-
-      status = "gameOver";
-      console.log("restart");
-      restart();
-      return;
-    }  
   
   
     
@@ -338,8 +417,9 @@ var playState =
 // 怪物入侵 (輸入數量)
 function monsterRush(amount)
 {
-  if (!alreadyDown) {
+  if (!FloorAlreadyRush) {
     populationMoster = new Population(amount,'BOT', 2,true);
+
 
     // 複製目前存活AI 避免弱智新生兒 拖累進度
     populationMoster.copyAliveBrain();
@@ -352,8 +432,8 @@ function monsterRush(amount)
     {
       populations.push(populationMoster);    
     }
-          
-    alreadyDown = true;
+    surprise.play();
+    FloorAlreadyRush = true;
   }
 
 }
@@ -411,8 +491,11 @@ function addAudio() {
   healSound = game.add.audio("healSound");
   bgm = game.add.audio("bgm");
   monsterBite =game.add.audio("monsterBite");
+  surprise =game.add.audio("surprise");
   
-
+  // 只有再初始化時才加入，避免每一輪檔案肥大
+  if(!initialed)
+  {
     // 批次加入T聲音
     for (var i = 1; i < 129 ;i ++) {
 
@@ -429,7 +512,7 @@ function addAudio() {
 
       BVoices.push(BVoice);
     }
-     
+  }         
 }
 
 function createBounders() {
@@ -784,6 +867,14 @@ function gameOver() {
 
 // 新一輪
 function restart() {
+
+  // 死光就閉嘴
+  for (let i = 0; i < populations.length; i++) {
+    if(populations[i].populationVoice)
+    {
+      populations[i].populationVoice.stop();
+    }    
+  }  
     
   // twitch API 報 每一輪 最佳成績
   ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");

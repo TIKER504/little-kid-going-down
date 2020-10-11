@@ -1118,20 +1118,7 @@ class Player {
         stabbedScream.play();
         this.dead = true;
         console.log("nailsPlatform to death!");
-
-        // // 隨機播放 B金句          
-        // if(this.species ===5)
-        // {
-        //   BVoices[(1+ Math.floor(Math.random()*31))].play();
-        // }
-
-        // 隨機播放 T金句          
-        if(this.species ===4)
-        {
-          TVoices[(1+ Math.floor(Math.random()*128))].play();
-        }
-        
-
+       
       }
     }
   }

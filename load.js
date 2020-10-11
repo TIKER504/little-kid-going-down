@@ -113,8 +113,10 @@ var loadState =
     game.load.audio("cashIn", "/sounds/cashIn.mp3");
     game.load.audio("healSound", "/sounds/healSound.mp3");
     game.load.audio("monsterBite", "/sounds/monsterBite.mp3");
+    game.load.audio("surprise", "/sounds/surprise.mp3");
     
     
+   
       
     // 批次讀取T聲音
     for (var i = 1; i < 129 ;i ++) {

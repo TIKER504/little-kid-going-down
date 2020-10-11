@@ -11,6 +11,9 @@ class Population {
     this.beginLevel = 1;
     this.nowAlive = 0;
     this.isMonster =isMonster;
+    this.populationVoice =undefined;
+    // 說了幾段話
+    this.populationSpeechCounter =0;
 
     // 假如有傳家族名子，統一命名，要不然就是系統隨機    
     if(FamilyName)
@@ -338,4 +341,54 @@ class Population {
     }
     return true;
   }
+
+  // 全家族一起演講(單聲道)
+  speech(species) {
+      // 隨機播放 B金句          
+    if(species ===5)
+    {          
+      if(this.populationVoice===undefined)
+      {
+        this.populationVoice = BVoices[(1+ Math.floor(Math.random()*30))];
+        this.populationVoice.play();
+
+        this.populationSpeechCounter++;
+      }
+
+      if(!this.populationVoice.isPlaying)
+      {
+        this.populationVoice = BVoices[(1+ Math.floor(Math.random()*30))];
+        this.populationVoice.play();
+
+        this.populationSpeechCounter++;
+      }
+      
+    }
+
+    // 隨機播放 T金句          
+    if(species ===4)
+    {
+      if(this.populationVoice===undefined)
+      {
+        this.populationVoice = TVoices[(1+ Math.floor(Math.random()*127))];
+        this.populationVoice.play();
+
+        this.populationSpeechCounter++;
+      }
+      if(!this.populationVoice.isPlaying)
+      {
+        this.populationVoice = TVoices[(1+ Math.floor(Math.random()*127))];
+        this.populationVoice.play();
+
+        this.populationSpeechCounter++;
+      }
+      
+    }           
+  }
+
+
 }
+
+
+
+

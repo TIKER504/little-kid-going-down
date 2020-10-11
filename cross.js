@@ -36,9 +36,10 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
         populationB.newMember(user, 5,message);
 
         ComfyJS.Say(user+' join The B population');
+
+         // B 軍 說話
+        populations[1].speech(5)
       
-         // 隨機播放 B金句
-         BVoices[(1+ Math.floor(Math.random()*31))].play();
       }
 
       // join T population
@@ -49,8 +50,8 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
         ComfyJS.Say(user+' join The T population');
 
-        // 隨機播放 T金句100
-        TVoices[(1+ Math.floor(Math.random()*128))].play();
+        // T 軍 說話
+        populations[0].speech(4)
       }
     }
     else
@@ -352,8 +353,8 @@ var crossState =
 
     populationB.newMember(WaitForJoinNameList_B[i].name, 5,WaitForJoinNameList_B[i].words);
 
-    // 隨機播放 B金句
-    BVoices[(1+ Math.floor(Math.random()*31))].play();
+    // B 軍 說話
+    populations[1].speech(5)
 
     ComfyJS.Say(WaitForJoinNameList_B[i]+' join B population');
   }
@@ -362,8 +363,8 @@ var crossState =
 
     populationT.newMember(WaitForJoinNameList_T[i].name, 4,WaitForJoinNameList_T[i].words);
 
-    // 隨機播放 T金句
-    TVoices[(1+ Math.floor(Math.random()*128))].play();
+    // T 軍 說話
+    populations[0].speech(4)
 
     ComfyJS.Say(WaitForJoinNameList_T[i]+' join T population');
   }
@@ -437,6 +438,13 @@ var crossState =
   // 倒數結束
   if(crossingTime<= 0)
   {
+      // 死光就閉嘴
+    for (let i = 0; i < populations.length; i++) {
+      if(populations[i].populationVoice)
+      {
+        populations[i].populationVoice.stop();
+      }    
+    }  
 
     clearInterval(crossingTimeInterval);
 
