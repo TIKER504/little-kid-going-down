@@ -11,6 +11,7 @@ var game = new Phaser.Game(canvasWidth, canvasHeight, Phaser.AUTO, "");
 game.state.add('load',loadState);
 game.state.add('play',playState);
 game.state.add('cross',crossState);
+game.state.add('win',winState);
 
 
 game.state.start('load');

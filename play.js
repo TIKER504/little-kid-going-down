@@ -7,6 +7,9 @@ const gameWidth = 800;
 const gameHeight = 950;
 const scale = 2;
 
+// 總樓數(999)
+var completeFloor =200;
+
 // var player;
 var keyboard;
 
@@ -247,6 +250,7 @@ var playState =
     }
 
     if (status == "gameOver" && keyboard.enter.isDown) restart();    
+    if (distance === completeFloor) win();    
     if (status != "playing") return;
                               
     var allDone = 0;
@@ -891,6 +895,13 @@ function restart() {
   game.state.start('cross');
 
   
+}
+
+// 遊戲 結束，贏了
+function win() {
+
+  game.state.start('win');
+
 }
 
 

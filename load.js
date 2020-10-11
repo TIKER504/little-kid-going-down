@@ -12,9 +12,17 @@ ComfyJS.Init("funmoon504", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
 
 var initialed = false;
 
+var gameStartime;
+
 var loadState =
 {
   preload : function () {
+
+    
+    // 遊戲開始當前時間
+    gameStartime = new Date().getTime(); // 獲取當前毫秒數  
+
+
 
     game.add.text(400 + gameWidth / 2, 400,'loading...',{font: '30px Courier',fill:'#ffffff'})
     game.load.baseURL = "./assets/";
@@ -78,6 +86,9 @@ var loadState =
     game.load.image("logo_player4", "logo_player4.png");
     
     game.load.image("logo_player5", "logo_player5.png");
+
+    game.load.image("winT", "winT.png");
+    game.load.image("winB", "winB.png");
   
     game.load.spritesheet("conveyorRight", "conveyor_right.png", 96, 16);
     game.load.spritesheet("conveyorLeft", "conveyor_left.png", 96, 16);
