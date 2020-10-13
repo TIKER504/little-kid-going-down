@@ -8,7 +8,7 @@ const gameHeight = 950;
 const scale = 2;
 
 // 總樓數(999)
-var completeFloor =200;
+var completeFloor =600;
 
 // var player;
 var keyboard;
@@ -163,7 +163,9 @@ var playState =
 
   
     createBounders();
-    addAudio();
+
+  
+    
   
     // 讓遊戲在別的視窗下也能執行， 但有點奇怪， 不論 true、false 都有一樣的效果
     // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
@@ -192,7 +194,7 @@ var playState =
       populations.push(populationT);
       populations.push(populationB);
 
-
+      addAudio();
         
     }  
             

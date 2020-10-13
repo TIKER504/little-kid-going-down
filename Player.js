@@ -934,6 +934,9 @@ class Player {
         // 將Y 方向速度歸零，避免重生時 速度太快入場
         this.player.body.velocity.y =0;        
 
+        // 增加無敵時間，避免直接出生就死亡
+        this.player.unbeatableTime = game.time.now + 1000;
+
         // 重生 閃紅光入場
         game.add.tween(this.player).to({
           tint: 0xff3300,
