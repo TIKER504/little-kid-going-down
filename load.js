@@ -37,8 +37,7 @@ var loadState =
     game.load.spritesheet("player3", "player3.png", 32, 32);
     game.load.spritesheet("player4", "player4.png", 32, 32);
     game.load.spritesheet("player5", "player5.png", 32, 32);
-    game.load.spritesheet("player6", "player6.png", 32, 32);
-    // game.load.spritesheet("player_han", "player_han.png", 32, 32);
+    game.load.spritesheet("player6", "player6.png", 32, 32);    
   
     game.load.spritesheet("img_explosion", "explosion.png", 32, 32);
   
@@ -49,6 +48,9 @@ var loadState =
 
     //紅水
     game.load.spritesheet("redpotion", "redpotion.png", 32, 32);
+
+    // 大字報
+    game.load.spritesheet("textPanel", "textPanel.png", 1200, 400);
     
   
     //按鈕

@@ -48,6 +48,9 @@ var rankObjectList =[]
 // Current Platform to keep track of the platform
 let currentPlatform;
 
+// 事件文字面板群
+var textPanels =[];
+
 // Sounds
 let conveyorSound,
   springSound,
@@ -269,14 +272,34 @@ var playState =
         if(populationBEnd ==false && populations[1].done())
         {
           populationBEnd = true;
-          console.log("populationBEnd");
-          ComfyJS.Say( "The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
+
+          // 另一邊沒死 才會後續啟動
+          if(!populationTEnd)
+          {
+            createTextPanel("The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor");          
+            // 等文字面板3秒後關閉，直接開講
+            setTimeout(( () => populations[0].speech(4) ), 3000); 
+          }
+          
+
+          // console.log("populationBEnd");
+          // ComfyJS.Say( "The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
         } 
         if(populationTEnd ==false && populations[0].done())
         {
           populationTEnd = true;
-          ComfyJS.Say( "The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
-          console.log("populationTEnd");
+
+          // 另一邊沒死 才會後續啟動
+          if(!populationBEnd)
+          {
+            createTextPanel("The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor");
+            // 等文字面板3秒後關閉，直接開講
+            setTimeout(( () => populations[1].speech(5) ), 3000); 
+          }
+          
+
+          // ComfyJS.Say( "The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
+          // console.log("populationTEnd");
         } 
       }
       else
@@ -339,23 +362,6 @@ var playState =
       // T 軍 說話
       populations[0].speech(4);
 
-      // // 地板凍結 把話說完
-      // if(!populations[0].populationVoice.isPlaying)
-      // {        
-      //   unfreeze();
-      //   populationTLongSpeech  =true;
-      // }
-      // else if(populations[0].populationVoice.isPlaying && !populationTLongSpeech)
-      // {
-      //   freeze();
-      // }
-
-      // if(!populationTLongSpeech)
-      // {
-      //   freeze(10);
-      // }
-
-
 
     }
 
@@ -363,19 +369,7 @@ var playState =
     if(populationTEnd && distance% 8 ===0)
     {     
       // B 軍 說話
-      populations[1].speech(5);
-      
-
-      // // 地板凍結 把話說完
-      // if(!populations[1].populationVoice.isPlaying)
-      // {        
-      //   unfreeze();
-      //   populationBLongSpeech  =true;
-      // }
-      // else if(populations[1].populationVoice.isPlaying && !populationBLongSpeech)
-      // {
-      //   freeze();
-      // }
+      populations[1].speech(5);           
 
     }
 
@@ -413,7 +407,7 @@ var playState =
       //   }       
       // }
 
-      populations[0].killAll();
+      // populations[0].killAll();
       populations[1].killAll();
     }
 
@@ -892,11 +886,19 @@ function updateItem() {
 function gameOver() {
   text3.visible = true;
   isStabbedToDeath = false;
+
+  // 清空所有地板
   platforms.forEach(function (s) {
     s.destroy();
   });
   platforms = [];
 
+  // 清空所有對話視窗
+  textPanels.forEach(function (s) {
+    s.destroy();
+  });
+  textPanels = [];
+  
   status = "gameOver";
 }
 
@@ -1046,6 +1048,47 @@ function unfreeze()
 {
   platformsStatus ="active";
   // console.log("unfreeze!");
+}
+
+// 事件廣播系統
+function createTextPanel(text) {
+  
+  // 凍結3 秒
+  freeze(3);
+
+  // textPanel = game.add.sprite(gameWidth/2-200, gameHeight/2-300, "textPanel");
+
+  var textPanel = game.add.sprite(-1200, gameHeight/2-300, "textPanel");
+
+  game.physics.arcade.enable(textPanel);
+
+  //  Move the Body 300 pixels to the right, over 2000 ms
+  textPanel.body.moveTo(250, 1200+ gameWidth/2-200, Phaser.ANGLE_RIGHT);
+  
+  //延遲幾秒後 秒後  移出
+  setTimeout(( () => textPanel.body.moveTo(250, 1800, Phaser.ANGLE_RIGHT) ), 3000); 
+
+  
+  const paneltxt = new Phaser.Text(game,200, 300, text, {
+    font: '30px Courier',    
+    align: "center",
+    fill: "white",
+  });
+
+  textPanel.addChild(paneltxt);
+    
+  textPanels.push(textPanel);
+}
+
+// 清除事件廣播系統
+function cleanTextPanel(textPanelClean) {
+
+  // textPanelClean.body.moveTo(250, 1800, Phaser.ANGLE_RIGHT);
+
+  // TextPanel.body.onMoveComplete.add(( () => TextPanel.destroy()), this);
+
+  // TextPanel.body.onMoveComplete.add(( () => console.log("onMoveComplete!!")), this);
+              
 }
 
 

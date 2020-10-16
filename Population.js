@@ -383,6 +383,11 @@ class Population {
             }
           }       
 
+          // 講話玩了，畫面還停止，繼續嘴
+          if(platformsStatus == "freeze")
+          {
+            populations[1].speech(5);
+          }
 
           this.populationSpeechCounter++;
 
@@ -419,7 +424,14 @@ class Population {
             if (!this.players[i].dead ) {   
               this.players[i].isPlayingAnimation = false;              
             }
-          }       
+          }
+          
+          // 講話玩了，畫面還停止，繼續嘴
+          if(platformsStatus == "freeze")
+          {
+            populations[1].speech(5);
+          }
+
 
 
           this.populationSpeechCounter++;
@@ -460,7 +472,13 @@ class Population {
             if (!this.players[i].dead ) {   
               this.players[i].isPlayingAnimation = false;              
             }
-          }       
+          }
+
+          // 講話玩了，畫面還停止，繼續嘴
+          if(platformsStatus == "freeze")
+          {
+            populations[0].speech(4);
+          }
 
           this.populationSpeechCounter++;
 
@@ -499,6 +517,12 @@ class Population {
               this.players[i].isPlayingAnimation = false;              
             }
           }       
+
+          // 講話玩了，畫面還停止，繼續嘴
+          if(platformsStatus == "freeze")
+          {
+            populations[0].speech(4);
+          }
 
 
           this.populationSpeechCounter++;
