@@ -11,8 +11,27 @@ class Player {
 
     this.words = words;
 
+    // 出生X 位置預設
+    var bornX =400 + gameWidth / 2;
+
+    // 出生Y 位置預設
+    var bornY = 50;
+
+    // 不同種，出生位置不同
+    if(species == 4)
+    {
+      var bornX =1100;
+    }
+    if(species ==5)
+    {
+      var bornX =500;
+    }
+
+
+
+
     // 依傳入的0、1家族而定
-    const player = game.add.sprite( 400 + gameWidth / 2, 50, "player" + species);
+    const player = game.add.sprite(bornX,bornY, "player" + species);
 
 
     player.scale.setTo(scale, scale);
@@ -1140,7 +1159,7 @@ class Player {
   nailsEffect(player, platform) {
     // So player doesn't get stabbed from the side
     if (player.body.y > platform.body.y) return;
-    if (player.touchOn !== platform) {
+    if (game.time.now > this.player.unbeatableTime && player.touchOn !== platform) {
       if (!stabbedSound.isPlaying) {
         stabbedSound.play();
       }
@@ -1156,8 +1175,7 @@ class Player {
       if (player.life <= 0 && !this.dead) {
         stabbedScream.play();
         this.dead = true;
-        console.log("nailsPlatform to death!");
-       
+        // console.log("nailsPlatform to death!");       
       }
     }
   }
@@ -1170,8 +1188,6 @@ class Player {
         stabbedSound.play();
       }
       player.life -= 3;
-
-
 
       player.touchOn = platform;
 

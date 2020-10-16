@@ -577,9 +577,31 @@ function createBounders() {
     rightWalls.push(rightWall);
   }
 
+  // 最右最左牆
+  for (let index = 0; index < numberOfWalls; index++) {
+    // let leftWall = game.add.sprite(0, wallHeight * index, "wall");
+
+    let leftWall = game.add.sprite(0, wallHeight * index, "wall");
+
+    game.physics.arcade.enable(leftWall);
+    leftWall.body.immovable = true;
+
+    leftWalls.push(leftWall);
+
+    // let rightWall = game.add.sprite(gameWidth - 17, wallHeight * index, "wall");
+
+    let rightWall = game.add.sprite(canvasWidth - 17, wallHeight * index, "wall");
+
+    game.physics.arcade.enable(rightWall);
+    rightWall.body.immovable = true;
+
+    rightWalls.push(rightWall);
+  }
+
   // 左上角平台
   let normal400 = game.add.sprite(0, 300, "normal400");
-  // normal400.scale.setTo(scale, scale);
+  // 寬度不變，高*2
+  normal400.scale.setTo(1, scale);
   game.physics.arcade.enable(normal400);
   normal400.body.immovable = true;
 
@@ -760,6 +782,7 @@ function createOnePlatform() {
     platform.body.setSize(96, 22, 0, 10);
   }
 
+  // platform.body.checkCollision.up = false;
   platform.body.checkCollision.down = false;
   platform.body.checkCollision.left = false;
   platform.body.checkCollision.right = false;

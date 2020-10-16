@@ -253,6 +253,20 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
 }
 
+ComfyJS.onJoin =( user, self, extra ) =>
+{
+
+  ComfyJS.Say(user+' join The Chat');
+
+}
+
+ComfyJS.onPart =( user, self, extra ) =>
+{
+
+  ComfyJS.Say(user+' leave The Chat');
+
+}
+
 var crossState =
 {
   preload : function () {
@@ -337,6 +351,13 @@ var crossState =
     rightWall.body.immovable = true;
 
     rightWalls.push(rightWall);
+
+    let centerWall = game.add.sprite(canvasWidth/2 - 17, wallHeight * index, "wall");
+
+    game.physics.arcade.enable(centerWall);
+    centerWall.body.immovable = true;
+
+    otherPlates.push(centerWall);
   }
 
   var crossingText = game.add.text(400 + gameWidth / 2, 400,'crossing...',{font: '30px Courier',fill:'#ffffff'})

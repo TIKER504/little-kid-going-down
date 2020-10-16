@@ -358,6 +358,14 @@ class Population {
         if(this.populationSpeechCounter ==0)
         {
           freeze(10);
+
+          // 暫停演講 無敵10秒
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].player.unbeatableTime = game.time.now + 10000;          
+            }
+          }       
         }
                 
         // 話說完了
@@ -390,6 +398,14 @@ class Population {
         if(this.populationSpeechCounter ==0)
         {
           freeze(10);
+
+          // 暫停演講 無敵10秒
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].player.unbeatableTime = game.time.now + 10000;          
+            }
+          }  
         }
               
         // 話說完了
@@ -424,6 +440,13 @@ class Population {
         if(this.populationSpeechCounter ==0)
         {
           freeze(10);
+          // 暫停演講 無敵10秒
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].player.unbeatableTime = game.time.now + 10000;          
+            }
+          }  
         }
 
        // 話說完了
@@ -453,6 +476,14 @@ class Population {
         if(this.populationSpeechCounter ==0)
         {
           freeze(10);
+
+          // 暫停演講 無敵10秒
+          for (let i = 0; i < this.players.length; i++)
+          {
+            if (!this.players[i].dead ) {   
+              this.players[i].player.unbeatableTime = game.time.now + 10000;          
+            }
+          }  
         }
 
          // 話說完了
