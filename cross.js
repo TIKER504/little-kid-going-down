@@ -16,6 +16,8 @@ crossingRewardIDList.push('44227033-e641-4450-be45-d402dc0e111d');
 WaitForJoinNameList_B = [];
 WaitForJoinNameList_T = [];
 
+var lineB;
+
 
 ComfyJS.onChat =( user, message, flags, self, extra )=>
 {
@@ -253,19 +255,19 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
 }
 
-ComfyJS.onJoin =( user, self, extra ) =>
-{
+// ComfyJS.onJoin =( user, self, extra ) =>
+// {
 
-  ComfyJS.Say(user+' join The Chat');
+//   ComfyJS.Say(user+' join The Chat');
 
-}
+// }
 
-ComfyJS.onPart =( user, self, extra ) =>
-{
+// ComfyJS.onPart =( user, self, extra ) =>
+// {
 
-  ComfyJS.Say(user+' leave The Chat');
+//   ComfyJS.Say(user+' leave The Chat');
 
-}
+// }
 
 var crossState =
 {
@@ -393,7 +395,26 @@ var crossState =
   WaitForJoinNameList_B=[];
   WaitForJoinNameList_T=[];
 
+  // 畫表現折線圖
+  // var lineB = new Phaser.Line(200, 400, 700, 400);
+  // game.stage.backgroundColor = '#124184';
 
+  // lineB = new Phaser.Line(200, 400, 700, 400);
+  // // var lineB = new Phaser.Line(rightWalls[0].x, rightWalls[0].y, leftWalls[0].x, leftWalls[0].y);
+
+   // add a graphics object to the world
+  //  var gra = game.add.graphics(game.world.centerX, game.world.centerY);
+ 
+  //  // make it a red rectangle
+  //  gra.lineStyle(3, 0xff0000);
+
+  //  // start by moving to a point
+  //  gra.moveTo(0, 0);
+
+  //  // draw a line
+  //  gra.lineTo(100, 0);
+
+  
   // function buffer() {      
 
   //   // 把 cross 場景的地板清光

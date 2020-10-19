@@ -51,6 +51,9 @@ class Player {
     // 講話動畫
     player.animations.add("speech", [8,17], 8);
 
+    // 哭動畫
+    player.animations.add("cry", [26,35], 8);
+
     player.life = 10;
     player.unbeatableTime = 0;
     player.touchOn = undefined;
@@ -888,8 +891,8 @@ class Player {
         if (this.player.life <= 0 && !this.dead) {
           stabbedScream.play();
           this.dead = true;
-
-          console.log("nailsCeiling to death!");
+          this.player.frame = 35;// crying
+          // console.log("nailsCeiling to death!");
 
           
 
@@ -1175,6 +1178,7 @@ class Player {
       if (player.life <= 0 && !this.dead) {
         stabbedScream.play();
         this.dead = true;
+        player.frame = 35;// crying
         // console.log("nailsPlatform to death!");       
       }
     }

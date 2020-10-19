@@ -279,11 +279,8 @@ var playState =
             createTextPanel("The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor");          
             // 等文字面板3秒後關閉，直接開講
             setTimeout(( () => populations[0].speech(4) ), 3000); 
-          }
-          
-
-          // console.log("populationBEnd");
-          // ComfyJS.Say( "The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
+          }          
+          // console.log("populationBEnd");         
         } 
         if(populationTEnd ==false && populations[0].done())
         {
@@ -295,10 +292,7 @@ var playState =
             createTextPanel("The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor");
             // 等文字面板3秒後關閉，直接開講
             setTimeout(( () => populations[1].speech(5) ), 3000); 
-          }
-          
-
-          // ComfyJS.Say( "The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor"); 
+          }                  
           // console.log("populationTEnd");
         } 
       }
@@ -913,13 +907,18 @@ function restart() {
     }    
   }  
     
-  // twitch API 報 每一輪 最佳成績
-  ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
+
   bgm.stop();
-  // bgm.destroy();
 
+  // twitch API 報 每一輪 最佳成績 (暫時不用Twitch API 報了，畫面與文字有延遲，容易造成暴雷狀況)
+  // ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
+ 
+  createTextPanel(generation.innerHTML + " generation reached " +distance +" floor");
 
-  game.state.start('cross');
+  //延遲3秒後  進入 cross 
+  setTimeout(( () => game.state.start('cross')), 3000); 
+
+  
 
   
 }
@@ -1078,6 +1077,74 @@ function createTextPanel(text) {
   textPanel.addChild(paneltxt);
     
   textPanels.push(textPanel);
+
+  if(populationBEnd && !populationTEnd)
+  {
+
+    var cryPlayerLogo = game.add.sprite(200,100, "player5");
+
+
+    // cryPlayerLogo.scale.setTo(scale, scale);
+    cryPlayerLogo.scale.setTo(6, 6);
+           
+     // 哭動畫
+     cryPlayerLogo.animations.add("cry", [26,35], 8);
+
+     cryPlayerLogo.animations.play("cry",8,true);      
+
+     textPanel.addChild(cryPlayerLogo);
+
+  }
+
+  if(populationTEnd && !populationBEnd)
+  {
+
+    var cryPlayerLogo = game.add.sprite(200,100, "player4");
+
+
+    // cryPlayerLogo.scale.setTo(scale, scale);
+    cryPlayerLogo.scale.setTo(6, 6);
+           
+     // 哭動畫
+     cryPlayerLogo.animations.add("cry", [26,35], 8);
+
+     cryPlayerLogo.animations.play("cry",8,true);      
+
+     textPanel.addChild(cryPlayerLogo);
+
+  }
+
+  if(populationBEnd && populationTEnd)
+  {
+
+    var cryPlayerBLogo = game.add.sprite(200,100, "player5");
+
+
+    // cryPlayerLogo.scale.setTo(scale, scale);
+    cryPlayerBLogo.scale.setTo(6, 6);
+           
+     // 哭動畫
+     cryPlayerBLogo.animations.add("cry", [26,35], 8);
+
+     cryPlayerBLogo.animations.play("cry",8,true);      
+
+     textPanel.addChild(cryPlayerBLogo);
+
+     var cryPlayerTLogo = game.add.sprite(500,100, "player4");
+
+
+     // cryPlayerLogo.scale.setTo(scale, scale);
+     cryPlayerTLogo.scale.setTo(6, 6);
+            
+      // 哭動畫
+      cryPlayerTLogo.animations.add("cry", [26,35], 8);
+ 
+      cryPlayerTLogo.animations.play("cry",8,true);      
+ 
+      textPanel.addChild(cryPlayerTLogo);
+
+  }
+    
 }
 
 // 清除事件廣播系統
