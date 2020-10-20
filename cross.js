@@ -296,6 +296,8 @@ var crossState =
 
     crossingTime = 30;
 
+
+
     platforms.forEach(function (s) {
       s.destroy();
     });

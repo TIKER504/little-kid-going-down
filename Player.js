@@ -58,7 +58,7 @@ class Player {
     player.unbeatableTime = 0;
     player.touchOn = undefined;
     player.touchItemOn = undefined;
-
+    player.headItem =undefined;
 
     this.player = player;
 
@@ -154,7 +154,7 @@ class Player {
     }
     
     
-
+   
 
     // const childName = this.familyName + " " + this.romanize(this.gen);
     const name = new Phaser.Text(game, 3, -15, this.familyName, {
@@ -165,7 +165,13 @@ class Player {
     });
 
     this.player.addChild(name);
+    
+    // 頭部裝備
+    // const headItem = new Phaser.Sprite(game, 2, -3, "helmet");
 
+    // const headItem = new Phaser.Sprite(game, 2, -15, "hat");
+
+    // this.player.addChild(headItem);
 
     this.fitness = 0;
     this.vision = []; //the input array fed into the neuralNet
@@ -872,6 +878,20 @@ class Player {
         this.player.body.velocity.y = 0;
       }
 
+      if(this.player.headItem)
+      {
+        // 戴頭盔，免疫天花板刺一次
+        if(this.player.headItem.key =="helmet")
+        {
+          this.player.unbeatableTime = game.time.now + 1000;
+          // 頭盔破掉
+          this.player.removeChildAt(2);
+          this.player.headItem = undefined;
+          return;
+        }
+      }
+
+
       // 無敵時間，才不會瞬殺
       if (game.time.now > this.player.unbeatableTime) {
         stabbedSound.play();
@@ -889,13 +909,31 @@ class Player {
 
         this.player.unbeatableTime = game.time.now + 1000;
         if (this.player.life <= 0 && !this.dead) {
+
+          if(this.player.headItem)
+          {
+            // 戴巫師帽，受到天花板即死攻擊，會順移到安全的地板上面
+            if(this.player.headItem.key =="hat")
+            {
+              this.player.unbeatableTime = game.time.now + 1000;
+              // 損的血加回來
+              this.player.life += 3;
+
+              this.player.body.x = 400+ gameWidth / 2;
+              this.player.body.y =  gameHeight / 2;
+
+              // 戴巫師帽破掉
+              this.player.removeChildAt(2);
+              this.player.headItem = undefined;
+              return;
+            }
+          }
+
+
           stabbedScream.play();
           this.dead = true;
           this.player.frame = 35;// crying
-          // console.log("nailsCeiling to death!");
-
-          
-
+          // console.log("nailsCeiling to death!");          
 
           // 非BOT 死亡會播報
           // if(this.familyName !="BOT")
@@ -1272,6 +1310,65 @@ class Player {
     }
   }
 
+  // 觸碰道具效果
+  WearheadItem(player, platform) {
+    // 只能碰一次
+    if (player.touchItemOn !== platform) {
+      
+      player.touchItemOn = platform;
+
+      
+      // 頭盔
+      if(platform.itemName=='helmet')
+      {
+        
+        
+        if(!player.headItem)
+        {
+          // 頭部裝備
+          player.headItem = new Phaser.Sprite(game, 2, -3, "helmet");
+
+          player.addChild(player.headItem);
+        }
+        else
+        {
+          player.removeChildAt(2);
+          player.headItem = new Phaser.Sprite(game, 2, -3, "helmet");
+          player.addChild(player.headItem);
+        }
+
+        
+              
+        // 吃完後，形同爆炸，play.js 主程序會回收
+        platform.Explodede = true;
+      }
+
+      // 巫師帽
+      if(platform.itemName=='hat')
+      {          
+         if(!player.headItem)
+         {
+          // 頭部裝備         
+          player.headItem = new Phaser.Sprite(game, 2, -15, "hat");
+          player.addChild(player.headItem);
+         }
+         else
+         {
+          player.removeChildAt(2);
+          player.headItem = new Phaser.Sprite(game, 2, -15, "hat");
+          player.addChild(player.headItem);
+         }
+
+         
+      
+        // 吃完後，形同爆炸，play.js 主程序會回收
+        platform.Explodede = true;
+      }
+      
+      
+    }
+  }
+
   // 最新的 TLOM 用不到， 先註解起來
   // 觸碰夾筷子平台
   // cutEffect(player, platform) {
@@ -1330,13 +1427,13 @@ class Player {
     if (platform.key == "redpotion") {
       this.ItemEffect(player, platform);
     }
+    // 頭部裝備
+    if (platform.platformType == "headItem") {
+      this.WearheadItem(player, platform);
+    }
 
     
-    // // 持有筷子 的市議員專用，有筷子才能夾
-    // if (platform.key == "cutPlate" && this.species == 3 && this.gotMoney >0) {
 
-    //   this.cutEffect(player, platform);
-    // }
   }
 
   destroy() {

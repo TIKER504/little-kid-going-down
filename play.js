@@ -164,7 +164,7 @@ var playState =
 
    
 
-  
+    
     createBounders();
 
   
@@ -241,6 +241,9 @@ var playState =
 
     bgm.loop = true;
     bgm.play();
+
+    
+    
   },
   update : function() {
     
@@ -819,10 +822,41 @@ function createOneItem() {
   
   Item2.platformType = 'redpotion';
 
+  x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale + 400;       
+  y = gameHeight + Math.random() * gameHeight;
+  var Item3;
+
+  // 只有一種筷子好像也不必用機率分布來算>>>>>>>>>> 物品變多了 該要用機率管理了!!
+  Item3 = game.add.sprite(x, y, "helmet");
+  
+  Item3.scale.setTo(scale, scale);
+  
+  game.physics.arcade.enable(Item3);
+  Item3.body.immovable = true;
+  
+  Item3.platformType = 'headItem';
+  Item3.itemName = 'helmet';
+
+  x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale + 400;       
+  y = gameHeight + Math.random() * gameHeight;
+  var Item4;
+
+  // 只有一種筷子好像也不必用機率分布來算>>>>>>>>>> 物品變多了 該要用機率管理了!!
+  Item4 = game.add.sprite(x, y, "hat");
+  
+  Item4.scale.setTo(scale, scale);
+  
+  game.physics.arcade.enable(Item4);
+  Item4.body.immovable = true;
+  
+  Item4.platformType = 'headItem';
+  Item4.itemName = 'hat';
+
   
   itemList.push(Item);
-
   itemList.push(Item2);
+  itemList.push(Item3);
+  itemList.push(Item4);
 }
 
 function createTextsBoard() {

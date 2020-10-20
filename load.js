@@ -14,6 +14,8 @@ var initialed = false;
 
 var gameStartime;
 
+var loadingGIFS;
+
 var loadState =
 {
   preload : function () {
@@ -23,10 +25,18 @@ var loadState =
     gameStartime = new Date().getTime(); // 獲取當前毫秒數  
 
 
-
+    
     game.add.text(400 + gameWidth / 2, 400,'loading...',{font: '30px Courier',fill:'#ffffff'})
-    game.load.baseURL = "./assets/";
-    game.load.crossOrigin = "anonymous";
+
+    // 這邊才再load 圖片太慢，再做一個proloadState
+    // game.load.baseURL = "./assets/";
+    // game.load.crossOrigin = "anonymous";
+
+    // game.load.spritesheet("loadingGIFSprite", "loadingGIFSprite.png",300,200);
+
+    loadingGIFS =game.add.sprite(350+ gameWidth / 2, 500, "loadingGIFSprite");
+    loadingGIFS.animations.add("loading", [0, 1, 2, 3,4,5,6,7,8,9], 10, true);
+    loadingGIFS.play("loading");
   
     if(!initialed)
     {
@@ -51,14 +61,19 @@ var loadState =
 
     // 大字報
     game.load.spritesheet("textPanel", "textPanel.png", 1200, 400);
-    
+
+    //頭盔
+    game.load.spritesheet("helmet", "helmet.png", 32, 32);
+
+    //巫師帽
+    game.load.spritesheet("hat", "hat.png", 32, 32);
   
     //按鈕
     game.load.spritesheet('muteBtn', 'mute.png', 170, 150);
     game.load.spritesheet('cameraEffectBtn', 'cameraEffect.png', 100, 100);
   
     game.load.image("background", "background.png");
-  
+          
     game.load.image("wall", "wall.png");
     game.load.image("ceiling", "ceiling.png");
     game.load.image("normal", "normal.png");
@@ -148,6 +163,7 @@ var loadState =
   
   },create : function ()
   {    
+    
     status = "playing";
     game.state.start('play');
   }
