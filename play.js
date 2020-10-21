@@ -279,7 +279,7 @@ var playState =
           // 另一邊沒死 才會後續啟動
           if(!populationTEnd)
           {
-            createTextPanel("The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor");          
+            createTextPanel("The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor","extinguish");          
             // 等文字面板3秒後關閉，直接開講
             setTimeout(( () => populations[0].speech(4) ), 3000); 
           }          
@@ -292,7 +292,7 @@ var playState =
           // 另一邊沒死 才會後續啟動
           if(!populationBEnd)
           {
-            createTextPanel("The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor");
+            createTextPanel("The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor","extinguish");
             // 等文字面板3秒後關閉，直接開講
             setTimeout(( () => populations[1].speech(5) ), 3000); 
           }                  
@@ -329,8 +329,10 @@ var playState =
     // 每 50層 怪物入侵一次，且此層尚未被入侵，避免短時間數個update 過於密集，第0層 不入侵
     if(distance% 50 == 0 && !FloorAlreadyRush && distance !=0 )
     {
+            
       monsterRush(3);
       // console.log("monsterRush!");
+      createTextPanel("They are coming!!!","monster");
       FloorAlreadyRush =true;
     }
 
@@ -395,17 +397,17 @@ var playState =
 
     // 全殺滅族 幫助快速測試
     if (keyboard.a.isDown){
-      // for (let i = 0; i < populations.length; i++) {
+      for (let i = 0; i < populations.length; i++) {
        
-      //   if (!populations[i].done()) {
+        if (!populations[i].done()) {
               
-      //   populations[i].killAll();
+        populations[i].killAll();
     
-      //   }       
-      // }
+        }       
+      }
 
       // populations[0].killAll();
-      populations[1].killAll();
+      // populations[1].killAll();
     }
 
 
@@ -656,11 +658,14 @@ function updateDistance() {
 
   if (recordScore < distance) {
 
-    // 破紀錄 放音樂
-    if (!breakNewRocord) {
+    // 破紀錄 放音樂 (第0世代不算S )
+    if (!breakNewRocord && generation.innerHTML !="0") {
       newRecord.play();
       breakNewRocord = true;
+      createTextPanel("New Record: " + distance +" floor!!!","newRocord" )
     }
+
+    
 
     recordScore = distance;
     record.innerHTML = recordScore;
@@ -947,7 +952,7 @@ function restart() {
   // twitch API 報 每一輪 最佳成績 (暫時不用Twitch API 報了，畫面與文字有延遲，容易造成暴雷狀況)
   // ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
  
-  createTextPanel(generation.innerHTML + " generation reached " +distance +" floor");
+  createTextPanel(generation.innerHTML + " generation reached " +distance +" floor","extinguish");
 
   //延遲3秒後  進入 cross 
   setTimeout(( () => game.state.start('cross')), 3000); 
@@ -1084,7 +1089,7 @@ function unfreeze()
 }
 
 // 事件廣播系統
-function createTextPanel(text) {
+function createTextPanel(text,eventType) {
   
   // 凍結3 秒
   freeze(3);
@@ -1112,72 +1117,137 @@ function createTextPanel(text) {
     
   textPanels.push(textPanel);
 
-  if(populationBEnd && !populationTEnd)
+  // 滅絕事件
+  if(eventType=="extinguish")
   {
+    if(populationBEnd && !populationTEnd)
+    {
+  
+      var cryPlayerLogo = game.add.sprite(200,100, "player5");
+  
+  
+      // cryPlayerLogo.scale.setTo(scale, scale);
+      cryPlayerLogo.scale.setTo(6, 6);
+             
+       // 哭動畫
+       cryPlayerLogo.animations.add("cry", [26,35], 8);
+  
+       cryPlayerLogo.animations.play("cry",8,true);      
+  
+       textPanel.addChild(cryPlayerLogo);
+  
+    }
+  
+    if(populationTEnd && !populationBEnd)
+    {
+  
+      var cryPlayerLogo = game.add.sprite(200,100, "player4");
+  
+  
+      // cryPlayerLogo.scale.setTo(scale, scale);
+      cryPlayerLogo.scale.setTo(6, 6);
+             
+       // 哭動畫
+       cryPlayerLogo.animations.add("cry", [26,35], 8);
+  
+       cryPlayerLogo.animations.play("cry",8,true);      
+  
+       textPanel.addChild(cryPlayerLogo);
+  
+    }
+  
+    if(populationBEnd && populationTEnd)
+    {
+  
+      var cryPlayerBLogo = game.add.sprite(200,100, "player5");
+  
+  
+      // cryPlayerLogo.scale.setTo(scale, scale);
+      cryPlayerBLogo.scale.setTo(6, 6);
+             
+       // 哭動畫
+       cryPlayerBLogo.animations.add("cry", [26,35], 8);
+  
+       cryPlayerBLogo.animations.play("cry",8,true);      
+  
+       textPanel.addChild(cryPlayerBLogo);
+  
+       var cryPlayerTLogo = game.add.sprite(500,100, "player4");
+  
+  
+       // cryPlayerLogo.scale.setTo(scale, scale);
+       cryPlayerTLogo.scale.setTo(6, 6);
+              
+        // 哭動畫
+        cryPlayerTLogo.animations.add("cry", [26,35], 8);
+   
+        cryPlayerTLogo.animations.play("cry",8,true);      
+   
+        textPanel.addChild(cryPlayerTLogo);
+  
+    }
 
-    var cryPlayerLogo = game.add.sprite(200,100, "player5");
-
-
-    // cryPlayerLogo.scale.setTo(scale, scale);
-    cryPlayerLogo.scale.setTo(6, 6);
-           
-     // 哭動畫
-     cryPlayerLogo.animations.add("cry", [26,35], 8);
-
-     cryPlayerLogo.animations.play("cry",8,true);      
-
-     textPanel.addChild(cryPlayerLogo);
 
   }
 
-  if(populationTEnd && !populationBEnd)
+  // 破紀錄事件
+  if(eventType=="newRocord")
   {
-
-    var cryPlayerLogo = game.add.sprite(200,100, "player4");
-
-
-    // cryPlayerLogo.scale.setTo(scale, scale);
-    cryPlayerLogo.scale.setTo(6, 6);
-           
-     // 哭動畫
-     cryPlayerLogo.animations.add("cry", [26,35], 8);
-
-     cryPlayerLogo.animations.play("cry",8,true);      
-
-     textPanel.addChild(cryPlayerLogo);
-
+    if(!populationTEnd)
+    {
+      var coolPlayerLogo = game.add.sprite(500,100, "player4");
+  
+  
+      // cryPlayerLogo.scale.setTo(scale, scale);
+      coolPlayerLogo.scale.setTo(6, 6);
+             
+       // 酷動畫
+      //  coolPlayerLogo.animations.add("cry", [26,35], 8);
+  
+      //  coolPlayerLogo.animations.play("cry",8,true);      
+  
+       coolPlayerLogo.frame = 44;
+       textPanel.addChild(coolPlayerLogo);
+     
+    }  
+    if(!populationBEnd)
+    {  
+      var coolPlayerLogo = game.add.sprite(200,100, "player5");
+  
+  
+      // cryPlayerLogo.scale.setTo(scale, scale);
+      coolPlayerLogo.scale.setTo(6, 6);
+             
+       // 酷動畫
+      //  coolPlayerLogo.animations.add("cry", [26,35], 8);
+  
+      //  coolPlayerLogo.animations.play("cry",8,true);      
+  
+      coolPlayerLogo.frame = 44;
+      textPanel.addChild(coolPlayerLogo);         
+    }
+    
   }
 
-  if(populationBEnd && populationTEnd)
+  //Monster 事件
+  if(eventType=="monster")
   {
-
-    var cryPlayerBLogo = game.add.sprite(200,100, "player5");
-
-
-    // cryPlayerLogo.scale.setTo(scale, scale);
-    cryPlayerBLogo.scale.setTo(6, 6);
-           
-     // 哭動畫
-     cryPlayerBLogo.animations.add("cry", [26,35], 8);
-
-     cryPlayerBLogo.animations.play("cry",8,true);      
-
-     textPanel.addChild(cryPlayerBLogo);
-
-     var cryPlayerTLogo = game.add.sprite(500,100, "player4");
-
-
-     // cryPlayerLogo.scale.setTo(scale, scale);
-     cryPlayerTLogo.scale.setTo(6, 6);
-            
-      // 哭動畫
-      cryPlayerTLogo.animations.add("cry", [26,35], 8);
- 
-      cryPlayerTLogo.animations.play("cry",8,true);      
- 
-      textPanel.addChild(cryPlayerTLogo);
-
+    var monsterLogo = game.add.sprite(200,100, "player2");
+  
+  
+      // cryPlayerLogo.scale.setTo(scale, scale);
+      monsterLogo.scale.setTo(6, 6);
+             
+       // 酷動畫
+      //  coolPlayerLogo.animations.add("cry", [26,35], 8);
+      monsterLogo.animations.add("right", [9, 10, 11, 12], 8);
+  
+      monsterLogo.animations.play("right",8,true);      
+        
+      textPanel.addChild(monsterLogo);
+    
   }
+
     
 }
 
