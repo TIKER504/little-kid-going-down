@@ -188,6 +188,14 @@ class Population {
 
         alive++;
       }
+
+      // 遊戲暫停，鎖死X 方向
+      if(!this.players[i].dead &&platformsStatus !="active")
+      {
+        this.players[i].stopMoving();
+        continue;      
+      }
+
       // 每6frame 才會更新一次行動邏輯，以節省效能
       if (!this.players[i].dead && this.players[i].passframe >=6 ) {
         this.players[i].look();
@@ -207,11 +215,6 @@ class Population {
         this.players[i].reportDead = true;
 
         suddenlyDeadNumber++;
-      }
-
-      if(this.beginLevel ==0)
-      {
-        this.players[i].beginLevel = 0;
       }
 
     }

@@ -139,6 +139,10 @@ var gameMute = true;
 var populationBEnd = false;
 var populationTEnd = false;
 
+// T B 家族最後希望
+var lastPopulationT = false;
+var lastPopulationB = false;
+
 // 長話演說
 var populationBLongSpeech = false;
 var populationTLongSpeech = false;
@@ -247,9 +251,9 @@ var playState =
   },
   update : function() {
     
-    // 凍結畫面
+    // 凍結畫面 10秒
     if (keyboard.s.isDown){
-      freeze();
+      freeze(10);
     }
 
     // 解凍畫面
@@ -262,13 +266,26 @@ var playState =
     if (status != "playing") return;
                               
     var allDone = 0;
-      
+
+
+
     for (let i = 0; i < populations.length; i++) {
        
       if (!populations[i].done()) {
             
-      populations[i].update();
-  
+        populations[i].update();
+        
+        // 最後倖存者
+        if(populations[0].nowAlive ==1 && !lastPopulationT)
+        {
+          lastPopulationT = true;
+          createTextPanel("The last hope","lastOne");  
+        }
+        if(populations[1].nowAlive ==1 && !lastPopulationB)
+        {
+          lastPopulationB = true;
+          createTextPanel("The last hope","lastOne");  
+        }  
       }
       else if(populations[i].done() && !populations[i].isMonster ) {
         allDone++;
@@ -306,6 +323,8 @@ var playState =
       }
   
     }
+      
+
 
     // 板塊可動時 才執行
     if(platformsStatus =="active")
@@ -1237,9 +1256,7 @@ function createTextPanel(text,eventType) {
   
       // cryPlayerLogo.scale.setTo(scale, scale);
       monsterLogo.scale.setTo(6, 6);
-             
-       // 酷動畫
-      //  coolPlayerLogo.animations.add("cry", [26,35], 8);
+                  
       monsterLogo.animations.add("right", [9, 10, 11, 12], 8);
   
       monsterLogo.animations.play("right",8,true);      
