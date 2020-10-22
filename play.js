@@ -217,7 +217,7 @@ var playState =
     cameraEffectBtn.scale.setTo(0.7, 0.7);
               
     //遊戲背景顏色  
-    // game.stage.backgroundColor = "#9044AA";
+    // game.stage.backgroundColor = "#064C7D";
     var textStyle= { font: "bold 48px Gothic", fill: "#ffffff", align:"center"};
     // 排名系統
     game.add.text(1500,100, "Top Ranks:", textStyle);

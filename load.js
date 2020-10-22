@@ -56,8 +56,8 @@ var loadState =
     // 錢
     game.load.spritesheet("money", "money.png", 32, 14);
 
-    // 表情符號
-    game.load.spritesheet("emotion", "emotion.png", 16, 16);
+    // 表情符號(原圖為16*16 緊鄰的圖，但因為phaser bug 會造成Pixel bleeding 邊緣髒點現象，先暫時手動每個圖加邊緣成為18*18)
+    game.load.spritesheet("emotion", "emotion.png", 18, 18);
 
     //紅水
     game.load.spritesheet("redpotion", "redpotion.png", 32, 32);

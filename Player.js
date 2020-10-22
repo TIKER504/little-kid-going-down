@@ -176,7 +176,7 @@ class Player {
     if(status=="crossing")
     {
         // 表情
-      const emotion = new Phaser.Sprite(game, 10, -30, "emotion");
+      const emotion = new Phaser.Sprite(game, 8, -30, "emotion");
 
       // emotion.frame=(1+ Math.floor(Math.random()*28));
 
