@@ -173,6 +173,26 @@ class Player {
 
     // this.player.addChild(headItem);
 
+    if(status=="crossing")
+    {
+        // 表情
+      const emotion = new Phaser.Sprite(game, 10, -30, "emotion");
+
+      // emotion.frame=(1+ Math.floor(Math.random()*28));
+
+      emotion.animations.add("emoPlay", [0, (1+ Math.floor(Math.random()*28))], 2);
+
+      // emotion.animations.add("emoPlay", [0, 1], 8);
+
+      emotion.animations.play("emoPlay",2,true);      
+
+      this.player.addChild(emotion);      
+    }
+    
+
+
+
+
     this.fitness = 0;
     this.vision = []; //the input array fed into the neuralNet
     this.decision = []; //the out put of the NN

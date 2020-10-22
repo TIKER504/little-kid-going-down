@@ -56,6 +56,9 @@ var loadState =
     // 錢
     game.load.spritesheet("money", "money.png", 32, 14);
 
+    // 表情符號
+    game.load.spritesheet("emotion", "emotion.png", 16, 16);
+
     //紅水
     game.load.spritesheet("redpotion", "redpotion.png", 32, 32);
 
@@ -106,6 +109,7 @@ var loadState =
 
     game.load.image("winT", "winT.png");
     game.load.image("winB", "winB.png");
+
   
     game.load.spritesheet("conveyorRight", "conveyor_right.png", 96, 16);
     game.load.spritesheet("conveyorLeft", "conveyor_left.png", 96, 16);
