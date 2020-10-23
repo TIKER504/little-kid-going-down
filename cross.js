@@ -326,14 +326,11 @@ var crossState =
     }
 
 
-  // 地板
-  let normal800 = game.add.sprite(0, 800, "normal400");
-  normal800.scale.setTo(5, scale);
-  game.physics.arcade.enable(normal800);
-  normal800.body.immovable = true;
+  
 
-  otherPlates.push(normal800);
 
+  
+ 
 
   const wallHeight = 400;
   const numberOfWalls = Math.round(gameHeight / 400) +1 ;
@@ -362,6 +359,19 @@ var crossState =
     centerWall.body.immovable = true;
 
     otherPlates.push(centerWall);
+  }
+
+  const numberOfBase = Math.round(canvasWidth / 800) +1 ;
+
+  for (let index = 0; index < numberOfBase; index++) {
+
+    // 地板
+    let normal800 = game.add.sprite(800 * index, 800, "normal400");
+    normal800.scale.setTo(scale, scale);
+    game.physics.arcade.enable(normal800);
+    normal800.body.immovable = true;
+  
+    otherPlates.push(normal800);  
   }
 
   var crossingText = game.add.text(400 + gameWidth / 2, 400,'crossing...',{font: '30px Courier',fill:'#ffffff'})
