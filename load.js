@@ -113,7 +113,7 @@ var loadState =
   
     game.load.spritesheet("conveyorRight", "conveyor_right.png", 98, 16);
     game.load.spritesheet("conveyorLeft", "conveyor_left.png", 98, 16);
-    game.load.spritesheet("trampoline", "trampoline.png", 96, 22);
+    game.load.spritesheet("trampoline", "trampoline.png", 96, 36);
     game.load.spritesheet("fake", "fake.png", 96, 36);
     game.load.audio("conveyor", "/sounds/Conveyor 1.mp3");
     game.load.audio("spring", "/sounds/Spring 1.mp3");
