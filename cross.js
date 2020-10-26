@@ -516,8 +516,8 @@ var crossState =
     });
     otherPlates = [];
 
-    game.state.start('play');     
-
+    // game.state.start('play');     
+    game.state.start('preplay');
   }
 
 

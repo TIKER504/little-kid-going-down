@@ -10,6 +10,8 @@ ComfyJS.Init("funmoon504", "oauth:1wr03xndowkqnn70fqhw4eujlxmnc2");
 // 這是node.js 的套件，先用html 解決之後一起整理。
 // var ComfyJS = require("comfy.js");
 
+var loadTo =""
+
 var initialed = false;
 
 var gameStartime;
@@ -21,11 +23,7 @@ var loadState =
   preload : function () {
 
     
-    // 遊戲開始當前時間
-    gameStartime = new Date().getTime(); // 獲取當前毫秒數  
-
-
-    
+       
     game.add.text(400 + gameWidth / 2, 400,'loading...',{font: '30px Courier',fill:'#ffffff'})
 
     // 這邊才再load 圖片太慢，再做一個proloadState
@@ -40,7 +38,10 @@ var loadState =
   
     if(!initialed)
     {
-      // game.load.spritesheet("player", "player.png", 32, 32);
+
+    // 遊戲開始當前時間
+    gameStartime = new Date().getTime(); // 獲取當前毫秒數  
+    // game.load.spritesheet("player", "player.png", 32, 32);
     game.load.spritesheet("player0", "player0.png", 32, 32);
     game.load.spritesheet("player1", "player1.png", 32, 32);
     game.load.spritesheet("player2", "player2.png", 32, 32);
@@ -79,6 +80,8 @@ var loadState =
     game.load.spritesheet('cameraEffectBtn', 'cameraEffect.png', 100, 100);
   
     game.load.image("background", "background.png");
+
+    game.load.image("crown", "crown.png");
           
     game.load.image("wall", "wall.png");
     game.load.image("ceiling", "ceiling.png");
@@ -150,6 +153,7 @@ var loadState =
     game.load.audio("monsterBite", "/sounds/monsterBite.mp3");
     game.load.audio("surprise", "/sounds/surprise.mp3");
     game.load.audio("smokeSFX", "/sounds/smokeSFX.mp3");
+    game.load.audio("tapeRewind", "/sounds/tapeRewind.mp3");
     
     
     
@@ -171,10 +175,22 @@ var loadState =
    
   
   },create : function ()
-  {    
-    
-    status = "playing";
-    game.state.start('play');
+  {   
+    loadingGIFS =game.add.sprite(350+ gameWidth / 2, 500, "loadingGIFSprite");
+    loadingGIFS.animations.add("loading", [0, 1, 2, 3,4,5,6,7,8,9], 10, true);
+    loadingGIFS.play("loading");
+
+    if(loadTo=="cross")
+    {
+      setTimeout(( () => game.state.start(loadTo)), 3000); 
+      return;
+    }
+
+
+    status = "playing";    
+    game.state.start('preplay');
+
+
   }
 }
 

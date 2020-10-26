@@ -3,9 +3,9 @@
 // const gameHeight = 800;
 // const scale = 2;
 
-const gameWidth = 800;
-const gameHeight = 950;
-const scale = 2;
+// const gameWidth = 800;
+// const gameHeight = 950;
+// const scale = 2;
 
 // 總樓數(999)
 var completeFloor =600;
@@ -45,8 +45,7 @@ var rankList = [];
 // 排名畫面物件，統一清除畫上，要不然塗層會一直疊
 var rankObjectList =[]
 
-// Current Platform to keep track of the platform
-let currentPlatform;
+
 
 // 事件文字面板群
 var textPanels =[];
@@ -81,7 +80,8 @@ let conveyorSound,
   bgm,
   monsterBite,
   surprise,
-  smokeSFX
+  smokeSFX,
+  tapeRewind
   ;
 
 // T語錄
@@ -167,9 +167,18 @@ var playState =
     populationBEnd = false;
     populationTEnd = false;
 
-   
+    distance = 0;
+    gameSpeed = 1.5;
+    // 平台群集
+    platforms = [];
 
-    
+    // 道具群集
+    itemList = [];
+
+    leftWalls = [];
+    rightWalls = [];
+    ceilings = [];
+    otherPlates = [];
     createBounders();
 
   
@@ -179,7 +188,7 @@ var playState =
     // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
     game.stage.disableVisibilityChange = true;
   
-    // Create population 
+    // Create 0th population 
     if(!initialed){
       // populationGreenGuy = new Population(50, "BOT", 0);  
       // populationRedGirl = new Population(50, "BOT", 1);  
@@ -276,17 +285,17 @@ var playState =
             
         populations[i].update();
         
-        // 最後倖存者
-        if(populations[0].nowAlive ==1 && !lastPopulationT)
-        {
-          lastPopulationT = true;
-          createTextPanel("The last hope","lastOne");  
-        }
-        if(populations[1].nowAlive ==1 && !lastPopulationB)
-        {
-          lastPopulationB = true;
-          createTextPanel("The last hope","lastOne");  
-        }  
+        // // 最後倖存者 (先取消，要不然功能太雜)
+        // if(populations[0].nowAlive ==1 && !lastPopulationT)
+        // {
+        //   lastPopulationT = true;
+        //   createTextPanel("The last hope","lastOne");  
+        // }
+        // if(populations[1].nowAlive ==1 && !lastPopulationB)
+        // {
+        //   lastPopulationB = true;
+        //   createTextPanel("The last hope","lastOne");  
+        // }  
       }
       else if(populations[i].done() && !populations[i].isMonster ) {
         allDone++;
@@ -525,6 +534,7 @@ function addAudio() {
   monsterBite =game.add.audio("monsterBite");
   surprise =game.add.audio("surprise");
   smokeSFX =game.add.audio("smokeSFX");
+  tapeRewind =game.add.audio("tapeRewind");
   
   // 只有再初始化時才加入，避免每一輪檔案肥大
   if(!initialed)
@@ -993,8 +1003,9 @@ function restart() {
  
   createTextPanel(generation.innerHTML + " generation reached " +distance +" floor","extinguish");
 
-  //延遲3秒後  進入 cross 
-  setTimeout(( () => game.state.start('cross')), 3000); 
+  //延遲3秒後  進入 loadState
+  loadTo ="cross" ;
+  setTimeout(( () => game.state.start('load')), 3000); 
 
   
 
@@ -1285,6 +1296,43 @@ function createTextPanel(text,eventType) {
     
   }
 
+  //intro 事件
+  if(eventType=="intro")
+  {
+    // var crownLogo = game.add.sprite(200,100, "crown");
+                        
+    // textPanel.addChild(crownLogo);
+
+    var crownPlayerBLogo = game.add.sprite(200,100, "player5");
+  
+  
+    // cryPlayerLogo.scale.setTo(scale, scale);
+    crownPlayerBLogo.scale.setTo(6, 6);
+            
+    // crown動畫
+    crownPlayerBLogo.animations.add("crown", [7,16], 8);
+
+    crownPlayerBLogo.animations.play("crown",8,true);      
+
+    textPanel.addChild(crownPlayerBLogo);
+
+    var crownPlayerTLogo = game.add.sprite(500,100, "player4");
+
+
+    // cryPlayerLogo.scale.setTo(scale, scale);
+    crownPlayerTLogo.scale.setTo(6, 6);
+          
+    // crown動畫
+    crownPlayerTLogo.animations.add("crown", [7,16], 8);
+
+    crownPlayerTLogo.animations.play("crown",8,true);      
+
+    textPanel.addChild(crownPlayerTLogo);
+    
+    //延遲幾秒後 秒後  播出 倒轉音樂
+    setTimeout(( () => tapeRewind.play() ), 7000); 
+    
+  }
     
 }
 
