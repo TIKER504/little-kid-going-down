@@ -80,7 +80,8 @@ let conveyorSound,
   healSound,
   bgm,
   monsterBite,
-  surprise
+  surprise,
+  smokeSFX
   ;
 
 // T語錄
@@ -523,6 +524,7 @@ function addAudio() {
   bgm = game.add.audio("bgm");
   monsterBite =game.add.audio("monsterBite");
   surprise =game.add.audio("surprise");
+  smokeSFX =game.add.audio("smokeSFX");
   
   // 只有再初始化時才加入，避免每一輪檔案肥大
   if(!initialed)

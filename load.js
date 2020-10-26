@@ -149,6 +149,8 @@ var loadState =
     game.load.audio("healSound", "/sounds/healSound.mp3");
     game.load.audio("monsterBite", "/sounds/monsterBite.mp3");
     game.load.audio("surprise", "/sounds/surprise.mp3");
+    game.load.audio("smokeSFX", "/sounds/smokeSFX.mp3");
+    
     
     
    

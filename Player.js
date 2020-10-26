@@ -935,6 +935,7 @@ class Player {
             // 戴巫師帽，受到天花板即死攻擊，會順移到安全的地板上面
             if(this.player.headItem.key =="hat")
             {
+              smokeSFX.play();
               const  smokeTele = game.add.sprite(this.player.body.x,this.player.body.y, "smoke");
               smokeTele.scale.setTo(4,4);
               smokeTele.animations.add("smoke", [0, 1, 2, 3,4,5], 6).killOnComplete = true;
@@ -952,20 +953,26 @@ class Player {
               setTimeout(
                 (   
                   function(player) {
-                    player.visible = true;
-                    
+                    player.visible = true;                                        
                     player.body.velocity.y =0;        
-                    player.body.x = 400+ gameWidth / 2;
-                    player.body.y =  gameHeight / 2;
-
+                    // player.body.x = 400+ gameWidth / 2;
+                    // player.body.y =  gameHeight / 2;
+                    // 改用 reset 調整位置 可以避免人物沒有正確位移
+                    player.reset(800,420);
+                    smokeSFX.play();
                     const  smokeTele = game.add.sprite(player.body.x,player.body.y, "smoke");
                     smokeTele.scale.setTo(4,4);
                     smokeTele.animations.add("smoke", [0, 1, 2, 3,4,5], 6).killOnComplete = true;
                     smokeTele.animations.play("smoke");
-      
+                        
                     // 戴巫師帽破掉
                     player.removeChildAt(2);
                     player.headItem = undefined;              
+
+                    // 重生 閃紅光入場
+                    game.add.tween(player).to({
+                      tint: 0xff3300,
+                    }, 200, Phaser.Easing.Exponential.Out, true, 0, 0, true);
                    
                   }                
                 )
