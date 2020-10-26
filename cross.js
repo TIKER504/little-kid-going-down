@@ -353,13 +353,21 @@ var crossState =
 
     rightWalls.push(rightWall);
 
-    let centerWall = game.add.sprite(canvasWidth/2 - 17, wallHeight * index, "wall");
+    // let centerWall = game.add.sprite(canvasWidth/2 - 17, wallHeight * index, "wall");
 
-    game.physics.arcade.enable(centerWall);
-    centerWall.body.immovable = true;
+    // game.physics.arcade.enable(centerWall);
+    // centerWall.body.immovable = true;
 
-    otherPlates.push(centerWall);
+    // otherPlates.push(centerWall);
   }
+
+  // 中間隔離牆不必太高
+  let centerWall = game.add.sprite(canvasWidth/2 - 17, 400, "wall");
+
+  game.physics.arcade.enable(centerWall);
+  centerWall.body.immovable = true;
+
+  otherPlates.push(centerWall);
 
   const numberOfBase = Math.round(canvasWidth / 800) +1 ;
 
@@ -376,7 +384,7 @@ var crossState =
 
   var crossingText = game.add.text(400 + gameWidth / 2, 400,'crossing...',{font: '30px Courier',fill:'#ffffff'})
   
-  
+  // 進行天擇
   for (let i = 0; i < populations.length; i++) {
 
     populations[i].naturalSelection();

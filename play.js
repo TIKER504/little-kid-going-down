@@ -391,13 +391,20 @@ var playState =
 
     }
 
-    // 大於5層 安全網會解除
-    if(distance >5
+    // 大於5層 安全網會解除 (好像有bug， 之後再看)
+    if(distance ==6
        && otherPlates[1])
-    {
-      otherPlates[1].destroy();
-  
-      otherPlates = otherPlates.slice(0,1);
+    {      
+      otherPlates[1].animations.play("turn");
+      setTimeout(function () {
+        otherPlates[1].body.checkCollision.up = false;
+        setTimeout(() => {
+          otherPlates[1].body.checkCollision.up = true;
+          otherPlates[1].destroy();  
+          otherPlates = otherPlates.slice(0,1);
+        }, 200);
+      }, 100);
+
     }
     
        
@@ -621,11 +628,22 @@ function createBounders() {
 
 
   // 起始安全地板，過5層後才會解除
-  let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
-  normal800.scale.setTo(scale, scale);
+  // let normal800 = game.add.sprite(gameWidth / 2, 200, "normal400");
+  // normal800.scale.setTo(scale, scale);
+  // game.physics.arcade.enable(normal800);
+  // normal800.body.immovable = true;
+
+  // otherPlates.push(normal800);
+    
+  // 起始安全fake地板，過5層後才會滑開
+  let normal800 = game.add.sprite(gameWidth / 2+17, 200, "fake");
+
+  normal800.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
+
+  normal800.scale.setTo(8, scale);
   game.physics.arcade.enable(normal800);
   normal800.body.immovable = true;
-
+  normal800.body.setSize(96, 22, 0, 10);// 真實待機SIZE
   otherPlates.push(normal800);
   
 

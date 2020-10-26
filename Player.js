@@ -935,16 +935,42 @@ class Player {
             // 戴巫師帽，受到天花板即死攻擊，會順移到安全的地板上面
             if(this.player.headItem.key =="hat")
             {
-              this.player.unbeatableTime = game.time.now + 1000;
+              const  smokeTele = game.add.sprite(this.player.body.x,this.player.body.y, "smoke");
+              smokeTele.scale.setTo(4,4);
+              smokeTele.animations.add("smoke", [0, 1, 2, 3,4,5], 6).killOnComplete = true;
+              smokeTele.animations.play("smoke");
+
+              this.player.unbeatableTime = game.time.now + 2000;
+
               // 損的血加回來
               this.player.life += 3;
 
-              this.player.body.x = 400+ gameWidth / 2;
-              this.player.body.y =  gameHeight / 2;
+              this.player.visible = false;
 
-              // 戴巫師帽破掉
-              this.player.removeChildAt(2);
-              this.player.headItem = undefined;
+
+             //延遲1秒後 現形
+              setTimeout(
+                (   
+                  function(player) {
+                    player.visible = true;
+                    
+                    player.body.velocity.y =0;        
+                    player.body.x = 400+ gameWidth / 2;
+                    player.body.y =  gameHeight / 2;
+
+                    const  smokeTele = game.add.sprite(player.body.x,player.body.y, "smoke");
+                    smokeTele.scale.setTo(4,4);
+                    smokeTele.animations.add("smoke", [0, 1, 2, 3,4,5], 6).killOnComplete = true;
+                    smokeTele.animations.play("smoke");
+      
+                    // 戴巫師帽破掉
+                    player.removeChildAt(2);
+                    player.headItem = undefined;              
+                   
+                  }                
+                )
+                , 1000,this.player);      
+                
               return;
             }
           }

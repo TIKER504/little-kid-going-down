@@ -1096,6 +1096,12 @@ class Monster {
     // monsterEffects
     monsterEffect(monster, player) {
       
+      // 板塊停止時，怪物不會有傷害
+      if(platformsStatus !="active")
+      {
+        return;
+      }
+
       // 碰到怪物短暫無敵時間，避免 連續判定
       if (game.time.now > player.unbeatableTime) {
       

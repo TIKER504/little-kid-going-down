@@ -50,6 +50,9 @@ var loadState =
     game.load.spritesheet("player6", "player6.png", 32, 32);    
   
     game.load.spritesheet("img_explosion", "explosion.png", 32, 32);
+
+    // game.load.spritesheet("smokeTele", "smokeTele.png", 60, 60);
+    game.load.spritesheet("smoke", "smoke.png", 16, 16);
   
     game.load.spritesheet("killmark", "killmark.png", 32, 32);
   
