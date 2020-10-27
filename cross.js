@@ -275,12 +275,32 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
 }
 
-// ComfyJS.onJoin =( user, self, extra ) =>
-// {
+ComfyJS.onJoin =( user, self, extra ) =>
+{
 
-//   ComfyJS.Say(user+' join The Chat');
+  // ComfyJS.Say(user+' join The Chat');
 
-// }
+  if(status!="playing")
+  {
+    return;
+  }
+
+  populationMoster = new Population(1,user, 2,true);
+
+  // 複製目前存活AI 避免弱智新生兒 拖累進度
+  populationMoster.copyAliveBrain();
+
+  if(populations.length>2)
+  {
+    populations[2].players = populations[2].players.concat(populationMoster.players);        
+  }
+  else
+  {
+    populations.push(populationMoster);    
+  }
+  surprise.play();
+
+}
 
 // ComfyJS.onPart =( user, self, extra ) =>
 // {

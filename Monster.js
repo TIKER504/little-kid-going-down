@@ -29,6 +29,8 @@ class Monster {
 
     // const player = game.add.sprite(0, 50, "player" + species);
 
+    // Monster 固定先在 左上角平台生成
+    // const player = game.add.sprite(200, 50, "player" + species);
 
     player.scale.setTo(scale, scale);
     player.direction = 10;
