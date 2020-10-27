@@ -8,7 +8,7 @@
 // const scale = 2;
 
 // 總樓數(999)
-var completeFloor =600;
+var completeFloor =999;
 
 // var player;
 var keyboard;

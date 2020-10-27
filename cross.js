@@ -83,7 +83,27 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
       }      
     }   
   }
+  
+  // 殭屍
+  if(status === "playing" && extra.customRewardId==='d571c0c9-b3ad-43ee-b233-8df3246272ab')
+  {
+    populationMoster = new Population(1,user, 2,true);
 
+    // 複製目前存活AI 避免弱智新生兒 拖累進度
+    populationMoster.copyAliveBrain();
+
+    if(populations.length>2)
+    {
+      populations[2].players = populations[2].players.concat(populationMoster.players);        
+    }
+    else
+    {
+      populations.push(populationMoster);    
+    }
+    surprise.play();
+
+
+  }
     
   // 人民的法槌
   // if(extra.customRewardId==='b901ce1d-a862-4362-aadb-c553310eee1f')
