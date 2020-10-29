@@ -89,12 +89,21 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   {
     populationMoster = new Population(1,user, 2,true);
 
+    populationMoster.isPlayer = false;
     // 複製目前存活AI 避免弱智新生兒 拖累進度
     populationMoster.copyAliveBrain();
 
     if(populations.length>2)
     {
-      populations[2].players = populations[2].players.concat(populationMoster.players);        
+      if(populations[2].species ==2)
+      {
+        populations[2].players = populations[2].players.concat(populationMoster.players);        
+      }      
+      else
+      {
+        populations.push(populationMoster);      
+      }
+      
     }
     else
     {
@@ -103,6 +112,37 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
     surprise.play();
 
 
+  }
+  if(status === "playing")
+  {
+        // 表情符號
+    if(message==="LUL")
+    {
+      // Doge 家族新成員
+      populationDoge = new Population(1,user, 3,false);
+
+      populationDoge.isPlayer = false;
+
+      // 複製目前存活AI 避免弱智新生兒 拖累進度
+      populationDoge.copyAliveBrain();
+      
+      if(populations.length>2)
+      {
+        if(populations[2].species ==3)
+        {
+          populations[2].players = populations[2].players.concat(populationDoge.players);        
+        }      
+        else
+        {
+          populations.push(populationDoge);      
+        }
+      }
+      else
+      {
+        populations.push(populationDoge);    
+      }
+      born.play();
+    }
   }
     
   // 人民的法槌
@@ -298,7 +338,7 @@ ComfyJS.onJoin =( user, self, extra ) =>
   {
     populations.push(populationMoster);    
   }
-  surprise.play();
+  // surprise.play();
 
 }
 
@@ -336,7 +376,7 @@ var crossState =
 
     crossingTime = 30;
 
-
+    trainMusic.play();
 
     platforms.forEach(function (s) {
       s.destroy();
@@ -430,7 +470,9 @@ var crossState =
     populations[i].naturalSelection();
   }
 
-  game.add.text(gameWidth / 2, 100,"Now,it's crossing floor,Using channel memeCoin for Joining the evolution" ,{font: '30px Courier',fill:'#ffffff'})
+  game.add.text(200 + gameWidth / 2, 100,"Heroes are training themselves..." ,{font: '30px Courier',fill:'#ffffff'})
+
+  game.add.text(gameWidth / 2, 200,"Use memeCoins to add new heroes and help them get stronger!" ,{font: '30px Courier',fill:'#ffffff'})
 
   for (let i = 0; i < WaitForJoinNameList_B.length; i++) {
 
@@ -516,7 +558,7 @@ var crossState =
 
     countDownObjectList = [];
     
-    var countDownText = game.add.text(200+ gameWidth / 2, 300,'Next generation will start in ' +crossingTime+'s...',{font: '30px Courier',fill:'#ffffff'})
+    var countDownText = game.add.text(200 + gameWidth / 2, 300,'Next generation starts in ' +crossingTime+'s...',{font: '30px Courier',fill:'#ffffff'})
 
     countDownObjectList.push(countDownText);
                               

@@ -154,6 +154,8 @@ var loadState =
     game.load.audio("surprise", "/sounds/surprise.mp3");
     game.load.audio("smokeSFX", "/sounds/smokeSFX.mp3");
     game.load.audio("tapeRewind", "/sounds/tapeRewind.mp3");
+    game.load.audio("trainMusic", "/sounds/trainMusic.mp3");
+    
     
     
     

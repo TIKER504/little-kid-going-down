@@ -48,7 +48,7 @@ class Monster {
 
     
     this.player = player;
-        
+    this.player.species = this.species; 
     // var playerGoLeft = 0;
     // var playerGoRight = 0;
 
@@ -160,9 +160,23 @@ class Monster {
     // game.physics.arcade.collide(this.player, [...populations[0].players,...populations[1].players,...populations[2].players]);
 
     // 檢驗活著玩家碰撞
-    for (let po = 0; po < populations.length-1; po++) {
+    // for (let po = 0; po < populations.length-1; po++) {
 
-      if (!populations[po].done()) {
+    //   if (!populations[po].done()) {
+        
+    //     for (let i = 0; i < populations[po].players.length; i++) {
+            
+    //       if (!populations[po].players[i].dead ) {      
+              
+    //         game.physics.arcade.collide(this.player,populations[po].players[i].player,this.monsterEffect.bind(this));
+    //       }             
+    //     }
+              
+    //   }       
+    // }
+    for (let po = 0; po < populations.length; po++) {
+
+      if (!populations[po].done() && !populations[po].isMonster) {
         
         for (let i = 0; i < populations[po].players.length; i++) {
             
@@ -1104,8 +1118,32 @@ class Monster {
         return;
       }
 
+      // doge 不會被怪物咬受傷，還可以秒殺怪物
+      if(player.species ==3)
+      {
+        monster.life =1;
+
+        // 受傷怪物 閃紅光
+        game.add.tween(monster).to({
+          tint: 0xff3300,
+        }, 400, Phaser.Easing.Exponential.Out, true, 0, 0, true);
+
+        // 碰觸怪物會擊退回彈
+        if(monster.x > player.x)
+        {        
+          monster.x += 3;
+          // player.body.velocity.x = -(gameWidth / 2);        
+        }
+        else
+        {
+          monster.x -= 3;
+          // player.body.velocity.x = (gameWidth / 2);     
+        }
+        return;
+      }
+
       // 碰到怪物短暫無敵時間，避免 連續判定
-      if (game.time.now > player.unbeatableTime) {
+      if (game.time.now > player.unbeatableTime ) {
       
         player.unbeatableTime = game.time.now + 1000;
 

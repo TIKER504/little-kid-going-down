@@ -61,7 +61,7 @@ class Player {
     player.headItem =undefined;
 
     this.player = player;
-
+    this.player.species = this.species; 
     // 是否正在播動畫
     this.isPlayingAnimation = false;
 

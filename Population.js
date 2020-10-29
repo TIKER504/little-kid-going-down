@@ -11,9 +11,11 @@ class Population {
     this.beginLevel = 1;
     this.nowAlive = 0;
     this.isMonster =isMonster;
+    this.isPlayer =true;
     this.populationVoice =undefined;
     // 說了幾段話
     this.populationSpeechCounter =0;
+    this.species = species;
 
     // 假如有傳家族名子，統一命名，要不然就是系統隨機    
     if(FamilyName)

@@ -27,7 +27,7 @@ var otherPlates = [];
 
 var distance = 0;
 var turnDead = 0;
-var status = "playing";
+var status = "preplaying";
 
 var platformsStatus ="active";
 
@@ -94,7 +94,7 @@ var preplayState =
 
     createBounders_pre();
 
-    status = "playing"; 
+    status = "preplaying"; 
     slowdown = false;
     // 讓遊戲在別的視窗下也能執行， 但有點奇怪， 不論 true、false 都有一樣的效果
     // 有空要研究一下  瀏覽器 requestAnimationFrame 機制
@@ -115,7 +115,7 @@ var preplayState =
     // game.stage.backgroundColor = "#064C7D";
     var textStyle= { font: "bold 48px Gothic", fill: "#ffffff", align:"center"};
     // 排名系統
-    game.add.text(1500,100, "Top Ranks:", textStyle);
+    game.add.text(1500,100, "Leaderboard:", textStyle);
 
     score.innerHTML = distance;
 
@@ -134,7 +134,7 @@ var preplayState =
 
     itemList.push(crown);
 
-    createTextPanel("Help them to get the crown on 999 floor!","intro"); 
+    createTextPanel("Help them win the crown by reaching floor 999!","intro"); 
     
   },
   update : function() {
@@ -158,7 +158,7 @@ var preplayState =
     {
       game.state.start('play');
     }     
-    if (status != "playing") return;
+    if (status != "preplaying") return;
     
  
     

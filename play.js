@@ -81,7 +81,8 @@ let conveyorSound,
   monsterBite,
   surprise,
   smokeSFX,
-  tapeRewind
+  tapeRewind,
+  trainMusic
   ;
 
 // T語錄
@@ -181,7 +182,18 @@ var playState =
     otherPlates = [];
     createBounders();
 
-  
+    status = "playing";
+
+    var logo_LUL = game.add.sprite(1240,160 , 'LUL' );
+
+    logo_LUL.scale.setTo(0.25,0.25);
+
+    var textStyleI= { font: "bold 36px Gothic", fill: "#ffffff", align:"center"};
+    var eq = game.add.text(1350,180 , "=", textStyleI);    
+
+    var logo_player3 = game.add.sprite(1390,160 , 'logo_player3' );
+
+    logo_player3.scale.setTo(2,2);
     
   
     // 讓遊戲在別的視窗下也能執行， 但有點奇怪， 不論 true、false 都有一樣的效果
@@ -230,7 +242,7 @@ var playState =
     // game.stage.backgroundColor = "#064C7D";
     var textStyle= { font: "bold 48px Gothic", fill: "#ffffff", align:"center"};
     // 排名系統
-    game.add.text(1500,100, "Top Ranks:", textStyle);
+    game.add.text(1500,100, "Leaderboard:", textStyle);
 
     score.innerHTML = distance;
 
@@ -297,7 +309,7 @@ var playState =
         //   createTextPanel("The last hope","lastOne");  
         // }  
       }
-      else if(populations[i].done() && !populations[i].isMonster ) {
+      else if(populations[i].done() && populations[i].isPlayer ) {
         allDone++;
         if(populationBEnd ==false && populations[1].done())
         {
@@ -306,7 +318,7 @@ var playState =
           // 另一邊沒死 才會後續啟動
           if(!populationTEnd)
           {
-            createTextPanel("The B population(" + generation.innerHTML +") is extinguished on the " + distance +" floor","extinguish");          
+            createTextPanel("The B population(" + generation.innerHTML +") got wiped out on the floor" + distance,"extinguish");          
             // 等文字面板3秒後關閉，直接開講
             setTimeout(( () => populations[0].speech(4) ), 3000); 
           }          
@@ -319,7 +331,7 @@ var playState =
           // 另一邊沒死 才會後續啟動
           if(!populationBEnd)
           {
-            createTextPanel("The T population(" + generation.innerHTML +") is extinguished on the " + distance +" floor","extinguish");
+            createTextPanel("The T population(" + generation.innerHTML +") got wiped out on the floor " + distance,"extinguish");
             // 等文字面板3秒後關閉，直接開講
             setTimeout(( () => populations[1].speech(5) ), 3000); 
           }                  
@@ -361,7 +373,7 @@ var playState =
             
       monsterRush(3);
       // console.log("monsterRush!");
-      createTextPanel("They are coming!!!","monster");
+      createTextPanel("Zombies are coming!!!","monster");
       FloorAlreadyRush =true;
     }
 
@@ -461,6 +473,8 @@ function monsterRush(amount)
   if (!FloorAlreadyRush) {
     populationMoster = new Population(amount,'BOT', 2,true);
 
+    populationMoster.isPlayer = false;
+
 
     // 複製目前存活AI 避免弱智新生兒 拖累進度
     populationMoster.copyAliveBrain();
@@ -535,6 +549,7 @@ function addAudio() {
   surprise =game.add.audio("surprise");
   smokeSFX =game.add.audio("smokeSFX");
   tapeRewind =game.add.audio("tapeRewind");
+  trainMusic =game.add.audio("trainMusic");
   
   // 只有再初始化時才加入，避免每一輪檔案肥大
   if(!initialed)
@@ -711,7 +726,7 @@ function updateDistance() {
     if (!breakNewRocord && generation.innerHTML !="0") {
       newRecord.play();
       breakNewRocord = true;
-      createTextPanel("New Record: " + distance +" floor!!!","newRocord" )
+      createTextPanel("New Record: floor" + distance +" !","newRocord" )
     }
 
     
@@ -1001,7 +1016,7 @@ function restart() {
   // twitch API 報 每一輪 最佳成績 (暫時不用Twitch API 報了，畫面與文字有延遲，容易造成暴雷狀況)
   // ComfyJS.Say(generation.innerHTML + " generation reached " +distance +" floor");
  
-  createTextPanel(generation.innerHTML + " generation reached " +distance +" floor","extinguish");
+  createTextPanel("Generation " + generation.innerHTML + " reached floor" + distance,"extinguish");
 
   //延遲3秒後  進入 loadState
   loadTo ="cross" ;
