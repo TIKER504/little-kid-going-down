@@ -12,6 +12,7 @@ class Population {
     this.nowAlive = 0;
     this.isMonster =isMonster;
     this.isPlayer =true;
+    this.isNPC =false;
     this.populationVoice =undefined;
     // 說了幾段話
     this.populationSpeechCounter =0;

@@ -263,36 +263,36 @@ class Player {
 
     game.physics.arcade.collide(this.player, [rage]);
 
-    // 有怪物populations存活 進入攻擊模式
-    if(populations.length >3)
-    {
-      if (!populations[3].done())
-      {
-        // this.attackMode = true;
+    // // 有怪物populations存活 進入攻擊模式
+    // if(populations.length >3)
+    // {
+    //   if (!populations[3].done())
+    //   {
+    //     // this.attackMode = true;
 
-        // 隨機開槍
-        this.attackMode = Math.random() >= 0.5;
+    //     // 隨機開槍
+    //     this.attackMode = Math.random() >= 0.5;
 
-        // 不開槍的話，這一秒內都不會開槍
-        if(!this.attackMode )
-        {
-          // this.isPlayingAnimation = true;
+    //     // 不開槍的話，這一秒內都不會開槍
+    //     if(!this.attackMode )
+    //     {
+    //       // this.isPlayingAnimation = true;
     
-          // // setTimeout(() => {
+    //       // // setTimeout(() => {
             
-          // //   this.isPlayingAnimation = false;
-          // // }, 1000);
-        }
+    //       // //   this.isPlayingAnimation = false;
+    //       // // }, 1000);
+    //     }
 
-      }
-      else
-      {
-        this.attackMode = false;
-      }
+    //   }
+    //   else
+    //   {
+    //     this.attackMode = false;
+    //   }
 
 
       
-    }
+    // }
 
     // 再次確認無血者死
     if (this.player.life <= 0 && !this.dead) {

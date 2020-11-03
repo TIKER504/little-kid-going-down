@@ -54,6 +54,8 @@ var loadState =
 
     // game.load.spritesheet("smokeTele", "smokeTele.png", 60, 60);
     game.load.spritesheet("smoke", "smoke.png", 16, 16);
+
+    game.load.spritesheet("memeCatRainbow", "memeCatRainbowSprite.png", 960, 320);
   
     game.load.spritesheet("killmark", "killmark.png", 32, 32);
   
@@ -112,6 +114,8 @@ var loadState =
     game.load.image("logo_player4", "logo_player4.png");
     
     game.load.image("logo_player5", "logo_player5.png");
+
+    game.load.image("logo_player6", "logo_player6.png");
 
     game.load.image("winT", "winT.png");
     game.load.image("winB", "winB.png");

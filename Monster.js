@@ -183,6 +183,8 @@ class Monster {
           if (!populations[po].players[i].dead ) {      
               
             game.physics.arcade.collide(this.player,populations[po].players[i].player,this.monsterEffect.bind(this));
+
+            // game.physics.arcade.collide(this.player,populations[po].players[i].player,this.monsterEffect(this.player,populations[po].players[i].player,populations[po].players[i]));
           }             
         }
               
@@ -1110,7 +1112,7 @@ class Monster {
   }
 
     // monsterEffects
-    monsterEffect(monster, player) {
+    monsterEffect(monster, player,uperPlayer) {
       
       // 板塊停止時，怪物不會有傷害
       if(platformsStatus !="active")
@@ -1122,6 +1124,16 @@ class Monster {
       if(player.species ==3)
       {
         monster.life =1;
+        
+        player.animations.add("attack", [17,26], 8);
+        player.animations.play("attack");
+
+        // uperPlayer.isPlayingAnimation = true;
+    
+        // setTimeout(() => {
+          
+        //   uperPlayer.isPlayingAnimation = false;
+        // }, 1000);
 
         // 受傷怪物 閃紅光
         game.add.tween(monster).to({

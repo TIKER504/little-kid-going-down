@@ -95,15 +95,19 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
 
     if(populations.length>2)
     {
-      if(populations[2].species ==2)
-      {
-        populations[2].players = populations[2].players.concat(populationMoster.players);        
-      }      
-      else
-      {
-        populations.push(populationMoster);      
-      }
-      
+      var alreadyMonster = false;
+        for (let po = 0; po < populations.length; po++) {
+
+          if (populations[po].isMonster) {
+              populations[po].players = populations[po].players.concat(populationMoster.players);                                        
+              alreadyMonster = true;
+          }       
+        }
+        if(!alreadyMonster)
+        {
+          populations.push(populationMoster);      
+
+        }                          
     }
     else
     {
@@ -115,33 +119,73 @@ ComfyJS.onChat =( user, message, flags, self, extra )=>
   }
   if(status === "playing")
   {
-        // 表情符號
+    // 表情符號
     if(message==="LUL")
     {
       // Doge 家族新成員
       populationDoge = new Population(1,user, 3,false);
-
       populationDoge.isPlayer = false;
+      populationDoge.isNPC = true;
 
       // 複製目前存活AI 避免弱智新生兒 拖累進度
-      populationDoge.copyAliveBrain();
-      
+      populationDoge.copyAliveBrain();      
       if(populations.length>2)
-      {
-        if(populations[2].species ==3)
-        {
-          populations[2].players = populations[2].players.concat(populationDoge.players);        
-        }      
-        else
+      {        
+        var alreadyNPC = false;
+        for (let po = 0; po < populations.length; po++) {
+
+          if (populations[po].isNPC) {
+              populations[po].players = populations[po].players.concat(populationDoge.players);                                        
+              alreadyNPC = true;
+          }       
+        }
+        if(!alreadyNPC)
         {
           populations.push(populationDoge);      
-        }
+
+        }               
       }
       else
       {
         populations.push(populationDoge);    
       }
       born.play();
+    }
+
+    // 表情符號
+    if(message==="Kappa")
+    {
+      
+      // Cat 家族新成員
+      populationCat = new Population(1,user, 6,false);
+      populationCat.isPlayer = false;
+      populationCat.isNPC = true;
+
+      // 複製目前存活AI 避免弱智新生兒 拖累進度
+      populationCat.copyAliveBrain();      
+      if(populations.length>2)
+      {        
+        var alreadyNPC = false;
+        for (let po = 0; po < populations.length; po++) {
+
+          if (populations[po].isNPC) {
+              populations[po].players = populations[po].players.concat(populationCat.players);                                        
+              alreadyNPC = true;
+          }       
+        }
+        if(!alreadyNPC)
+        {
+          populations.push(populationCat);      
+
+        }               
+      }
+      else
+      {
+        populations.push(populationCat);    
+      }
+      born.play();
+
+      createTextPanel("nyan ~ & magic~" ,"nyanMeme");   
     }
   }
     

@@ -33,8 +33,8 @@ var platformsStatus ="active";
 
 var breakNewRocord = false;
 
-// 人民法槌集氣條
-var rageNameList = [];
+// memeCat集氣條
+var memeCatNameList = [];
 
 // 苦力怕集氣條
 var creepNameList = [];
@@ -192,6 +192,16 @@ var playState =
     var eq = game.add.text(1350,180 , "=", textStyleI);    
 
     var logo_player3 = game.add.sprite(1390,160 , 'logo_player3' );
+
+    logo_player3.scale.setTo(2,2);
+
+    var logo_LUL = game.add.sprite(1240,280 , 'kappa' );
+
+    logo_LUL.scale.setTo(0.25,0.25);
+
+    var eq2 = game.add.text(1350,300 , "=", textStyleI);    
+
+    var logo_player3 = game.add.sprite(1390,280 , 'logo_player6' );
 
     logo_player3.scale.setTo(2,2);
     
@@ -1294,6 +1304,24 @@ function createTextPanel(text,eventType) {
     
   }
 
+  // nyanMeme事件
+  if(eventType=="nyanMeme")
+  {
+    var nyanMemeLogo = game.add.sprite(130,50, "memeCatRainbow");    
+    
+      nyanMemeLogo.scale.setTo(0.8, 0.8);
+       
+      nyanMemeLogo.animations.add("memeCatRainbow", [0,1], 8);
+
+      nyanMemeLogo.animations.play("memeCatRainbow",8,true);      
+       
+      textPanel.addChild(nyanMemeLogo);          
+      
+      //延遲幾秒後 秒後 magic
+      setTimeout(( () => magicFloorChange() ), 3000); 
+  }
+     
+
   //Monster 事件
   if(eventType=="monster")
   {
@@ -1308,6 +1336,7 @@ function createTextPanel(text,eventType) {
       monsterLogo.animations.play("right",8,true);      
         
       textPanel.addChild(monsterLogo);
+    
     
   }
 
@@ -1361,6 +1390,94 @@ function cleanTextPanel(textPanelClean) {
   // TextPanel.body.onMoveComplete.add(( () => console.log("onMoveComplete!!")), this);
               
 }
+
+// 喵咪事件改變地板
+function magicFloorChange() {
+
+  var x = Math.random() * (gameWidth - 96 * scale - 40 * scale) + 20 * scale +400;
+  
+  var y = gameHeight;
+
+  var rand = Math.random() * 100;
+
+  for (var i = 0; i < platforms.length; i++) {
+   
+    var platform = platforms[i];
+
+    const  smokeTele = game.add.sprite(platform.body.x,platform.body.y, "smoke");
+    smokeTele.scale.setTo(4,4);
+    smokeTele.animations.add("smoke", [0, 1, 2, 3,4,5], 6).killOnComplete = true;
+    smokeTele.animations.play("smoke");
+    
+    platform.Explodede = true;
+
+    // let platformType = "normal";
+
+    // if (rand < 50) {
+    //   platform = game.add.sprite(x, y, "normal");
+    // }
+    // else if (rand < 60) {
+    //   platform = game.add.sprite(x, y, "nails");
+    //   platformType = "nails";
+    //   game.physics.arcade.enable(platform);
+    //   platform.body.setSize(96, 15, 0, 15);
+    // }
+    // else if (rand < 70) {
+    //   platform = game.add.sprite(x, y, "conveyorLeft");
+    //   platformType = "conveyorLeft";
+    //   platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
+    //   platform.play("scroll");
+    // }
+    // else if (rand < 80) {
+    //   platform = game.add.sprite(x, y, "conveyorRight");
+    //   platformType = "conveyorRight";
+    //   platform.animations.add("scroll", [0, 1, 2, 3], 16, true);
+    //   platform.play("scroll");
+    // }
+    // else if (rand < 90) {
+    //   platform = game.add.sprite(x, y, "trampoline");
+    //   platformType = "trampoline";
+    //   platform.animations.add("jump", [4, 5, 4, 3, 2, 1, 0, 1, 2, 3], 120);
+    //   platform.frame = 3;
+    // }
+    // else {
+    //   platform = game.add.sprite(x, y, "fake");
+    //   platformType = "fake";
+    //   platform.animations.add("turn", [0, 1, 2, 3, 4, 5, 0], 14);
+    // }
+
+    // platform.scale.setTo(scale, scale);
+    // game.physics.arcade.enable(platform);
+    // platform.body.immovable = true;
+
+    // // Offset collison box by 6 of y to actually touch the platform
+    // if (platformType === "trampoline") {
+    //   platform.body.setSize(96, 22, 0, 6);
+    // }
+
+    // if (platformType === "fake") {
+    //   platform.body.setSize(96, 22, 0, 10);
+    // }
+
+    // // platform.body.checkCollision.up = false;
+    // platform.body.checkCollision.down = false;
+    // platform.body.checkCollision.left = false;
+    // platform.body.checkCollision.right = false;
+    // platform.platformType = platformType;
+    
+    
+  }
+
+  smokeSFX.play();
+ 
+
+}
+
+  
+              
+
+
+
 
 
 
